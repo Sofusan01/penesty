@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <%- include('../partials/sidebar') %>
+            <div class="main-content">
+                <div class="dashboard-container">
+                    <header>
+                        <h1>Settings</h1>
+                    </header>
+                    <div class="content card">
+                        <p>General Settings</p>
+                        <!-- Settings form -->
+                        <form>
+                            <div class="form-group">
+                                <label>Site Name</label>
+                                <input type="text" value="Pentest Estimator">
+                            </div>
+                            <button class="btn">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+</body>
+
+</html>

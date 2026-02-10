@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมัครสมาชิก</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>สร้างบัญชีใหม่</h2>
+        <p class="text-center" style="font-size: 0.9rem;">เริ่มต้นใช้งานระบบจัดการ Pentest Estimator</p>
+
+        <% if (error) { %>
+            <div class="error">
+                <%= error %>
+            </div>
+            <% } %>
+
+                <form action="/auth/register" method="POST">
+                    <div class="form-group">
+                        <label for="username">ชื่อผู้ใช้</label>
+                        <input type="text" id="username" name="username" placeholder="ตั้งชื่อผู้ใช้ของคุณ" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">รหัสผ่าน</label>
+                        <input type="password" id="password" name="password" placeholder="อย่างน้อย 6 ตัวอักษร"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword"
+                            placeholder="กรอกรหัสผ่านอีกครั้ง" required>
+                    </div>
+                    <button type="submit" class="btn-secondary">สมัครสมาชิก</button>
+                </form>
+
+                <div class="mt-4 text-center">
+                    <span style="color: #6b7280; font-size: 0.9rem;">มีบัญชีอยู่แล้ว? </span>
+                    <a href="/auth/login" class="text-link">เข้าสู่ระบบ</a>
+                </div>
+    </div>
+</body>
+
+</html>

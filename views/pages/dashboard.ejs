@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pentest Estimator Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <%- include('../partials/sidebar') %>
+
+            <div class="main-content">
+                <div class="dashboard-container">
+                    <header>
+                        <div>
+                            <h1 style="margin: 0; font-size: 1.5rem;">ประเมินราคา Pentest</h1>
+                            <span class="text-muted" style="font-size: 0.9rem;">ระบบคำนวณระยะเวลาทดสอบเจาะระบบ</span>
+                        </div>
+                    </header>
+
+                    <div class="content">
+                        <% if (locals.error) { %>
+                            <div class="error">
+                                <%= error %>
+                            </div>
+                            <% } %>
+                                <% if (locals.success) { %>
+                                    <div
+                                        style="background-color: #d1fae5; color: #065f46; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1.5rem; text-align: center; border: 1px solid #a7f3d0;">
+                                        <%= success %>
+                                    </div>
+                                    <% } %>
+
+                                        <% if (locals.previewResult && previewResult) { %>
+                                            <!-- PREVIEW SECTION -->
+                                            <div class="card"
+                                                style="border: 2px solid var(--primary-color); background-color: #f0f9ff;">
+                                                <h3 style="color: var(--primary-color);">📊 ผลการคำนวณ (Evaluation
+                                                    Result)</h3>
+                                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                                    <div>
+                                                        <strong>ลูกค้า:</strong>
+                                                        <%= previewResult.client_name %><br>
+                                                            <strong>ประเภท:</strong>
+                                                            <%= previewResult.device_type %> (<%=
+                                                                    previewResult.test_type %>)<br>
+                                                                    <strong>Scope:</strong>
+                                                                    <%= previewResult.target_info || '-' %><br>
+                                                                        <strong>Roles:</strong>
+                                                                        <%= previewResult.number_of_roles || 1 %><br>
+                                                                            <strong>ฟังก์ชัน:</strong>
+                                                                            <%= previewResult.function_count %>
+                                                                                รายการ<br>
+                                                                                <strong>แพลตฟอร์ม:</strong>
+                                                                                <%= previewResult.platform_count %><br>
+                                                                                    <strong
+                                                                                        style="color: var(--primary-color); font-size: 1.2rem;">ระยะเวลา:
+                                                                                        <%= previewResult.estimated_days
+                                                                                            %> Man-Days</strong>
+
+                                                                                    <% if (previewResult.wstg_list &&
+                                                                                        previewResult.wstg_list.length>
+                                                                                        0) { %>
+                                                                                        <div
+                                                                                            style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                                                                                            <small>Includes <%=
+                                                                                                    previewResult.wstg_list.length
+                                                                                                    %> OWASP test
+                                                                                                    cases.</small>
+                                                                                        </div>
+                                                                                        <% } %>
+                                                    </div>
+                                                    <div
+                                                        style="text-align: right; display: flex; flex-direction: column; gap: 0.5rem;">
+                                                        <form action="/dashboard/confirm" method="POST">
+                                                            <input type="hidden" name="client_name"
+                                                                value="<%= previewResult.client_name %>">
+                                                            <input type="hidden" name="device_type"
+                                                                value="<%= previewResult.device_type %>">
+                                                            <input type="hidden" name="test_type"
+                                                                value="<%= previewResult.test_type %>">
+                                                            <input type="hidden" name="target_info"
+                                                                value="<%= previewResult.target_info %>">
+                                                            <input type="hidden" name="number_of_roles"
+                                                                value="<%= previewResult.number_of_roles %>">
+                                                            <input type="hidden" name="function_count"
+                                                                value="<%= previewResult.function_count %>">
+                                                            <input type="hidden" name="platform_count"
+                                                                value="<%= previewResult.platform_count %>">
+                                                            <input type="hidden" name="estimated_days"
+                                                                value="<%= previewResult.estimated_days %>">
+
+                                                            <button type="submit" class="btn btn-primary"
+                                                                style="width: 100%;">💾 บันทึก (Save)</button>
+                                                        </form>
+                                                        <a href="/dashboard" class="btn"
+                                                            style="width: 100%; background-color: #6b7280; text-align: center;">❌
+                                                            ยกเลิก</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% } else { %>
+                                                <!-- Estimation Form -->
+                                                <div class="card">
+                                                    <h3>🛠️ สร้างการประเมินใหม่ (New Estimation)</h3>
+                                                    <form action="/dashboard/estimate" method="POST">
+                                                        <div class="form-grid"
+                                                            style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                                            <!-- Client Name -->
+                                                            <div class="form-group">
+                                                                <label for="client_name">ชื่อลูกค้า (Client Name) <span
+                                                                        class="text-danger">*</span></label>
+                                                                <input type="text" id="client_name" name="client_name"
+                                                                    placeholder="ระบุชื่อบริษัทลูกค้า" required
+                                                                    maxlength="100">
+                                                            </div>
+
+                                                            <!-- Roles -->
+                                                            <div class="form-group">
+                                                                <label for="number_of_roles">จำนวน Role (Number of
+                                                                    Roles) <span class="text-danger">*</span></label>
+                                                                <input type="number" id="number_of_roles"
+                                                                    name="number_of_roles" min="1" max="20" value="1"
+                                                                    required>
+                                                                <small class="text-muted">ผู้ใช้งานในระบบ (Admin, User,
+                                                                    Manager etc.)</small>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-grid"
+                                                            style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                                            <!-- Device Type -->
+                                                            <div class="form-group">
+                                                                <label for="device_type">ชนิดเป้าหมาย (System Type)
+                                                                    <span class="text-danger">*</span></label>
+                                                                <select id="device_type" name="device_type" required
+                                                                    style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: #f9fafb;">
+                                                                    <option value="web_application">Web Application
+                                                                    </option>
+                                                                    <option value="mobile_application">Mobile
+                                                                        Application</option>
+                                                                    <option value="api_webservice">API / Webservice
+                                                                    </option>
+                                                                    <option value="infrastructure">Infrastructure /
+                                                                        Network</option>
+                                                                </select>
+                                                            </div>
+
+                                                            <!-- Test Type -->
+                                                            <div class="form-group">
+                                                                <label for="test_type">รูปแบบการทดสอบ (Test Type) <span
+                                                                        class="text-danger">*</span></label>
+                                                                <select id="test_type" name="test_type" required
+                                                                    style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: #f9fafb;">
+                                                                    <option value="graybox">Gray Box (Authenticated)
+                                                                    </option>
+                                                                    <option value="blackbox">Black Box (Unauthenticated)
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Dynamic Target Info -->
+                                                        <div class="form-group" id="target_info_group">
+                                                            <label id="target_label" for="target_input">Target URL /
+                                                                FQDN <span class="text-danger">*</span></label>
+                                                            <input type="text" id="target_url" name="target_url"
+                                                                placeholder="https://example.com" class="target-input">
+
+                                                            <input type="text" id="target_mobile_app"
+                                                                name="target_mobile_app"
+                                                                placeholder="App Name (iOS/Android)"
+                                                                class="target-input" style="display:none;">
+
+                                                            <textarea id="target_infra_desc" name="target_infra_desc"
+                                                                placeholder="List of IP ranges or system description..."
+                                                                class="target-input"
+                                                                style="display:none; width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:0.5rem;"></textarea>
+                                                        </div>
+
+                                                        <!-- Platform Count -->
+                                                        <div class="form-group">
+                                                            <label for="platform_count">จำนวนแพลตฟอร์ม/Environment
+                                                                (Platform Count)</label>
+                                                            <input type="number" id="platform_count"
+                                                                name="platform_count" min="1" max="50" value="1"
+                                                                required>
+                                                            <small class="text-muted">เช่น iOS + Android = 2, Prod + UAT
+                                                                = 2</small>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label>เลือกฟังก์ชันระบบ (Business Functions) <span
+                                                                    class="text-danger">*</span></label>
+                                                            <div
+                                                                style="max-height: 300px; overflow-y: auto; border: 1px solid #e5e7eb; padding: 1rem; border-radius: 0.5rem; background: #f9fafb;">
+                                                                <% if (locals.appFunctions) { %>
+                                                                    <% appFunctions.forEach(func=> { %>
+                                                                        <div class="checkbox-group"
+                                                                            style="margin-bottom: 0.5rem; padding: 0.5rem; border-bottom: 1px solid #eee;">
+                                                                            <input type="checkbox"
+                                                                                id="func_<%= func.id %>"
+                                                                                name="selected_functions"
+                                                                                value="<%= func.id %>">
+                                                                            <label for="func_<%= func.id %>"
+                                                                                style="display: inline; font-weight: normal; cursor: pointer;">
+                                                                                <strong style="color: #374151;">
+                                                                                    <%= func.name %>
+                                                                                </strong>
+                                                                                <div
+                                                                                    style="font-size: 0.85rem; color: #6b7280; margin-left: 1.5rem;">
+                                                                                    <%= func.description %>
+                                                                                </div>
+                                                                            </label>
+                                                                        </div>
+                                                                        <% }) %>
+                                                                            <% } else { %>
+                                                                                <p>ไม่พบข้อมูลฟังก์ชัน</p>
+                                                                                <% } %>
+                                                            </div>
+                                                            <small
+                                                                class="text-muted">เลือกฟังก์ชันที่เกี่ยวข้องเพื่อคำนวณ
+                                                                Scope งาน (OWASP WSTG Mapping)</small>
+                                                        </div>
+
+                                                        <button type="submit" class="btn btn-primary"
+                                                            style="width: 100%; margin-top: 1rem; padding: 1rem; font-size: 1.1rem;">
+                                                            🚀 คำนวณราคาประเมิน (Calculate Estimate)
+                                                        </button>
+                                                    </form>
+                                                </div>
+
+                                                <!-- Data for Client Constraints -->
+                                                <script id="constraints-data" type="application/json">
+                                                    <%- JSON.stringify(locals.constraints || {}) %>
+                                                </script>
+
+                                                <script>
+                                                    const deviceSelect = document.getElementById('device_type');
+                                                    const testSelect = document.getElementById('test_type');
+                                                    const targetUrl = document.getElementById('target_url');
+                                                    const targetMobile = document.getElementById('target_mobile_app');
+                                                    const targetInfra = document.getElementById('target_infra_desc');
+                                                    const targetLabel = document.getElementById('target_label');
+
+                                                    let constraints = {};
+                                                    try {
+                                                        constraints = JSON.parse(document.getElementById('constraints-data').textContent);
+                                                    } catch (e) { console.error(e); }
+
+                                                    function updateUI() {
+                                                        const device = deviceSelect.value;
+
+                                                        // 1. Update Target Inputs
+                                                        targetUrl.style.display = 'none'; targetUrl.removeAttribute('required');
+                                                        targetMobile.style.display = 'none'; targetMobile.removeAttribute('required');
+                                                        targetInfra.style.display = 'none'; targetInfra.removeAttribute('required');
+
+                                                        if (device === 'web_application' || device === 'api_webservice') {
+                                                            targetLabel.textContent = device === 'api_webservice' ? 'Base API URL / Swagger' : 'Target URL / FQDN';
+                                                            targetUrl.style.display = 'block';
+                                                            targetUrl.required = true;
+                                                        } else if (device === 'mobile_application') {
+                                                            targetLabel.textContent = 'Application Name';
+                                                            targetMobile.style.display = 'block';
+                                                            targetMobile.required = true;
+                                                        } else if (device === 'infrastructure') {
+                                                            targetLabel.textContent = 'System Description / IP Ranges';
+                                                            targetInfra.style.display = 'block';
+                                                            targetInfra.required = true;
+                                                        }
+
+                                                        // 2. Update Test Type Constraints
+                                                        const allowed = constraints[device] || [];
+                                                        const options = testSelect.options;
+
+                                                        for (let i = 0; i < options.length; i++) {
+                                                            const opt = options[i];
+                                                            // Enable if allowed
+                                                            if (allowed.includes(opt.value)) {
+                                                                opt.disabled = false;
+                                                                opt.hidden = false;
+                                                            } else {
+                                                                opt.disabled = true;
+                                                                opt.hidden = true;
+                                                            }
+                                                        }
+
+                                                        // Auto-select valid option if current is invalid
+                                                        if (!allowed.includes(testSelect.value)) {
+                                                            // Find first enabled option
+                                                            for (let i = 0; i < options.length; i++) {
+                                                                if (!options[i].disabled) {
+                                                                    testSelect.value = options[i].value;
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+
+                                                    deviceSelect.addEventListener('change', updateUI);
+                                                    // Init
+                                                    updateUI();
+                                                </script>
+                                                <% } %>
+
+                                                    <!-- History Table -->
+                                                    <div class="card">
+                                                        <h3>📜 ประวัติการประเมิน (History)</h3>
+                                                        <% if (locals.estimations && estimations.length> 0) { %>
+                                                            <div style="overflow-x: auto;">
+                                                                <table
+                                                                    style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                                                                    <thead>
+                                                                        <tr
+                                                                            style="background: #f3f4f6; text-align: left;">
+                                                                            <th
+                                                                                style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                                                                ลูกค้า</th>
+                                                                            <th
+                                                                                style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                                                                ประเภท</th>
+                                                                            <th
+                                                                                style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                                                                รายละเอียด</th>
+                                                                            <th
+                                                                                style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb; color: var(--primary-color);">
+                                                                                ระยะเวลา (Man-Days)</th>
+                                                                            <th
+                                                                                style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                                                                จัดการ</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <% estimations.forEach(est=> { %>
+                                                                            <tr
+                                                                                style="border-bottom: 1px solid #e5e7eb;">
+                                                                                <td style="padding: 0.75rem;">
+                                                                                    <%= est.client_name %>
+                                                                                </td>
+                                                                                <td style="padding: 0.75rem;">
+                                                                                    <span
+                                                                                        style="font-size: 0.85rem; font-weight: bold;">
+                                                                                        <%= est.device_type %>
+                                                                                    </span><br>
+                                                                                    <span
+                                                                                        style="font-size: 0.75rem; color: #6b7280;">
+                                                                                        <%= est.test_type %>
+                                                                                    </span>
+                                                                                </td>
+                                                                                <td style="padding: 0.75rem;">
+                                                                                    functions: <%= est.function_count %>
+                                                                                        <br>
+                                                                                        platform: <%= est.platform_count
+                                                                                            %>
+                                                                                </td>
+                                                                                <td
+                                                                                    style="padding: 0.75rem; font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">
+                                                                                    <%= est.estimated_days %> วัน
+                                                                                </td>
+                                                                                <td style="padding: 0.75rem;">
+                                                                                    <form
+                                                                                        action="/dashboard/delete/<%= est.id %>"
+                                                                                        method="POST"
+                                                                                        style="display:inline;">
+                                                                                        <button type="submit"
+                                                                                            style="background:none; border:none; color: var(--danger-color); font-size: 0.9rem; cursor:pointer; padding:0; text-decoration: underline;"
+                                                                                            onclick="return confirm('ยืนยันลบข้อมูล?');">
+                                                                                            ลบ
+                                                                                        </button>
+                                                                                    </form>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <% }) %>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <% } else { %>
+                                                                <p style="text-align: center; margin-top: 2rem;">
+                                                                    ยังไม่มีประวัติการประเมิน</p>
+                                                                <% } %>
+                                                    </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</body>
+
+</html>

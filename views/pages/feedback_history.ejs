@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback History</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <%- include('../partials/sidebar') %>
+            <div class="main-content">
+                <div class="dashboard-container">
+                    <header>
+                        <h1>Feedback History</h1>
+                    </header>
+                    <div class="content card">
+                        <p>Admin Access Only</p>
+                        <table style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">User</th>
+                                    <th class="text-center">Feedback</th>
+                                    <th class="text-center">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (locals.feedbacks && feedbacks.length> 0) { %>
+                                    <% feedbacks.forEach(fb=> { %>
+                                        <tr>
+                                            <td class="text-center"><strong>
+                                                    <%= fb.username %>
+                                                </strong></td>
+                                            <td class="text-center">
+                                                <%= fb.message %>
+                                            </td>
+                                            <td class="text-center">
+                                                <%= new Date(fb.created_at).toLocaleString('th-TH') %>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="3" class="text-center" style="padding: 2rem;">
+                                                        ไม่พบข้อมูลข้อเสนอแนะ (No feedback found)</td>
+                                                </tr>
+                                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    </div>
+</body>
+
+</html>

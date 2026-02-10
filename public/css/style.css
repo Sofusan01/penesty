@@ -1,4 +1,8 @@
 /* Modern Design System */
+* {
+    box-sizing: border-box;
+}
+
 :root {
     --primary-color: #4f46e5;
     --primary-hover: #4338ca;
@@ -30,7 +34,8 @@ body {
 }
 
 /* Container & Cards */
-.container, .login-container, .dashboard-container {
+.container,
+.login-container {
     background-color: var(--card-bg);
     padding: 2.5rem;
     border-radius: var(--radius-lg);
@@ -41,12 +46,19 @@ body {
     transition: transform 0.2s ease;
 }
 
+/* Dashboard Container specific modification for new layout */
 .dashboard-container {
-    max-width: 800px;
+    padding: 1rem;
+    width: 100%;
+    max-width: none;
+    box-shadow: none;
+    background: transparent;
 }
 
 /* Typography */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     color: #111827;
     margin-top: 0;
     margin-bottom: 1.5rem;
@@ -81,7 +93,8 @@ input[type="password"] {
     font-size: 1rem;
     transition: border-color 0.2s, box-shadow 0.2s;
     background-color: #f9fafb;
-    box-sizing: border-box; /* Fix padding issue */
+    box-sizing: border-box;
+    /* Fix padding issue */
 }
 
 input:focus {
@@ -92,7 +105,8 @@ input:focus {
 }
 
 /* Buttons */
-.btn, button {
+.btn,
+button {
     display: inline-block;
     width: 100%;
     padding: 0.75rem 1.5rem;
@@ -109,7 +123,8 @@ input:focus {
     box-sizing: border-box;
 }
 
-.btn:hover, button:hover {
+.btn:hover,
+button:hover {
     background-color: var(--primary-hover);
     transform: translateY(-1px);
 }
@@ -134,10 +149,23 @@ input:focus {
 }
 
 /* Utilities */
-.text-center { text-align: center; }
-.mt-4 { margin-top: 1rem; }
-.text-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
-.text-link:hover { text-decoration: underline; }
+.text-center {
+    text-align: center;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.text-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.text-link:hover {
+    text-decoration: underline;
+}
 
 .error {
     background-color: #fef2f2;
@@ -176,7 +204,10 @@ header {
     margin-bottom: 2rem;
 }
 
-header h1 { margin: 0; text-align: left; }
+header h1 {
+    margin: 0;
+    text-align: left;
+}
 
 .card {
     background-color: white;
@@ -191,4 +222,108 @@ header h1 { margin: 0; text-align: left; }
     text-align: left;
     margin-bottom: 1rem;
     color: var(--primary-color);
+}
+
+/* --- SIDEBAR & LAYOUT --- */
+.app-layout {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: white;
+    border-right: 1px solid #e5e7eb;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    left: 0;
+    top: 0;
+    z-index: 100;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 2rem;
+    width: calc(100% - 250px);
+}
+
+.sidebar-brand {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+}
+
+.nav-item {
+    margin-bottom: 0.5rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--text-main);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: background-color 0.2s, color 0.2s;
+    font-weight: 500;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background-color: #f3f4f6;
+    color: var(--primary-color);
+}
+
+.sidebar-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.user-profile-mini {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    background: #e0e7ff;
+    color: #4f46e5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+        /* Hide for now on mobile, needs responsive JS */
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
 }

@@ -10,14 +10,14 @@ exports.loginPage = (req, res) => {
     if (req.user) {
         return res.redirect('/profile');
     }
-    res.render('login', { error: null });
+    res.render('auth/login', { error: null });
 };
 
 exports.login = (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
         if (err) return next(err);
         if (!user) {
-            return res.render('login', { error: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง (Invalid credentials)' });
+            return res.render('auth/login', { error: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง (Invalid credentials)' });
         }
         req.logIn(user, (err) => {
             if (err) return next(err);

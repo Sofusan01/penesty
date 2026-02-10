@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรไฟล์</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <%- include('../partials/sidebar') %>
+
+            <div class="main-content">
+                <div class="dashboard-container">
+                    <header>
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div>
+                                <h1 style="margin: 0; font-size: 1.5rem;">โปรไฟล์</h1>
+                                <span class="text-muted" style="font-size: 0.9rem;">ยินดีต้อนรับคุณ <%= user.username %>
+                                </span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="content">
+                        <div class="card">
+                            <h3>👤 ข้อมูลส่วนตัว</h3>
+                            <div
+                                style="display: grid; grid-template-columns: 100px 1fr; gap: 1rem; align-items: center;">
+                                <strong style="color: #6b7280;">User ID:</strong>
+                                <span>#<%= user.id %></span>
+
+                                <strong style="color: #6b7280;">Username:</strong>
+                                <span>
+                                    <%= user.username %>
+                                </span>
+
+                                <strong style="color: #6b7280;">Role:</strong>
+                                <span
+                                    style="display: inline-block; background: #d1fae5; color: #065f46; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.85rem; width: fit-content;">
+                                    <%= user.role %>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    </div>
+</body>
+
+</html>
