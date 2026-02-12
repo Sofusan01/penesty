@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partials/head') %>
+        <style>
+            .setting-block {
+                margin-bottom: 2rem;
+                border: 1px solid #d1d5db;
+                border-radius: 0.5rem;
+                padding: 1.5rem;
+                background: #f9fafb;
+            }
+
+            .setting-key {
+                font-weight: bold;
+                display: block;
+                margin-bottom: 0.5rem;
+                color: var(--primary-color);
+            }
+
+            .setting-desc {
+                font-size: 0.85rem;
+                color: #6b7280;
+                margin-bottom: 0.5rem;
+                display: block;
+            }
+
+            textarea.json-editor {
+                width: 100%;
+                min-height: 150px;
+                font-family: monospace;
+                padding: 0.75rem;
+                border: 1px solid #9ca3af;
+                border-radius: 0.375rem;
+                font-size: 0.9rem;
+                background-color: #ffffff;
+            }
+
+            textarea.json-editor:focus {
+                outline: none;
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+            }
+        </style>
+</head>
+
+<body>
+    <div class="app-layout">
+        <%- include('../partials/sidebar') %>
+            <div class="main-content">
+                <div class="dashboard-container">
+                    <header>
+                        <h1>⚙️ System Settings</h1>
+                        <p class="text-muted">Manage global rules, constraints, and operational parameters (JSON
+                            format).</p>
+                        <%- include('../partials/header_user_menu') %>
+                    </header>
+
+                    <div class="content">
+                        <% if (locals.error) { %>
+                            <div class="error">
+                                <%= error %>
+                            </div>
+                            <% } %>
+                                <% if (locals.success) { %>
+                                    <div
+                                        style="background-color: #d1fae5; color: #065f46; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1.5rem; text-align: center; border: 1px solid #a7f3d0;">
+                                        <%= success %>
+                                    </div>
+                                    <% } %>
+
+                                        <form action="/settings/system" method="POST">
+                                            <% if (settings) { %>
+                                                <% settings.forEach(setting=> { %>
+                                                    <div class="setting-block">
+                                                        <label class="setting-key" for="setting_<%= setting.key %>">
+                                                            <%= setting.key %>
+                                                        </label>
+                                                        <span class="setting-desc">
+                                                            <%= setting.description %>
+                                                        </span>
+                                                        <textarea class="json-editor" name="setting_<%= setting.key %>"
+                                                            id="setting_<%= setting.key %>"
+                                                            required><%= JSON.stringify(setting.value, null, 2) %></textarea>
+                                                        <div id="validation_<%= setting.key %>"
+                                                            style="color:red; font-size:0.8rem; margin-top:0.25rem;">
+                                                        </div>
+                                                    </div>
+                                                    <% }) %>
+                                                        <% } %>
+
+                                                            <button type="submit" class="btn btn-primary"
+                                                                onclick="return confirm('Ensure JSON is valid. Errors may break calculation logic.');">
+                                                                💾 Save System Settings
+                                                            </button>
+                                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <script>
+        // Simple Client-side JSON Validation Feedback
+        document.querySelectorAll('textarea.json-editor').forEach(ta => {
+            ta.addEventListener('input', (e) => {
+                const val = e.target.value;
+                const feedback = document.getElementById('validation_' + e.target.id.replace('setting_', ''));
+                try {
+                    JSON.parse(val);
+                    e.target.style.borderColor = '#10b981'; // Green
+                    feedback.textContent = '';
+                } catch (err) {
+                    e.target.style.borderColor = '#ef4444'; // Red
+                    feedback.textContent = 'Invalid JSON: ' + err.message;
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

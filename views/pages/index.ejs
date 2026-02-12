@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <%- include('../partials/head') %>
+</head>
+
+<body>
+    <div class="container text-center" style="padding: 3rem 2rem;">
+        <div style="margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary-color); text-align: center;">
+                ยินดีต้อนรับ</h1>
+            <p class="text-muted" style="font-size: 1.1rem; margin: 0;">ระบบยืนยันตัวตน (Authentication System)</p>
+        </div>
+
+        <% if (user) { %>
+            <div class="card"
+                style="border:1px solid var(--border-color); box-shadow:none; background: var(--bg-input); padding: 1.5rem;">
+                <p style="font-size: 1.1rem; margin-bottom: 1rem;">สวัสดี, <strong style="color: var(--primary-color);">
+                        <%= user.username %>
+                    </strong> 👋</p>
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <a href="/profile" class="btn">ไปที่หน้าโปรไฟล์</a>
+                    <a href="/auth/logout" class="text-link"
+                        style="color: var(--danger-color); font-size: 0.9rem;">ออกจากระบบ</a>
+                </div>
+            </div>
+            <% } else { %>
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 2rem;">
+                    <a href="/auth/login" class="btn" style="font-size: 1.1rem;">เข้าสู่ระบบ (Login)</a>
+                </div>
+                <% } %>
+    </div>
+</body>
+
+</html>

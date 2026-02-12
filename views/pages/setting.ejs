@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <%- include('../partials/head') %>
+</head>
+
+<body>
+    <div class="app-layout">
+        <%- include('../partials/sidebar') %>
+            <div class="main-content">
+                <div class="dashboard-container">
+                    <header>
+                        <h1>Settings</h1>
+                        <%- include('../partials/header_user_menu') %>
+                    </header>
+                    <div class="content card">
+                        <p>General Settings</p>
+                        <!-- Settings form -->
+                        <form>
+                            <div class="form-group">
+                                <label>Site Name</label>
+                                <input type="text" value="Pentest Estimator">
+                            </div>
+                            <button class="btn">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+</body>
+
+</html>

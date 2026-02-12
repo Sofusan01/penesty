@@ -1,0 +1,73 @@
+<div class="sidebar">
+    <div class="sidebar-brand">
+        Pentest Estimator
+    </div>
+    <ul class="nav-menu">
+        <li class="nav-item">
+            <a href="/dashboard"
+                class="nav-link <%= (locals.path && locals.path.startsWith('/dashboard')) ? 'active' : '' %>">Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a href="/feedback"
+                class="nav-link <%= (locals.path && locals.path.startsWith('/feedback') && !locals.path.includes('/history')) ? 'active' : '' %>">Feedback</a>
+        </li>
+        <% if (user && user.role==='admin' ) { %>
+            <li class="nav-item">
+                <a href="/feedback/history"
+                    class="nav-link <%= (locals.path && locals.path.startsWith('/feedback/history')) ? 'active' : '' %>">Feedback
+                    History</a>
+            </li>
+
+            <!-- Settings Dropdown -->
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="toggleSettings(event)"
+                    style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Settings</span>
+                    <span id="settings-arrow">▼</span>
+                </a>
+                <% const isSettings=(locals.path && locals.path.startsWith('/settings')); const
+                    submenuStyles=`list-style: none; padding-left: 0; margin-bottom: 0; display: ${isSettings ? 'block'
+                    : 'none' }; background-color: rgba(0, 0, 0, 0.05);`; %>
+                    <ul id="settings-submenu" <%- `style="${submenuStyles}" ` %>>
+                        <li class="nav-item">
+                            <a href="/settings" class="nav-link <%= (locals.path === '/settings') ? 'active' : '' %>"
+                                style="padding-left: 2rem; font-size: 0.9em;">General</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/settings/estimate-cal"
+                                class="nav-link <%= (locals.path && locals.path.startsWith('/settings/estimate-cal')) ? 'active' : '' %>"
+                                style="padding-left: 2rem; font-size: 0.9em;">Estimate Cal</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/settings/system"
+                                class="nav-link <%= (locals.path && locals.path.startsWith('/settings/system')) ? 'active' : '' %>"
+                                style="padding-left: 2rem; font-size: 0.9em;">System Settings</a>
+                        </li>
+                    </ul>
+            </li>
+
+            <script>
+                function toggleSettings(e) {
+                    e.preventDefault();
+                    const submenu = document.getElementById('settings-submenu');
+                    const arrow = document.getElementById('settings-arrow');
+
+                    if (submenu.style.display === 'none') {
+                        submenu.style.display = 'block';
+                        arrow.style.transform = 'rotate(180deg)';
+                    } else {
+                        submenu.style.display = 'none';
+                        arrow.style.transform = 'rotate(0deg)';
+                    }
+                }
+            </script>
+            <% } %>
+    </ul>
+
+
+    <div class="sidebar-footer">
+        <div class="sidebar-footer">
+            <!-- User profile moved to header dropdown -->
+        </div>
+    </div>
+</div>

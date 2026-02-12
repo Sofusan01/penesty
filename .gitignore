@@ -1,0 +1,12 @@
+node_modules
+.env
+database.sqlite
+sessions.sqlite
+.DS_Store
+dist
+build
+coverage
+*.log
+code_project.txt
+project_code_summary.txt
+public/uploads/feedback/*

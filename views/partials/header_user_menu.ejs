@@ -1,0 +1,52 @@
+<% if (locals.user) { %>
+    <div style="display: flex; align-items: center;">
+        <div class="user-dropdown">
+            <div class="user-dropdown-btn">
+                <div class="user-avatar-sm">
+                    <%= user.username.charAt(0).toUpperCase() %>
+                </div>
+                <span class="user-name">
+                    <%= user.username %>
+                </span>
+                <svg class="dropdown-chevron" xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                    fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                        d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                </svg>
+            </div>
+
+            <div class="dropdown-menu-container">
+                <div class="dropdown-header">
+                    <div class="user-avatar-lg">
+                        <%= user.username.charAt(0).toUpperCase() %>
+                    </div>
+                    <div class="user-info">
+                        <div class="name">
+                            <%= user.username %>
+                        </div>
+                        <div class="role">
+                            <%= user.role %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dropdown-links">
+                    <a href="/profile" class="dropdown-item">
+                        <span class="icon">👤</span>
+                        <span>โปรไฟล์ (Profile)</span>
+                    </a>
+                    <% if (user.role==='admin' ) { %>
+                        <a href="/settings" class="dropdown-item">
+                            <span class="icon">⚙️</span>
+                            <span>ตั้งค่า (Settings)</span>
+                        </a>
+                        <% } %>
+                            <div class="dropdown-divider"></div>
+                            <a href="/auth/logout" class="dropdown-item text-danger">
+                                <span class="icon">🚪</span>
+                                <span>ออกจากระบบ (Logout)</span>
+                            </a>
+                </div>
+            </div>
+        </div>
+        <% } %>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>เข้าสู่ระบบ</h2>
+        <p class="text-center" style="font-size: 0.9rem;">ยินดีต้อนรับกลับ! กรุณากรอกข้อมูลเพื่อเข้าใช้งาน</p>
+
+        <% if (error) { %>
+            <div class="error">
+                <%= error %>
+            </div>
+            <% } %>
+
+                <form action="/auth/login" method="POST">
+                    <div class="form-group">
+                        <label for="username">ชื่อผู้ใช้</label>
+                        <input type="text" id="username" name="username" placeholder="เช่น admin" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">รหัสผ่าน</label>
+                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit">ลงชื่อเข้าใช้</button>
+                </form>
+
+                <div class="mt-4 text-center">
+                    <span style="color: #6b7280; font-size: 0.9rem;">หากยังไม่มีบัญชี กรุณาติดต่อ Admin</span>
+                </div>
+                <div class="mt-4 text-center">
+                    <a href="/" class="text-link" style="font-size: 0.9rem; color: #9ca3af;">กลับหน้าหลัก</a>
+                </div>
+    </div>
+</body>
+
+</html>

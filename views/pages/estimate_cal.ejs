@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <%- include('../partials/head') %>
+</head>
+
+<body>
+    <div class="app-layout">
+        <%- include('../partials/sidebar') %>
+
+            <div class="main-content">
+                <div class="dashboard-container">
+                    <header>
+                        <div>
+                            <h1 style="margin: 0; font-size: 1.5rem;">⚙️ ตั้งค่าสูตรคำนวณ (Estimate Calibration)</h1>
+                            <span class="text-muted" style="font-size: 0.9rem;">ปรับแต่งตัวแปรในการคำนวณระยะเวลา
+                                Pentest</span>
+                        </div>
+                        <%- include('../partials/header_user_menu') %>
+                    </header>
+
+                    <div class="content">
+                        <% if (locals.error) { %>
+                            <div class="error">
+                                <%= error %>
+                            </div>
+                            <% } %>
+                                <% if (locals.success) { %>
+                                    <div
+                                        style="background-color: #d1fae5; color: #065f46; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1.5rem; text-align: center; border: 1px solid #a7f3d0;">
+                                        <%= success %>
+                                    </div>
+                                    <% } %>
+
+                                        <div class="card">
+                                            <form action="/update-config" method="POST">
+
+                                                <!-- Base Parameters -->
+                                                <div class="setting-group">
+                                                    <h4>🕒 ค่าพื้นฐาน (Base Parameters)</h4>
+                                                    <div
+                                                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                                        <div class="form-group">
+                                                            <label for="hours_per_function">เวลาต่อฟังก์ชัน (Hours per
+                                                                Function)</label>
+                                                            <input type="number" step="0.1" id="hours_per_function"
+                                                                name="hours_per_function"
+                                                                value="<%= config.hours_per_function %>" required>
+                                                            <small class="text-muted">ค่าเริ่มต้น: 2.0 ชั่วโมง</small>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="report_overhead_hours">เวลาทำรายงาน (Report
+                                                                Overhead Hours)</label>
+                                                            <input type="number" step="0.1" id="report_overhead_hours"
+                                                                name="report_overhead_hours"
+                                                                value="<%= config.report_overhead_hours %>" required>
+                                                            <small class="text-muted">ค่าเริ่มต้น: 8.0 ชั่วโมง (1
+                                                                วัน)</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Test Type Factors -->
+                                                <div class="setting-group">
+                                                    <h4>🔍 รูปแบบการทดสอบ (Test Type Factors)</h4>
+                                                    <div
+                                                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                                        <div class="form-group">
+                                                            <label for="graybox_factor">Gray Box Factor</label>
+                                                            <input type="number" step="0.1" id="graybox_factor"
+                                                                name="graybox_factor"
+                                                                value="<%= config.graybox_factor %>" required>
+                                                            <small class="text-muted">ค่าเริ่มต้น: 1.0 (มาตรฐาน)</small>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="blackbox_factor">Black Box Factor</label>
+                                                            <input type="number" step="0.1" id="blackbox_factor"
+                                                                name="blackbox_factor"
+                                                                value="<%= config.blackbox_factor %>" required>
+                                                            <small class="text-muted">ค่าเริ่มต้น: 1.5 (ยากกว่า)</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Device Type Factors -->
+                                                <div class="setting-group">
+                                                    <h4>📱 ประเภทอุปกรณ์ (Device Type Factors)</h4>
+                                                    <div
+                                                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                                        <div class="form-group">
+                                                            <label for="web_factor">Web Application</label>
+                                                            <input type="number" step="0.1" id="web_factor"
+                                                                name="web_factor" value="<%= config.web_factor %>"
+                                                                required>
+                                                            <small class="text-muted">ค่าเริ่มต้น: 1.0</small>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="mobile_factor">Mobile Application</label>
+                                                            <input type="number" step="0.1" id="mobile_factor"
+                                                                name="mobile_factor" value="<%= config.mobile_factor %>"
+                                                                required>
+                                                            <small class="text-muted">ค่าเริ่มต้น: 1.2</small>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="api_factor">API / Webservice</label>
+                                                            <input type="number" step="0.1" id="api_factor"
+                                                                name="api_factor" value="<%= config.api_factor %>"
+                                                                required>
+                                                            <small class="text-muted">ค่าเริ่มต้น: 0.9</small>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="infra_factor">Infrastructure</label>
+                                                            <input type="number" step="0.1" id="infra_factor"
+                                                                name="infra_factor" value="<%= config.infra_factor %>"
+                                                                required>
+                                                            <small class="text-muted">ค่าเริ่มต้น: 0.5</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- OWASP Test Cases Base Hours -->
+                                                <div class="setting-group">
+                                                    <h4>🛡️ OWASP WSTG Base Hours (เวลามาตรฐานต่อเคส)</h4>
+                                                    <p class="text-muted">กำหนดเวลามาตรฐาน (ชั่วโมง)
+                                                        สำหรับการทดสอบแต่ละหัวข้อ</p>
+                                                    <div style="overflow-x: auto;">
+                                                        <table
+                                                            style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                                                            <thead>
+                                                                <tr
+                                                                    style="background-color: #f3f4f6; text-align: left;">
+                                                                    <th
+                                                                        style="padding: 0.5rem; border-bottom: 2px solid #e5e7eb;">
+                                                                        Code</th>
+                                                                    <th
+                                                                        style="padding: 0.5rem; border-bottom: 2px solid #e5e7eb;">
+                                                                        Category</th>
+                                                                    <th
+                                                                        style="padding: 0.5rem; border-bottom: 2px solid #e5e7eb;">
+                                                                        Name</th>
+                                                                    <th
+                                                                        style="padding: 0.5rem; border-bottom: 2px solid #e5e7eb;">
+                                                                        Base Hours</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <% if (locals.testCases) { %>
+                                                                    <% testCases.forEach(test=> { %>
+                                                                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                                                                            <td
+                                                                                style="padding: 0.5rem; font-weight: bold;">
+                                                                                <%= test.code %>
+                                                                            </td>
+                                                                            <td style="padding: 0.5rem;">
+                                                                                <%= test.category %>
+                                                                            </td>
+                                                                            <td style="padding: 0.5rem;">
+                                                                                <%= test.name %>
+                                                                            </td>
+                                                                            <td style="padding: 0.5rem;">
+                                                                                <input type="number" step="0.1" min="0"
+                                                                                    name="wstg_<%= test.id %>"
+                                                                                    value="<%= test.base_hours %>"
+                                                                                    style="width: 80px; padding: 0.25rem;">
+                                                                                Hrs
+                                                                            </td>
+                                                                        </tr>
+                                                                        <% }) %>
+                                                                            <% } %>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+                                                <button type="submit" class="btn"
+                                                    onclick="return confirm('ยืนยันการเปลี่ยนแปลงค่า configuration? การเปลี่ยนแปลงจะมีผลทันทีต่อการคำนวณใหม่');">
+                                                    💾 บันทึกการตั้งค่า (Save Configuration)
+                                                </button>
+                                            </form>
+                                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</body>
+
+</html>

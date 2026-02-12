@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <%- include('../partials/head') %>
+</head>
+
+<body>
+    <div class="app-layout">
+        <%- include('../partials/sidebar') %>
+            <div class="main-content">
+                <div class="dashboard-container">
+                    <header>
+                        <h1>Feedback</h1>
+                        <%- include('../partials/header_user_menu') %>
+                    </header>
+                    <div class="content card">
+                        <% if (locals.success) { %>
+                            <div class="alert alert-success"
+                                style="padding: 1rem; background-color: #d1fae5; color: #065f46; border-radius: 0.5rem; margin-bottom: 1rem;">
+                                <%= success %>
+                            </div>
+                            <% } %>
+                                <% if (locals.error) { %>
+                                    <div class="alert alert-danger"
+                                        style="padding: 1rem; background-color: #fee2e2; color: #991b1b; border-radius: 0.5rem; margin-bottom: 1rem;">
+                                        <%= error %>
+                                    </div>
+                                    <% } %>
+
+                                        <h3>Submit Feedback</h3>
+                                        <form action="/feedback" method="POST" enctype="multipart/form-data">
+                                            <div class="form-group" style="margin-bottom: 1rem;">
+                                                <label for="subject"
+                                                    style="display: block; margin-bottom: 0.5rem; font-weight: bold;">หัวข้อ
+                                                    (Subject):</label>
+                                                <input type="text" id="subject" name="subject" required
+                                                    placeholder="เรื่องที่ต้องการแจ้ง..."
+                                                    style="width:100%; padding:0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                                            </div>
+
+                                            <div class="form-group" style="margin-bottom: 1rem;">
+                                                <label for="feedback"
+                                                    style="display: block; margin-bottom: 0.5rem; font-weight: bold;">ข้อเสนอะแนะ
+                                                    (Comments):</label>
+                                                <textarea id="feedback" name="message" rows="5" required
+                                                    placeholder="รายละเอียด..."
+                                                    style="width:100%; padding:0.5rem; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+                                            </div>
+
+                                            <div class="form-group" style="margin-bottom: 1rem;">
+                                                <label for="image"
+                                                    style="display: block; margin-bottom: 0.5rem; font-weight: bold;">แนบรูปภาพ
+                                                    (Image) <small class="text-muted">(Optional)</small>:</label>
+                                                <input type="file" id="image" name="image" accept="image/*"
+                                                    style="width:100%; padding:0.5rem; border: 1px solid #ddd; border-radius: 4px; background-color: #fff;">
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">📩
+                                                ส่งข้อเสนอแนะ (Send Feedback)</button>
+                                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+</body>
+
+</html>
