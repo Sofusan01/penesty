@@ -5,6 +5,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('./config/passport');
 const path = require('path');
+const fs = require('fs');
 const SQLiteStore = require('connect-sqlite3')(session);
 const db = require('./config/sqlite');
 const {
@@ -61,6 +62,11 @@ app.use(express.static(path.join(__dirname, 'public'), {
    SESSION CONFIG (SECURE)
 ====================================================== */
 // Use __Host- prefix only in Production (requires HTTPS)
+// Ensure data directory exists
+if (!fs.existsSync(path.join(__dirname, 'data'))) {
+   fs.mkdirSync(path.join(__dirname, 'data'), { recursive: true });
+}
+
 const cookieName = isProduction ? '__Host-session' : 'session_id';
 
 app.use(session({
