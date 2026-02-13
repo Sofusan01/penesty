@@ -1,83 +1,100 @@
-# Pentest Estimator Web Application
+<div align="center">
 
-A web-based application for estimating penetration testing efforts and costs. This application allows users to calculate estimated mandays based on various factors like application type, number of functions, and testing methodology (Blackbox/Graybox).
+<img src="https://readme-typing-svg.herokuapp.com?font=Outfit&weight=600&size=30&pause=1000&color=0EA5E9&center=true&vCenter=true&width=600&lines=Pentest+Estimator+Web+Application;ระบบประเมินราคาและระยะเวลา+Pentest;Secure+%7C+Modern+%7C+Efficient" alt="Typing SVG" />
 
-## Features
+<br>
 
-- **Estimation Engine:** Calculate mandays based on input parameters.
-- **User Dashboard:** View and manage past estimations.
-- **Admin Panel:** Manage system configurations and view all estimations.
-- **Feedback System:** Users can submit feedback with attachments.
-- **Authentication:** Secure login and registration system.
-- **Responsive Design:** Modern UI with dark/light mode support.
+<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" />
+<img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" />
+<img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" />
+<img src="https://img.shields.io/badge/EJS-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
 
-## Prerequisites
+<br>
+<br>
 
-- **Node.js** (v14 or higher recommended)
-- **npm** (Node Package Manager)
+**เว็บแอปพลิเคชันสำหรับประเมินความพยายาม (Effort) และระยะเวลาในการทำ Penetration Testing**  
+ออกแบบมาเพื่อช่วยคำนวณ Man-days ตามมาตรฐาน โดยพิจารณาจากจำนวนฟังก์ชัน, ประเภทแอปพลิเคชัน และวิธีการทดสอบ (Blackbox / Graybox / Whitebox)
 
-## Installation
+[ฟีเจอร์เด่น](#ฟีเจอร์เด่น) • [การติดตั้ง](#การติดตั้ง) • [การใช้งาน](#การใช้งาน) • [โครงสร้างโปรเจกต์](#โครงสร้างโปรเจกต์)
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/Dunkphanpron/Pentest-Estimator.git
-    cd Pentest-Estimator
-    ```
-    *(Or download the ZIP file and extract it)*
+---
+</div>
 
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
+## ✨ ฟีเจอร์เด่น (Features)
 
-3.  **Initialize the database:**
-    This will create the SQLite database file in `data/database.sqlite`.
-    ```bash
-    node scripts/init_db.js
-    ```
+*   🚀 **ระบบคำนวณอัตโนมัติ (Estimation Engine):** คำนวณวันทำงาน (Man-days) แม่นยำตามสูตรมาตรฐาน
+*   📊 **แดชบอร์ดผู้ใช้ (Dashboard):** ดูประวัติการประเมินย้อนหลัง และสถานะงาน
+*   🛡️ **ระบบรักษาความปลอดภัย (Security):** ระบบล็อกอิน/สมัครสมาชิกที่ปลอดภัยด้วย Session และ Token
+*   👑 **แผงควบคุมผู้ดูแล (Admin Panel):** จัดการค่า Config ของระบบและดูภาพรวม User ทั้งหมด
+*   💬 **ระบบข้อเสนอแนะ (Feedback):** ผู้ใช้สามารถส่ง Feedback พร้อมแนบรูปภาพประกอบได้
+*   🎨 **ดีไซน์ทันสมัย (Modern UI):** รองรับ **Dark Mode** และ Responsive ใช้งานได้ทุกอุปกรณ์
 
-4.  **Create an Admin User (Optional but Recommended):**
-    Running this script will create a default admin user.
-    ```bash
-    node scripts/seed_user.js
-    ```
-    *Check the script output for the default credentials (usually `admin` / `password123` or similar).*
+---
 
-5.  **(Optional) Initialize other data:**
-    If you need specific initial data for testing, you can run:
-    ```bash
-    node scripts/init_feedback.js   # Create feedback table
-    node scripts/init_owasp.js      # Initialize OWASP Top 10 data
-    ```
+## 🛠️ การติดตั้ง (Installation)
 
-## Usage
+เพื่อให้โปรเจกต์นี้รันบนเครื่องของคุณได้ ทำตามขั้นตอนง่ายๆ ดังนี้:
 
-1.  **Start the server:**
-    ```bash
-    npm start
-    ```
-    Or directly:
-    ```bash
-    node server.js
-    ```
+### 1. 📥 ดาวน์โหลดโปรเจกต์ (Clone)
+```bash
+git clone https://github.com/Dunkphanpron/Pentest-Estimator.git
+cd Pentest-Estimator
+```
 
-2.  **Access the application:**
-    Open your web browser and go to:
-    `http://localhost:3000`
+### 2. 📦 ติดตั้ง Dependencies
+ติดตั้ง Library ที่จำเป็นทั้งหมดด้วยคำสั่ง:
+```bash
+npm install
+```
 
-## Project Structure
+### 3. 🗄️ สร้างฐานข้อมูล (Initialize Database)
+คำสั่งนี้จะสร้างไฟล์ฐานข้อมูล SQLite (`data/database.sqlite`) ให้พร้อมใช้งาน:
+```bash
+node scripts/init_db.js
+```
 
-- `server.js` - Main entry point of the application.
-- `app.js` - Express application setup.
-- `controllers/` - Logic for handling requests.
-- `models/` - Database models and schema interactions.
-- `routes/` - API and page route definitions.
-- `views/` - EJS templates for the frontend.
-- `public/` - Static files (CSS, JS, Images).
-- `scripts/` - Utility scripts for database initialization and maintenance.
-- `data/` - SQLite database storage.
+### 4. 👤 สร้าง Admin (แนะนำ)
+รันคำสั่งนี้เพื่อสร้าง User **Admin** เริ่มต้นสำหรับการทดสอบระบบ:
+```bash
+node scripts/seed_user.js
+```
+*(ระบบจะแสดง Username/Password ให้เห็นใน Terminal หลังจากรันเสร็จ)*
 
-## Troubleshooting
+---
 
-- **Database Errors:** If you encounter widespread errors, try deleting `data/database.sqlite` and re-running the initialization scripts.
-- **Port In Use:** If port 3000 is occupied, modify the port in `server.js` or `.env` file.
+## 🚀 การใช้งาน (Usage)
+
+### 1. เปิดเซิร์ฟเวอร์ (Start Server)
+```bash
+npm start
+```
+หรือรันแบบพื้นฐาน:
+```bash
+node server.js
+```
+
+### 2. เข้าใช้งานผ่านเว็บ
+เปิดเบราว์เซอร์ (Chrome, Edge, Firefox) แล้วไปที่:
+> **http://localhost:3000**
+
+---
+
+## 📂 โครงสร้างโปรเจกต์ (Project Structure)
+
+| ไฟล์ / โฟลเดอร์ | รายละเอียด |
+| :--- | :--- |
+| `server.js` | จุดเริ่มต้นของเซิร์ฟเวอร์ (Entry Point) |
+| `app.js` | การตั้งค่า Express App และ Middleware ทั้งหมด |
+| `controllers/` | โลจิกการทำงานหลัก (Controller Logic) |
+| `models/` | การจัดการฐานข้อมูล SQLite (Database Models) |
+| `routes/` | เส้นทาง API และหน้าเว็บ (Routes) |
+| `views/` | หน้าเว็บ Frontend (EJS Templates) |
+| `public/` | ไฟล์ Static (CSS, JS, Images, Uploads) |
+| `scripts/` | สคริปต์ช่วยจัดการระบบ (System Scripts) |
+| `data/` | ที่เก็บไฟล์ฐานข้อมูล (`database.sqlite`) |
+
+---
+
+<div align="center">
+  พัฒนาด้วยความใส่ใจ 💖 | Pentest Estimator
+</div>
