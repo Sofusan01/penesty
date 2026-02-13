@@ -1,7 +1,7 @@
 <% if (locals.user) { %>
     <div style="display: flex; align-items: center;">
         <div class="user-dropdown">
-            <div class="user-dropdown-btn">
+            <div class="user-dropdown-btn" onclick="toggleUserDropdown(event)">
                 <div class="user-avatar-sm">
                     <%= user.username.charAt(0).toUpperCase() %>
                 </div>
@@ -49,4 +49,26 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            function toggleUserDropdown(event) {
+                event.stopPropagation();
+                const dropdown = document.querySelector('.dropdown-menu-container');
+                if (dropdown) {
+                    dropdown.classList.toggle('show');
+                }
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function (event) {
+                const dropdown = document.querySelector('.dropdown-menu-container');
+                const dropdownBtn = document.querySelector('.user-dropdown-btn');
+
+                if (dropdown && dropdown.classList.contains('show')) {
+                    if (!dropdown.contains(event.target) && !dropdownBtn.contains(event.target)) {
+                        dropdown.classList.remove('show');
+                    }
+                }
+            });
+        </script>
         <% } %>

@@ -1,5 +1,7 @@
 // controllers/feedbackController.js
 const Feedback = require('../models/Feedback');
+const fs = require('fs');
+const path = require('path');
 
 exports.submitFeedback = async (req, res) => {
     try {
@@ -46,6 +48,22 @@ exports.getFeedbackHistory = async (req, res) => {
 exports.deleteFeedback = async (req, res) => {
     try {
         const feedbackId = req.params.id;
+
+        // Fetch feedback to get image path before deleting
+        const feedback = await Feedback.getById(feedbackId);
+
+        if (feedback && feedback.image_path) {
+            // Construct absolute path to the image
+            // image_path is like "/uploads/feedback/filename.jpg"
+            const uniquePath = feedback.image_path.startsWith('/') ? feedback.image_path.substring(1) : feedback.image_path;
+            const absolutePath = path.join(__dirname, '../public', uniquePath);
+
+            // Delete file if it exists
+            if (fs.existsSync(absolutePath)) {
+                fs.unlinkSync(absolutePath);
+            }
+        }
+
         await Feedback.delete(feedbackId);
         res.redirect('/feedback/history');
     } catch (err) {

@@ -44,6 +44,21 @@ class Feedback {
     }
 
     /**
+     * Get feedback by ID.
+     * @param {number} id - Feedback ID.
+     * @returns {Promise<Object>} - Feedback object.
+     */
+    static async getById(id) {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT * FROM feedbacks WHERE id = ?';
+            db.get(sql, [id], (err, row) => {
+                if (err) return reject(err);
+                resolve(row);
+            });
+        });
+    }
+
+    /**
      * Delete a feedback entry by ID.
      * @param {number} id - ID of the feedback to delete.
      * @returns {Promise<void>}

@@ -145,7 +145,8 @@ exports.confirmEstimation = async (req, res) => {
             platform_count: calcResult.platform_count,
             number_of_roles: calcResult.number_of_roles,
             target_info,
-            estimated_days: calcResult.estimated_days // Trusted Server-Side Calculation
+            estimated_days: calcResult.estimated_days, // Trusted Server-Side Calculation
+            selected_functions: JSON.stringify(selected_functions)
         });
 
         // SUCCESS: Redirect using PRG Pattern

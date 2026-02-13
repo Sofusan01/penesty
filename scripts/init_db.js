@@ -35,6 +35,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
                 number_of_roles INTEGER DEFAULT 1,
                 target_info TEXT,
                 estimated_days REAL,
+                selected_functions TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id)
             )`, (err) => {
