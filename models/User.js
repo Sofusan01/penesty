@@ -25,7 +25,7 @@ module.exports = {
 
     create: (user) => {
         return new Promise((resolve, reject) => {
-            const hash = bcrypt.hashSync(user.password, 8);
+            const hash = bcrypt.hashSync(user.password, 10);
             const sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
 
             // Note: need to use function() {} to access this.lastID

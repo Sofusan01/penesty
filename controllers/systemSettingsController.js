@@ -12,7 +12,7 @@ exports.getSettingsPage = async (req, res) => {
         });
     } catch (err) {
         console.error(err);
-        res.render('pages/dashboard', { user: req.user, estimations: [], error: 'Error loading system settings', success: null });
+        res.redirect('/dashboard?error=' + encodeURIComponent('Error loading system settings'));
     }
 };
 

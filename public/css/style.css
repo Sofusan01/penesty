@@ -1147,13 +1147,11 @@ header h1 {
 @media (max-width: 768px) {
     .sidebar {
         display: none;
-        /* Hide for now on mobile, needs responsive JS */
     }
 
     .main-content {
         margin-left: 0;
         width: 100%;
-
     }
 }
 

@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "init": "node scripts/init_db.js && node scripts/seed_user.js",
+    "setup": "node config/database.js",
+    "init": "node config/database.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

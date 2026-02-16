@@ -41,6 +41,9 @@ exports.apiLogin = async (req, res) => {
         const user = await User.findOne(username);
 
         if (user && bcrypt.compareSync(password, user.password)) {
+            if (user.is_active === 0) {
+                return res.status(403).json({ message: 'Account deactivated' });
+            }
             const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: '1d' });
             return res.json({ auth: true, token: token });
         }

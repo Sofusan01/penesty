@@ -38,25 +38,25 @@
                     <% if (user.role==='admin' ) { %>
                         <a href="#" class="dropdown-item" onclick="toggleSettingsSubmenu(event)"
                             style="justify-content: space-between;">
-                            <div style="display: flex; align-items: center;">
+                            <span style="display: flex; align-items: center; gap: 0.75rem;">
                                 <span class="icon">⚙️</span>
                                 <span>ตั้งค่า (Settings)</span>
-                            </div>
+                            </span>
                             <span id="header-settings-arrow"
-                                style="font-size: 0.8em; transition: transform 0.2s;">▼</span>
+                                style="font-size: 0.7em; transition: transform 0.2s;">▼</span>
                         </a>
-                        <div id="header-settings-submenu" style="display: none; background-color: rgba(0,0,0,0.03);">
+                        <div id="header-settings-submenu" style="display: none; background-color: rgba(0,0,0,0.02);">
                             <a href="/settings" class="dropdown-item" target="_blank"
-                                style="padding-left: 3rem; font-size: 0.9em;">
-                                <span>General</span>
+                                style="padding: 0.4rem 1rem 0.4rem 3.25rem; font-size: 0.9em;">
+                                General
                             </a>
                             <a href="/settings/estimate-cal" class="dropdown-item" target="_blank"
-                                style="padding-left: 3rem; font-size: 0.9em;">
-                                <span>Estimate Cal</span>
+                                style="padding: 0.4rem 1rem 0.4rem 3.25rem; font-size: 0.9em;">
+                                Estimate Cal
                             </a>
                             <a href="/settings/system" class="dropdown-item" target="_blank"
-                                style="padding-left: 3rem; font-size: 0.9em;">
-                                <span>System Settings</span>
+                                style="padding: 0.4rem 1rem 0.4rem 3.25rem; font-size: 0.9em;">
+                                System Settings
                             </a>
                         </div>
                         <% } %>
