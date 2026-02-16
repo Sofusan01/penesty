@@ -32,19 +32,19 @@
                             </div>
                         </div>
 
-                        <div id="estimation-tab" class="tab-content active">
+                        <% if (locals.error) { %>
+                            <div class="error">
+                                <%= error %>
+                            </div>
+                            <% } %>
+                                <% if (locals.success) { %>
+                                    <div
+                                        style="background-color: #d1fae5; color: #065f46; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1.5rem; text-align: center; border: 1px solid #a7f3d0;">
+                                        <%= success %>
+                                    </div>
+                                    <% } %>
 
-                            <% if (locals.error) { %>
-                                <div class="error">
-                                    <%= error %>
-                                </div>
-                                <% } %>
-                                    <% if (locals.success) { %>
-                                        <div
-                                            style="background-color: #d1fae5; color: #065f46; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1.5rem; text-align: center; border: 1px solid #a7f3d0;">
-                                            <%= success %>
-                                        </div>
-                                        <% } %>
+                                        <div id="estimation-tab" class="tab-content active">
 
                                             <% if (locals.previewResult && previewResult) { %>
                                                 <!-- PREVIEW SECTION -->
@@ -280,90 +280,220 @@
                                                         updateUI();
                                                     </script>
                                                     <% } %>
-                        </div>
+                                        </div>
 
-                        <div id="history-tab" class="tab-content">
+                                        <div id="history-tab" class="tab-content">
 
 
-                            <!-- History Table -->
-                            <div class="card">
-                                <h3>📜 ประวัติการประเมิน (History)</h3>
-                                <% if (locals.estimations && estimations.length> 0) { %>
-                                    <div style="overflow-x: auto;">
-                                        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
-                                            <thead>
-                                                <tr style="background: #f3f4f6; text-align: left;">
-                                                    <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
-                                                        ลูกค้า</th>
-                                                    <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
-                                                        ประเภท</th>
-                                                    <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
-                                                        จำนวนฟังก์ชัน</th>
-                                                    <th
-                                                        style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb; color: var(--primary-color);">
-                                                        เวลาประเมิน (Man-Days)</th>
-                                                    <th
-                                                        style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb; text-align: center;">
-                                                        จัดการ</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <% estimations.forEach(est=> { %>
-                                                    <tr style="border-bottom: 1px solid #e5e7eb;">
-                                                        <td style="padding: 0.75rem;">
-                                                            <%= est.client_name %>
-                                                        </td>
-                                                        <td style="padding: 0.75rem;">
-                                                            <span style="font-size: 0.85rem; font-weight: bold;">
-                                                                <%= est.device_type %>
-                                                            </span><br>
-                                                            <span style="font-size: 0.75rem; color: #6b7280;">
-                                                                <%= est.test_type %>
-                                                            </span>
-                                                        </td>
-                                                        <td style="padding: 0.75rem;">
-                                                            <% if (est.selected_functions && est.selected_functions
-                                                                !=='[]' ) { %>
-                                                                <div class="function-count-link tooltip-btn"
-                                                                    data-functions='<%- est.selected_functions %>'
-                                                                    data-client="<%= est.client_name %>"
-                                                                    onclick="handleViewFunctions(this)"
-                                                                    data-tooltip="คลิกเพื่อดูรายละเอียด"
-                                                                    style="cursor: pointer; color: var(--primary-color); font-weight: 500; text-decoration: underline; text-underline-offset: 4px; display: inline-block;">
-                                                                    <%= est.function_count %> ฟังก์ชัน
-                                                                </div>
-                                                                <% } else { %>
-                                                                    <div style="color: var(--text-secondary);">
-                                                                        <%= est.function_count %> ฟังก์ชัน
-                                                                    </div>
-                                                                    <% } %>
-                                                        </td>
-                                                        <td
-                                                            style="padding: 0.75rem; font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">
-                                                            <%= est.estimated_days %> วัน
-                                                        </td>
-                                                        <td style="padding: 0.75rem; text-align: center;">
-                                                            <div class="action-buttons">
+                                            <!-- History Table -->
+                                            <div class="card">
+                                                <div
+                                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                                    <h3 style="margin: 0;">📜 ประวัติการประเมิน (History)</h3>
+                                                    <div style="display: flex; gap: 0.75rem; align-items: center;">
+                                                        <!-- Default Actions -->
+                                                        <div id="default-actions" style="display: flex; gap: 0.75rem;">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                onclick="enterMode('csv')"
+                                                                style="background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;">
+                                                                <i class="fas fa-download"></i> ส่งออก CSV
+                                                            </button>
+                                                            <button type="button" class="btn"
+                                                                onclick="enterMode('delete')"
+                                                                style="background-color: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;">
+                                                                <i class="fas fa-trash-alt"></i> ลบข้อมูล
+                                                            </button>
+                                                        </div>
 
-                                                                <button type="button"
-                                                                    class="btn-delete-action tooltip-btn"
-                                                                    onclick="confirmDelete('<%= est.id %>')"
-                                                                    data-tooltip="ลบรายการ">
-                                                                    <i class="fas fa-trash-alt"></i> ลบ
-                                                                </button>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <% }) %>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <% } else { %>
-                                        <p style="text-align: center; margin-top: 2rem;">
-                                            ยังไม่มีประวัติการประเมิน</p>
-                                        <% } %>
-                            </div>
-                        </div>
+                                                        <!-- CSV Selection Mode -->
+                                                        <div id="csv-actions"
+                                                            style="display: none; gap: 0.75rem; align-items: center;">
+                                                            <span
+                                                                style="color: var(--primary-color); font-weight: 600; font-size: 0.9rem; white-space: nowrap;">เลือกรายการส่งออก:</span>
+                                                            <button type="button" class="btn btn-secondary"
+                                                                onclick="exitMode()"
+                                                                style="padding: 0.4rem 0.8rem; font-size: 0.9rem;">
+                                                                ยกเลิก (Cancel)
+                                                            </button>
+                                                            <button type="button" class="btn" onclick="executeCSV()"
+                                                                style="background-color: var(--success-color); padding: 0.4rem 0.8rem; font-size: 0.9rem;">
+                                                                ยืนยัน (Confirm)
+                                                            </button>
+                                                        </div>
+
+                                                        <!-- Delete Selection Mode -->
+                                                        <div id="delete-actions"
+                                                            style="display: none; gap: 0.75rem; align-items: center;">
+                                                            <span
+                                                                style="color: var(--danger-color); font-weight: 600; font-size: 0.9rem; white-space: nowrap;">เลือกรายการลบ:</span>
+                                                            <button type="button" class="btn btn-secondary"
+                                                                onclick="exitMode()"
+                                                                style="padding: 0.4rem 0.8rem; font-size: 0.9rem;">
+                                                                ยกเลิก (Cancel)
+                                                            </button>
+                                                            <button type="button" class="btn"
+                                                                onclick="confirmBulkDelete()"
+                                                                style="background-color: var(--danger-color); padding: 0.4rem 0.8rem; font-size: 0.9rem;">
+                                                                ยืนยัน (Confirm)
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style="overflow-x: auto;">
+                                                    <table
+                                                        style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                                                        <thead>
+                                                            <tr style="background: #f3f4f6; text-align: left;">
+                                                                <th class="checkbox-col"
+                                                                    style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb; width: 40px; text-align: center; display: none;">
+                                                                    <input type="checkbox" id="selectAllEst"
+                                                                        onclick="toggleSelectAllRecords(this)"
+                                                                        style="width: 18px; height: 18px; cursor: pointer;">
+                                                                </th>
+                                                                <th
+                                                                    style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                                                    <a href="?tab=history&page=1&order=<%= (locals.order === 'ASC') ? 'DESC' : 'ASC' %>"
+                                                                        style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                                                                        ลำดับ <span style="font-size: 0.8em;">
+                                                                            <%= (locals.order==='ASC' ) ? '▲' : '▼' %>
+                                                                        </span>
+                                                                    </a>
+                                                                </th>
+                                                                <th
+                                                                    style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                                                    ลูกค้า</th>
+                                                                <th
+                                                                    style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                                                    ประเภท</th>
+                                                                <th
+                                                                    style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                                                    จำนวนฟังก์ชัน</th>
+                                                                <th
+                                                                    style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb; color: var(--primary-color);">
+                                                                    เวลาประเมิน (Man-Days)</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% if (locals.estimations && estimations.length> 0) { %>
+                                                                <% estimations.forEach((est, index)=> { %>
+                                                                    <tr style="border-bottom: 1px solid #e5e7eb;"
+                                                                        class="history-row">
+                                                                        <td class="checkbox-col"
+                                                                            style="padding: 0.75rem; text-align: center; display: none;">
+                                                                            <input type="checkbox"
+                                                                                class="record-checkbox"
+                                                                                value="<%= est.id %>"
+                                                                                style="width: 18px; height: 18px; cursor: pointer;">
+                                                                        </td>
+                                                                        <td style="padding: 0.75rem;">
+                                                                            <%= (locals.order==='ASC' ) ?
+                                                                                (((locals.currentPage || 1) - 1) * 10 +
+                                                                                index + 1) : (locals.totalItems -
+                                                                                (((locals.currentPage || 1) - 1) * 10) -
+                                                                                index) %>
+                                                                        </td>
+                                                                        <td style="padding: 0.75rem;">
+                                                                            <%= est.client_name %>
+                                                                        </td>
+                                                                        <td style="padding: 0.75rem;">
+                                                                            <span
+                                                                                style="font-size: 0.85rem; font-weight: bold;">
+                                                                                <%= est.device_type %>
+                                                                            </span><br>
+                                                                            <span
+                                                                                style="font-size: 0.75rem; color: #6b7280;">
+                                                                                <%= est.test_type %>
+                                                                            </span>
+                                                                        </td>
+                                                                        <td style="padding: 0.75rem;">
+                                                                            <% if (est.selected_functions &&
+                                                                                est.selected_functions !=='[]' ) { %>
+                                                                                <div class="function-count-link tooltip-btn"
+                                                                                    data-functions='<%- est.selected_functions %>'
+                                                                                    data-client="<%= est.client_name %>"
+                                                                                    onclick="handleViewFunctions(this)"
+                                                                                    data-tooltip="คลิกเพื่อดูรายละเอียด"
+                                                                                    style="cursor: pointer; color: var(--primary-color); font-weight: 500; text-decoration: underline; text-underline-offset: 4px; display: inline-block;">
+                                                                                    <%= est.function_count %> ฟังก์ชัน
+                                                                                </div>
+                                                                                <% } else { %>
+                                                                                    <div
+                                                                                        style="color: var(--text-secondary);">
+                                                                                        <%= est.function_count %>
+                                                                                            ฟังก์ชัน
+                                                                                    </div>
+                                                                                    <% } %>
+                                                                        </td>
+                                                                        <td
+                                                                            style="padding: 0.75rem; font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">
+                                                                            <%= est.estimated_days %> วัน
+                                                                        </td>
+                                                                    </tr>
+                                                                    <% }) %>
+                                                                        <% } else { %>
+                                                                            <tr>
+                                                                                <td colspan="6"
+                                                                                    style="text-align: center; padding: 3rem; color: #6b7280;">
+                                                                                    <i class="fas fa-folder-open"
+                                                                                        style="font-size: 2rem; display: block; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                                                                    ยังไม่มีประวัติการประเมิน
+                                                                                </td>
+                                                                            </tr>
+                                                                            <% } %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+
+                                                <!-- Pagination -->
+                                                <% if (locals.totalPages && totalPages> 1) { %>
+                                                    <div
+                                                        style="display: flex; justify-content: flex-end; align-items: center; margin-top: 12px; gap: 8px;">
+                                                        <% if (typeof currentPage !=='undefined' && currentPage> 1) { %>
+                                                            <a href="?tab=history&page=<%= currentPage - 1 %>&order=<%= locals.order || 'DESC' %>"
+                                                                class="btn"
+                                                                style="padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid #d1d5db; color: #374151; border-radius: 4px; width: auto; flex-grow: 0;">&lt;</a>
+                                                            <% } %>
+
+                                                                <% let shownDotsBefore=false; let shownDotsAfter=false;
+                                                                    for(let i=1; i <=totalPages; i++) { if (i===1 ||
+                                                                    i===totalPages || i===currentPage) { if
+                                                                    (i===currentPage) { %>
+                                                                    <span
+                                                                        style="padding: 4px 10px; font-size: 14px; background: var(--primary-color); color: white; border: 1px solid var(--primary-color); border-radius: 4px; cursor: default;">
+                                                                        <%= i %>
+                                                                    </span>
+                                                                    <% } else { %>
+                                                                        <a href="?tab=history&page=<%= i %>&order=<%= locals.order || 'DESC' %>"
+                                                                            style="padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid #d1d5db; color: #374151; border-radius: 4px; text-decoration: none;">
+                                                                            <%= i %>
+                                                                        </a>
+                                                                        <% } } else if (i < currentPage &&
+                                                                            !shownDotsBefore) { shownDotsBefore=true; %>
+                                                                            <span
+                                                                                style="padding: 4px 8px; color: #6b7280;">...</span>
+                                                                            <% } else if (i> currentPage &&
+                                                                                !shownDotsAfter) { shownDotsAfter =
+                                                                                true; %>
+                                                                                <span
+                                                                                    style="padding: 4px 8px; color: #6b7280;">...</span>
+                                                                                <% } } %>
+
+                                                                                    <% if (typeof currentPage
+                                                                                        !=='undefined' && currentPage <
+                                                                                        totalPages) { %>
+                                                                                        <a href="?tab=history&page=<%= currentPage + 1 %>&order=<%= locals.order || 'DESC' %>"
+                                                                                            class="btn"
+                                                                                            style="padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid #d1d5db; color: #374151; border-radius: 4px; width: auto; flex-grow: 0;">></a>
+                                                                                        <% } %>
+                                                    </div>
+                                                    <div
+                                                        style="text-align: right; font-size: 0.8rem; color: #6b7280; margin-top: 4px;">
+                                                        หน้า <%= currentPage %> จาก <%= totalPages %> (ทั้งหมด <%=
+                                                                    totalItems %> รายการ)
+                                                    </div>
+                                                    <% } %>
+                                            </div>
+                                        </div>
                     </div>
                 </div>
             </div>
@@ -384,6 +514,22 @@
             </div>
             <div id="modalBody" class="modal-body">
                 <!-- Functions will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Info/Warning Modal -->
+    <div id="infoModal" class="modal-overlay" style="z-index: 2200;" onclick="closeInfoModal(event)">
+        <div class="modal-content" style="max-width: 450px; text-align: center; border-top: 5px solid #f59e0b;"
+            onclick="event.stopPropagation()">
+            <div style="padding: 2.5rem 1.5rem;">
+                <div style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <h3 id="infoModalTitle" style="margin-bottom: 0.5rem; color: #1f2937;">แจ้งเตือน</h3>
+                <p id="infoModalMessage" style="color: #6b7280; margin-bottom: 2rem; font-size: 1.1rem;"></p>
+                <button class="btn" onclick="closeInfoModal()" style="min-width: 120px; background: #6b7280;">ตกลง
+                    (OK)</button>
             </div>
         </div>
     </div>
@@ -409,6 +555,121 @@
 
 
     <script>
+        // Mode Management
+        function enterMode(mode) {
+            // Hide default actions
+            document.getElementById('default-actions').style.display = 'none';
+
+            // Show Checkboxes
+            const checkboxes = document.querySelectorAll('.checkbox-col');
+            checkboxes.forEach(el => el.style.display = 'table-cell');
+
+            // Show Specific Actions
+            if (mode === 'csv') {
+                document.getElementById('csv-actions').style.display = 'flex';
+                document.getElementById('delete-actions').style.display = 'none';
+            } else if (mode === 'delete') {
+                document.getElementById('delete-actions').style.display = 'flex';
+                document.getElementById('csv-actions').style.display = 'none';
+            }
+        }
+
+        function exitMode() {
+            // Reset Inputs
+            const checkboxes = document.querySelectorAll('.record-checkbox');
+            checkboxes.forEach(cb => cb.checked = false);
+            const selectAll = document.getElementById('selectAllEst');
+            if (selectAll) selectAll.checked = false;
+
+            // Hide Checkboxes
+            const checkboxCols = document.querySelectorAll('.checkbox-col');
+            checkboxCols.forEach(el => el.style.display = 'none');
+
+            // Reset Buttons
+            document.getElementById('default-actions').style.display = 'flex';
+            document.getElementById('csv-actions').style.display = 'none';
+            document.getElementById('delete-actions').style.display = 'none';
+        }
+
+        function executeCSV() {
+            exportToCSV();
+            // Optional: exitMode() after export? Users might want to export multiple batches, but usually one is enough.
+            // Let's keep it open or close it. Closing feels cleaner.
+            exitMode();
+        }
+
+        // Global data for CSV Export
+        const historyData = JSON.parse(decodeURIComponent('<%= encodeURIComponent(JSON.stringify(estimations || [])) %>'));
+        const allFunctionsLookup = JSON.parse(decodeURIComponent('<%= encodeURIComponent(JSON.stringify(locals.appFunctions || [])) %>'));
+
+        function toggleSelectAllRecords(source) {
+            const checkboxes = document.getElementsByClassName('record-checkbox');
+            for (let i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+
+        function exportToCSV() {
+            const checkboxes = document.querySelectorAll('.record-checkbox:checked');
+            if (checkboxes.length === 0) {
+                showInfoModal('กรุณาเลือกรายการที่ต้องการส่งออกอย่างน้อย 1 รายการ');
+                return;
+            }
+
+            const selectedIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            const selectedData = historyData.filter(d => selectedIds.includes(d.id));
+
+            // Define CSV Headers
+            const headers = ['ID', 'Client Name', 'Target Info', 'Device Type', 'Test Type', 'Functions Details', 'Total Functions', 'Roles', 'Platforms', 'Estimated Days', 'Created At'];
+
+            // Map data to rows
+            const rows = selectedData.map(d => {
+                let funcDetails = "";
+                try {
+                    const selectedIds = JSON.parse(d.selected_functions || "[]");
+                    funcDetails = selectedIds.map(id => {
+                        const f = allFunctionsLookup.find(item => item.id == id);
+                        return f ? `${f.name}` : `ID:${id}`;
+                    }).join(" | ");
+                } catch (e) {
+                    funcDetails = "Error parsing functions";
+                }
+
+                return [
+                    d.id,
+                    `"${d.client_name.replace(/"/g, '""')}"`,
+                    `"${(d.target_info || '').replace(/"/g, '""')}"`,
+                    d.device_type,
+                    d.test_type,
+                    `"${funcDetails.replace(/"/g, '""')}"`,
+                    d.function_count,
+                    d.number_of_roles,
+                    d.platform_count,
+                    d.estimated_days,
+                    d.created_at
+                ];
+            });
+
+            // Combine into CSV string
+            let csvContent = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csvContent += row.join(',') + '\n';
+            });
+
+            // Trigger Download
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().split('T')[0];
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `pentest_estimations_${timestamp}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         function openTab(btn, tabName) {
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tab-content");
@@ -426,12 +687,26 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const savedTab = localStorage.getItem('activeDashboardTab');
-            if (savedTab && document.getElementById(savedTab)) {
+            // Check URL query param 'tab'
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            let initialTab = localStorage.getItem('activeDashboardTab');
+
+            if (tabParam === 'history') initialTab = 'history-tab';
+            if (tabParam === 'estimation') initialTab = 'estimation-tab';
+
+            if (initialTab && document.getElementById(initialTab)) {
+                // Find tab button that opens this tab
                 const tabButton = Array.from(document.querySelectorAll('.tab-link')).find(btn => {
-                    return btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(savedTab);
+                    return btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(initialTab);
                 });
                 if (tabButton) tabButton.click();
+            }
+
+            // Clean URL params after use (optional but nice UI)
+            if (tabParam) {
+                const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                window.history.replaceState({ path: newUrl }, '', newUrl);
             }
         });
 
@@ -499,24 +774,45 @@
         }
 
         // Delete Modal Logic
-        let deleteFormId = null;
+        let deleteIds = [];
 
-        function confirmDelete(id) {
-            deleteFormId = id;
+        function confirmBulkDelete() {
+            const checkboxes = document.querySelectorAll('.record-checkbox:checked');
+            if (checkboxes.length === 0) {
+                showInfoModal('กรุณาเลือกรายการที่ต้องการลบอย่างน้อย 1 รายการ');
+                return;
+            }
+
+            deleteIds = Array.from(checkboxes).map(cb => cb.value);
             const modal = document.getElementById('deleteModal');
+            const modalText = modal.querySelector('p');
+            modalText.innerHTML = `คุณแน่ใจหรือไม่ที่จะลบรายการที่เลือกทั้งหมด <strong>${deleteIds.length} รายการ</strong>?<br>การกระทำนี้ไม่สามารถย้อนกลับได้`;
+
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
 
-            // Set up confirm button
             const confirmBtn = document.getElementById('confirmDeleteBtn');
-            // Remove old event listeners to prevent multiple submissions
             const newConfirmBtn = confirmBtn.cloneNode(true);
             confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
 
-            newConfirmBtn.onclick = function () {
+            newConfirmBtn.onclick = async function () {
+                newConfirmBtn.disabled = true;
+                newConfirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังลบ...';
+
+                // We'll use a form to post multiple IDs if our backend supported it, 
+                // but since the current backend only has /delete/:id, 
+                // we'll create a new bulk delete route or process them.
+                // For now, to keep it simple and compatible, we'll use a form for bulk delete.
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '/dashboard/delete/' + deleteFormId;
+                form.action = '/dashboard/bulk-delete';
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'ids';
+                input.value = JSON.stringify(deleteIds);
+                form.appendChild(input);
+
                 document.body.appendChild(form);
                 form.submit();
             };
@@ -528,10 +824,28 @@
             deleteFormId = null;
         }
 
+        function showInfoModal(message, title = 'แจ้งเตือน') {
+            document.getElementById('infoModalTitle').innerText = title;
+            document.getElementById('infoModalMessage').innerText = message;
+            document.getElementById('infoModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeInfoModal() {
+            document.getElementById('infoModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
         // Close delete modal on outside click
         document.getElementById('deleteModal').addEventListener('click', function (e) {
             if (e.target === this) {
                 closeDeleteModal();
+            }
+        });
+
+        document.getElementById('infoModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeInfoModal();
             }
         });
     </script>

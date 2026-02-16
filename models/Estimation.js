@@ -27,22 +27,41 @@ module.exports = {
         });
     },
 
-    findByUserId: (userId) => {
+    findByUserId: (userId, limit = 10, offset = 0, order = 'DESC') => {
         return new Promise((resolve, reject) => {
-            const sql = "SELECT * FROM estimations WHERE user_id = ? ORDER BY created_at DESC";
-            db.all(sql, [userId], (err, rows) => {
+            const sortOrder = order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+            const sql = `SELECT * FROM estimations WHERE user_id = ? ORDER BY created_at ${sortOrder}, id ${sortOrder} LIMIT ? OFFSET ?`;
+            db.all(sql, [userId, limit, offset], (err, rows) => {
                 if (err) return reject(err);
                 resolve(rows);
             });
         });
     },
 
-    getAll: () => {
+    getAll: (limit = 10, offset = 0, order = 'DESC') => {
         return new Promise((resolve, reject) => {
-            const sql = "SELECT estimations.*, users.username FROM estimations LEFT JOIN users ON estimations.user_id = users.id ORDER BY created_at DESC";
-            db.all(sql, [], (err, rows) => {
+            const sortOrder = order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+            const sql = `SELECT estimations.*, users.username FROM estimations LEFT JOIN users ON estimations.user_id = users.id ORDER BY created_at ${sortOrder}, estimations.id ${sortOrder} LIMIT ? OFFSET ?`;
+            db.all(sql, [limit, offset], (err, rows) => {
                 if (err) return reject(err);
                 resolve(rows);
+            });
+        });
+    },
+
+    count: (userId = null) => {
+        return new Promise((resolve, reject) => {
+            let sql = "SELECT COUNT(*) as count FROM estimations";
+            let params = [];
+
+            if (userId) {
+                sql += " WHERE user_id = ?";
+                params.push(userId);
+            }
+
+            db.get(sql, params, (err, row) => {
+                if (err) return reject(err);
+                resolve(row.count);
             });
         });
     },
@@ -62,6 +81,26 @@ module.exports = {
         return new Promise((resolve, reject) => {
             const sql = "DELETE FROM estimations WHERE id = ?";
             db.run(sql, [id], function (err) {
+                if (err) return reject(err);
+                resolve(this.changes);
+            });
+        });
+    },
+
+    bulkDelete: (ids, userId, isAdmin = false) => {
+        return new Promise((resolve, reject) => {
+            if (!ids || ids.length === 0) return resolve(0);
+
+            const placeholders = ids.map(() => '?').join(',');
+            let sql = `DELETE FROM estimations WHERE id IN (${placeholders})`;
+            let params = [...ids];
+
+            if (!isAdmin) {
+                sql += " AND user_id = ?";
+                params.push(userId);
+            }
+
+            db.run(sql, params, function (err) {
                 if (err) return reject(err);
                 resolve(this.changes);
             });

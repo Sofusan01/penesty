@@ -15,6 +15,7 @@ router.get('/dashboard', isAuthenticated, dashboardController.getDashboard);
 router.post('/dashboard/estimate', isAuthenticated, dashboardController.calculateEstimation);
 router.post('/dashboard/confirm', isAuthenticated, dashboardController.confirmEstimation);
 router.post('/dashboard/delete/:id', isAuthenticated, dashboardController.deleteEstimation); // Changed from GET to POST
+router.post('/dashboard/bulk-delete', isAuthenticated, dashboardController.bulkDeleteEstimation);
 
 router.get('/profile', isAuthenticated, userController.getProfile);
 
@@ -30,10 +31,10 @@ router.get('/feedback', isAuthenticated, (req, res) => {
 router.post('/feedback', isAuthenticated, upload.single('image'), feedbackController.submitFeedback);
 router.get('/feedback/history', isAuthenticated, isAdmin, feedbackController.getFeedbackHistory);
 router.post('/feedback/delete/:id', isAuthenticated, isAdmin, feedbackController.deleteFeedback);
+router.post('/feedback/bulk-delete', isAuthenticated, isAdmin, feedbackController.bulkDeleteFeedback);
 
-router.get('/settings', isAuthenticated, isAdmin, (req, res) => {
-    res.render('pages/setting', { user: req.user });
-});
+router.get('/settings', isAuthenticated, isAdmin, userController.getSettings);
+router.post('/settings/toggle-user-status', isAuthenticated, isAdmin, userController.toggleUserStatus);
 
 // Estimate Calibration (Admin)
 const estimateConfigController = require('../controllers/estimateConfigController');

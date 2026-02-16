@@ -6,9 +6,20 @@ const estimationCalculator = require('../utils/estimationCalculator');
 
 exports.getDashboard = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const offset = (page - 1) * limit;
+        const order = (req.query.order || 'DESC').toUpperCase();
+
+        const userId = req.user.role === 'admin' ? null : req.user.id;
+
+        // Count total items for pagination
+        const totalItems = await Estimation.count(userId);
+        const totalPages = Math.ceil(totalItems / limit);
+
         // Safe Parallel DB Selects
         const [estimations, appFunctions, constraints] = await Promise.all([
-            (req.user.role === 'admin' ? Estimation.getAll() : Estimation.findByUserId(req.user.id))
+            (req.user.role === 'admin' ? Estimation.getAll(limit, offset, order) : Estimation.findByUserId(req.user.id, limit, offset, order))
                 .catch(err => { console.error('Est Select Err:', err); return []; }),
             AppFunction.getAll().catch(err => { console.error('AppFunc Select Err:', err); return []; }),
             SystemSetting.get('test_type_constraints').then(res => res || {}).catch(() => ({}))
@@ -19,6 +30,10 @@ exports.getDashboard = async (req, res) => {
             estimations,
             appFunctions,
             constraints,
+            currentPage: page,
+            totalPages,
+            totalItems,
+            order,
             error: req.query.error || null,
             success: req.query.success || null,
             previewResult: null
@@ -50,16 +65,19 @@ exports.calculateEstimation = async (req, res) => {
             device_type, test_type, platform_count, number_of_roles, selected_functions: funcIds
         });
 
-        const [estimations, appFunctions, constraints] = await Promise.all([
-            Estimation.findByUserId(req.user.id),
+        const [estimations, appFunctions, constraints, totalItems] = await Promise.all([
+            Estimation.findByUserId(req.user.id, 3, 0),
             AppFunction.getAll(),
-            SystemSetting.get('test_type_constraints').then(res => res || {})
+            SystemSetting.get('test_type_constraints').then(res => res || {}),
+            Estimation.count(req.user.id)
         ]);
+        const totalPages = Math.ceil(totalItems / 3);
 
         if (calcResult.error) {
             return res.render('pages/dashboard', {
                 user: req.user,
                 estimations, appFunctions, constraints,
+                currentPage: 1, totalPages, totalItems,
                 error: calcResult.error, success: null, previewResult: null
             });
         }
@@ -71,6 +89,7 @@ exports.calculateEstimation = async (req, res) => {
         res.render('pages/dashboard', {
             user: req.user,
             estimations, appFunctions, constraints,
+            currentPage: 1, totalPages, totalItems,
             error: null, success: null,
             previewResult: {
                 client_name, device_type, test_type,
@@ -166,9 +185,33 @@ exports.deleteEstimation = async (req, res) => {
             // User can only delete their own
             await Estimation.delete(req.params.id, req.user.id);
         }
-        res.redirect('/dashboard');
+        res.redirect('/dashboard?tab=history');
     } catch (err) {
-        console.error(err);
-        res.redirect('/dashboard');
+        res.redirect('/dashboard?tab=history');
+    }
+};
+
+exports.bulkDeleteEstimation = async (req, res) => {
+    try {
+        let ids = req.body.ids;
+        if (typeof ids === 'string') {
+            try {
+                ids = JSON.parse(ids);
+            } catch (e) {
+                ids = [];
+            }
+        }
+
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.redirect('/dashboard?error=' + encodeURIComponent("No items selected for deletion.") + '&tab=history');
+        }
+
+        const isAdmin = req.user.role === 'admin';
+        await Estimation.bulkDelete(ids, req.user.id, isAdmin);
+
+        res.redirect('/dashboard?success=' + encodeURIComponent(`${ids.length} items deleted successfully.`) + '&tab=history');
+    } catch (err) {
+        console.error("Bulk Delete Error:", err);
+        res.redirect('/dashboard?error=' + encodeURIComponent("Failed to delete selected items.") + '&tab=history');
     }
 };

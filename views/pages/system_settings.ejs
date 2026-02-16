@@ -51,7 +51,7 @@
             <div class="main-content">
                 <div class="dashboard-container">
                     <header>
-                        <h1>⚙️ System Settings</h1>
+                        <h1 style="margin: 0; font-size: 1.5rem;">⚙️ System Settings</h1>
                         <p class="text-muted">Manage global rules, constraints, and operational parameters (JSON
                             format).</p>
                         <%- include('../partials/header_user_menu') %>
@@ -90,8 +90,9 @@
                                                     <% }) %>
                                                         <% } %>
 
-                                                            <button type="submit" class="btn btn-primary"
-                                                                onclick="return confirm('Ensure JSON is valid. Errors may break calculation logic.');">
+                                                            <button type="button" class="btn btn-primary"
+                                                                style="width: 100%; margin-top: 1rem; padding: 1rem; font-size: 1.1rem;"
+                                                                onclick="showConfirmModal(event)">
                                                                 💾 Save System Settings
                                                             </button>
                                         </form>
@@ -100,7 +101,60 @@
             </div>
     </div>
 
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 480px; border-top: 5px solid var(--primary-color);">
+            <div class="modal-header">
+                <h3 style="margin: 0; color: var(--primary-color);">🛡️ ยืนยันการบันทึกระบบ</h3>
+                <button type="button" class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="background: white; padding: 2rem;">
+                <p style="text-align: center; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 1.5rem;">
+                    กรุณาตรวจสอบความถูกต้องของ JSON ก่อนบันทึก
+                </p>
+                <div
+                    style="background-color: #fee2e2; border: 1px solid #fecaca; padding: 1rem; border-radius: 0.5rem; display: flex; gap: 0.75rem; align-items: flex-start;">
+                    <span style="font-size: 1.25rem;">🛑</span>
+                    <span style="font-size: 0.9rem; color: #991b1b;">
+                        คำเตือน: หาก JSON ไม่ถูกต้อง อาจทำให้ระบบคำนวณราคาทำงานผิดพลาดหรือหยุดชะงักได้
+                    </span>
+                </div>
+            </div>
+            <div class="modal-footer"
+                style="background: #f8fafc; display: flex; justify-content: flex-end; gap: 1rem; padding: 1.25rem 2rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>
+                <button type="button" class="btn" id="confirmSaveBtn" onclick="submitForm()">
+                    💾 ยืนยันและอัปเดตระบบ
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function showConfirmModal(event) {
+            event.preventDefault();
+            const modal = document.getElementById('confirmModal');
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+
+        function submitForm() {
+            const btn = document.getElementById('confirmSaveBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังอัปเดต...';
+            btn.disabled = true;
+            document.querySelector('form[action="/settings/system"]').submit();
+        }
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
         // Simple Client-side JSON Validation Feedback
         document.querySelectorAll('textarea.json-editor').forEach(ta => {
             ta.addEventListener('input', (e) => {

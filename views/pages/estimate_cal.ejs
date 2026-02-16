@@ -173,8 +173,8 @@
                                                     </div>
                                                 </div>
 
-                                                <button type="submit" class="btn"
-                                                    onclick="return confirm('ยืนยันการเปลี่ยนแปลงค่า configuration? การเปลี่ยนแปลงจะมีผลทันทีต่อการคำนวณใหม่');">
+                                                <button type="button" class="btn" onclick="showConfirmModal(event)"
+                                                    style="width: 100%; margin-top: 2rem; padding: 1rem; font-size: 1.1rem;">
                                                     💾 บันทึกการตั้งค่า (Save Configuration)
                                                 </button>
                                             </form>
@@ -183,6 +183,75 @@
                 </div>
             </div>
     </div>
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 480px; border-top: 5px solid var(--primary-color);">
+            <div class="modal-header">
+                <h3 style="margin: 0; color: var(--primary-color); display: flex; align-items: center; gap: 0.5rem;">
+                    🛡️ ยืนยันการเปลี่ยนแปลง
+                </h3>
+                <button type="button" class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="background: white; padding: 2rem;">
+                <p style="text-align: center; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 1.5rem;">
+                    คุณต้องการบันทึกการเปลี่ยนแปลงค่า configuration หรือไม่?
+                </p>
+                <div
+                    style="background-color: #fffbeb; border: 1px solid #fde68a; padding: 1rem; border-radius: 0.5rem; display: flex; gap: 0.75rem; align-items: flex-start;">
+                    <span style="font-size: 1.25rem;">⚠️</span>
+                    <span style="font-size: 0.9rem; color: #92400e;">
+                        การเปลี่ยนแปลงจะมีผลทันทีต่อการคำนวณราคาและระยะเวลาการทำงานใหม่ทั้งหมดในระบบ
+                    </span>
+                </div>
+            </div>
+            <div class="modal-footer"
+                style="background: #f8fafc; display: flex; justify-content: flex-end; gap: 1rem; padding: 1.25rem 2rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>
+                <button type="button" class="btn" id="confirmSaveBtn" onclick="submitForm()">
+                    💾 ยืนยันบันทึกข้อมูล
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showConfirmModal(event) {
+            event.preventDefault();
+            const modal = document.getElementById('confirmModal');
+            modal.style.display = 'flex';
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.style.transition = 'opacity 0.3s ease';
+                modal.style.opacity = '1';
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('confirmModal');
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        function submitForm() {
+            // Show loading state on button
+            const btn = document.getElementById('confirmSaveBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
+            btn.disabled = true;
+
+            // Submit the form
+            document.querySelector('form[action="/update-config"]').submit();
+        }
+
+        // Close on overlay click
+        window.onclick = function (event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
 </body>
 
 </html>

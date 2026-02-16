@@ -14,16 +14,114 @@
                         <h1>Settings</h1>
                         <%- include('../partials/header_user_menu') %>
                     </header>
-                    <div class="content card">
-                        <p>General Settings</p>
-                        <!-- Settings form -->
-                        <form>
-                            <div class="form-group">
-                                <label>Site Name</label>
-                                <input type="text" value="Pentest Estimator">
+                    <div class="content">
+                        <% if (locals.error) { %>
+                            <div class="error"
+                                style="margin-bottom: 1rem; padding: 1rem; background: #fee2e2; color: #b91c1c; border-radius: 0.5rem; border: 1px solid #fecaca;">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <%= error %>
                             </div>
-                            <button class="btn">Save</button>
-                        </form>
+                            <% } %>
+                                <% if (locals.success) { %>
+                                    <div class="success"
+                                        style="margin-bottom: 1rem; padding: 1rem; background: #f0fdf4; color: #166534; border-radius: 0.5rem; border: 1px solid #bbf7d0;">
+                                        <i class="fas fa-check-circle"></i>
+                                        <%= success %>
+                                    </div>
+                                    <% } %>
+
+                                        <div class="card" style="margin-bottom: 2rem;">
+                                            <div
+                                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                                <h3 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                                                    <i class="fas fa-users-cog"
+                                                        style="color: var(--primary-color);"></i>
+                                                    จัดการผู้ใช้งาน (User Management)
+                                                </h3>
+                                                <span class="text-muted"
+                                                    style="font-size: 0.85rem;">จัดการสถานะการเข้าใช้งานของสมาชิก</span>
+                                            </div>
+
+                                            <div style="overflow-x: auto;">
+                                                <table style="width: 100%; border-collapse: collapse;">
+                                                    <thead>
+                                                        <tr style="background: #f8fafc; text-align: left;">
+                                                            <th
+                                                                style="padding: 1rem; border-bottom: 2px solid #e2e8f0; border-radius: 0.5rem 0 0 0;">
+                                                                ชื่อผู้ใช้</th>
+                                                            <th
+                                                                style="padding: 1rem; border-bottom: 2px solid #e2e8f0;">
+                                                                บทบาท</th>
+                                                            <th
+                                                                style="padding: 1rem; border-bottom: 2px solid #e2e8f0;">
+                                                                สถานะ</th>
+                                                            <th
+                                                                style="padding: 1rem; border-bottom: 2px solid #e2e8f0; text-align: center; border-radius: 0 0.5rem 0 0;">
+                                                                จัดการการใช้งาน</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% users.forEach(u=> { %>
+                                                            <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.2s;"
+                                                                onmouseover="this.style.background='#f8fafc'"
+                                                                onmouseout="this.style.background='transparent'">
+                                                                <td style="padding: 1rem; font-weight: 500;">
+                                                                    <%= u.username %>
+                                                                </td>
+                                                                <td style="padding: 1rem;">
+                                                                    <span
+                                                                        style="padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600; 
+                                                        <%= u.role === 'admin' ? 'background: #eff6ff; color: #1d4ed8;' : 'background: #f1f5f9; color: #475569;' %>">
+                                                                        <%= u.role.toUpperCase() %>
+                                                                    </span>
+                                                                </td>
+                                                                <td style="padding: 1rem;">
+                                                                    <% if (u.is_active) { %>
+                                                                        <span
+                                                                            style="color: #16a34a; display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem;">
+                                                                            <span
+                                                                                style="width: 8px; height: 8px; background: #16a34a; border-radius: 50%;"></span>
+                                                                            ปกติ (Active)
+                                                                        </span>
+                                                                        <% } else { %>
+                                                                            <span
+                                                                                style="color: #dc2626; display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem;">
+                                                                                <span
+                                                                                    style="width: 8px; height: 8px; background: #dc2626; border-radius: 50%;"></span>
+                                                                                ถูกระงับ (Suspended)
+                                                                            </span>
+                                                                            <% } %>
+                                                                </td>
+                                                                <td style="padding: 1rem; text-align: center;">
+                                                                    <% if (u.id !==user.id) { %>
+                                                                        <form action="/settings/toggle-user-status"
+                                                                            method="POST" style="margin: 0;">
+                                                                            <input type="hidden" name="userId"
+                                                                                value="<%= u.id %>">
+                                                                            <input type="hidden" name="status"
+                                                                                value="<%= u.is_active ? '0' : '1' %>">
+                                                                            <button type="submit" class="btn"
+                                                                                style="padding: 0.4rem 1rem; font-size: 0.85rem; 
+                                                                <%= u.is_active ? 'background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca;' : 'background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;' %>">
+                                                                                <i
+                                                                                    class="fas <%= u.is_active ? 'fa-user-slash' : 'fa-user-check' %>"></i>
+                                                                                <%= u.is_active ? 'ระงับการใช้งาน'
+                                                                                    : 'คืนสถานะการใช้งาน' %>
+                                                                            </button>
+                                                                        </form>
+                                                                        <% } else { %>
+                                                                            <span class="text-muted"
+                                                                                style="font-size: 0.8rem; font-style: italic;">บัญชีปัจจุบัน</span>
+                                                                            <% } %>
+                                                                </td>
+                                                            </tr>
+                                                            <% }) %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+
                     </div>
                 </div>
             </div>

@@ -20,10 +20,50 @@
                         <%- include('../partials/header_user_menu') %>
                     </header>
                     <div class="content card">
-                        <p>Admin Access Only</p>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <p style="margin: 0; color: #6b7280; font-size: 1rem; font-weight: 500;"><i
+                                    class="fas fa-user-shield" style="margin-right: 5px;"></i> Administrator Access</p>
+
+                            <!-- Default Actions -->
+                            <div id="default-actions">
+                                <button class="btn tooltip-btn" data-tooltip="เข้าสู่โหมดลบข้อมูล"
+                                    style="background: var(--danger-color); padding: 0.4rem; width: 100px; height: 40px; min-width: auto; justify-content: center; border-radius: 4px;"
+                                    onclick="enterMode()">
+                                    <i class="fas fa-trash-alt" style="font-size: 0.9rem;"></i> ลบข้อมูล
+                                </button>
+                            </div>
+
+                            <!-- Delete Selection Mode -->
+                            <div id="delete-actions" style="display: none; gap: 0.75rem; align-items: center;">
+                                <span
+                                    style="color: var(--danger-color); font-weight: 600; font-size: 0.9rem; white-space: nowrap;">เลือกรายการลบ:</span>
+                                <button type="button" class="btn btn-secondary" onclick="exitMode()"
+                                    style="padding: 0.4rem 0.8rem; font-size: 0.9rem;">
+                                    ยกเลิก (Cancel)
+                                </button>
+                                <button type="button" class="btn" onclick="confirmBulkDelete()"
+                                    style="background-color: var(--danger-color); padding: 0.4rem 0.8rem; font-size: 0.9rem;">
+                                    ยืนยัน (Confirm)
+                                </button>
+                            </div>
+                        </div>
                         <table style="width:100%; border-collapse: collapse;">
                             <thead>
                                 <tr style="background-color: #f3f4f6; text-align: left;">
+                                    <th class="checkbox-col"
+                                        style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb; width: 40px; text-align: center; display: none;">
+                                        <input type="checkbox" id="selectAllFb" onchange="toggleSelectAll(this)"
+                                            style="cursor: pointer;">
+                                    </th>
+                                    <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                        <a href="?page=1&order=<%= (locals.order === 'ASC') ? 'DESC' : 'ASC' %>"
+                                            style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                                            ลำดับ <span style="font-size: 0.8em;">
+                                                <%= (locals.order==='ASC' ) ? '▲' : '▼' %>
+                                            </span>
+                                        </a>
+                                    </th>
                                     <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">วันที่ (Date)</th>
                                     <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">ผู้ใช้ (User)</th>
                                     <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">หัวข้อ (Subject)
@@ -33,14 +73,22 @@
                                     <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb; text-align: center;">
                                         รูปภาพ (Attachment)
                                     </th>
-                                    <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb; text-align: center;">
-                                        จัดการ (Action)</th>
+
                                 </tr>
                             </thead>
                             <tbody>
                                 <% if (locals.feedbacks && feedbacks.length> 0) { %>
-                                    <% feedbacks.forEach(fb=> { %>
+                                    <% feedbacks.forEach((fb, index)=> { %>
                                         <tr style="border-bottom: 1px solid #e5e7eb;">
+                                            <td class="checkbox-col"
+                                                style="padding: 0.75rem; text-align: center; display: none;">
+                                                <input type="checkbox" class="feedback-checkbox" value="<%= fb.id %>"
+                                                    style="cursor: pointer;">
+                                            </td>
+                                            <td style="padding: 0.75rem;">
+                                                <%= (locals.order==='ASC' ) ? (((currentPage - 1) * 10) + index + 1) :
+                                                    (locals.totalItems - (((currentPage - 1) * 10) + index)) %>
+                                            </td>
                                             <td style="padding: 0.75rem;">
                                                 <%= new Date(fb.created_at).toLocaleString('th-TH') %>
                                             </td>
@@ -52,14 +100,15 @@
                                             <td style="padding: 0.75rem; font-weight: bold; color: #111827;">
                                                 <%= fb.subject || 'No Subject' %>
                                             </td>
-                                            <td style="padding: 0.75rem; width: 35%;">
-                                                <div class="message-content" id="msg-<%= fb.id %>">
+                                            <td
+                                                style="padding: 0.75rem; max-width: 300px; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
+                                                <div class="message-content" id="msg-<%= fb.id %>" style="width: 100%;">
                                                     <% if (fb.message && fb.message.length> 50) { %>
                                                         <span class="text-short">
                                                             <%= fb.message.substring(0, 50) %>...
                                                                 <span onclick="toggleMessage('<%= fb.id %>')"
                                                                     class="read-more-toggle"
-                                                                    style="color: var(--primary-color); cursor: pointer; font-weight: 500;">ดูเพิ่มเติม</span>
+                                                                    style="color: var(--primary-color); cursor: pointer; font-weight: 500; white-space: nowrap;">ดูเพิ่มเติม</span>
                                                         </span>
                                                         <span class="text-full" style="display: none;">
                                                             <%= fb.message %>
@@ -86,17 +135,12 @@
                                                         <span class="text-muted">-</span>
                                                         <% } %>
                                             </td>
-                                            <td style="padding: 0.75rem; text-align: center;">
-                                                <button type="button" class="btn-delete-action tooltip-btn"
-                                                    data-tooltip="ลบรายการ" onclick="confirmDelete('<%= fb.id %>')">
-                                                    <i class="fas fa-trash-alt"></i> ลบ
-                                                </button>
-                                            </td>
+
                                         </tr>
                                         <% }) %>
                                             <% } else { %>
                                                 <tr>
-                                                    <td colspan="6"
+                                                    <td colspan="7"
                                                         style="padding: 2rem; text-align: center; color: #6b7280;">
                                                         ไม่มีข้อมูล
                                                     </td>
@@ -105,8 +149,65 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Pagination -->
+                    <% if (locals.totalPages && totalPages> 1) { %>
+                        <div
+                            style="display: flex; justify-content: flex-end; align-items: center; margin-top: 12px; gap: 8px;">
+                            <% if (typeof currentPage !=='undefined' && currentPage> 1) { %>
+                                <a href="?page=<%= currentPage - 1 %>&order=<%= locals.order || 'DESC' %>" class="btn"
+                                    style="padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid #d1d5db; color: #374151; border-radius: 4px; width: auto; flex-grow: 0;">&lt;</a>
+                                <% } %>
+
+                                    <% let shownDotsBefore=false; let shownDotsAfter=false; for(let i=1; i <=totalPages;
+                                        i++) { if (i===1 || i===totalPages || i===currentPage) { if (i===currentPage) {
+                                        %>
+                                        <span
+                                            style="padding: 4px 10px; font-size: 14px; background: var(--primary-color); color: white; border: 1px solid var(--primary-color); border-radius: 4px; cursor: default;">
+                                            <%= i %>
+                                        </span>
+                                        <% } else { %>
+                                            <a href="?page=<%= i %>&order=<%= locals.order || 'DESC' %>"
+                                                style="padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid #d1d5db; color: #374151; border-radius: 4px; text-decoration: none;">
+                                                <%= i %>
+                                            </a>
+                                            <% } } else if (i < currentPage && !shownDotsBefore) { shownDotsBefore=true;
+                                                %>
+                                                <span style="padding: 4px 8px; color: #6b7280;">...</span>
+                                                <% } else if (i> currentPage && !shownDotsAfter) { shownDotsAfter =
+                                                    true; %>
+                                                    <span style="padding: 4px 8px; color: #6b7280;">...</span>
+                                                    <% } } %>
+
+                                                        <% if (typeof currentPage !=='undefined' && currentPage <
+                                                            totalPages) { %>
+                                                            <a href="?page=<%= currentPage + 1 %>&order=<%= locals.order || 'DESC' %>"
+                                                                class="btn"
+                                                                style="padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid #d1d5db; color: #374151; border-radius: 4px; width: auto; flex-grow: 0;">></a>
+                                                            <% } %>
+                        </div>
+                        <div style="text-align: right; font-size: 0.8rem; color: #6b7280; margin-top: 4px;">
+                            หน้า <%= currentPage %> จาก <%= totalPages %> (ทั้งหมด <%= totalItems %> รายการ)
+                        </div>
+                        <% } %>
                 </div>
             </div>
+    </div>
+
+    <!-- Info/Warning Modal -->
+    <div id="infoModal" class="modal-overlay" style="z-index: 2200;" onclick="closeInfoModal(event)">
+        <div class="modal-content" style="max-width: 450px; text-align: center; border-top: 5px solid #f59e0b;"
+            onclick="event.stopPropagation()">
+            <div style="padding: 2.5rem 1.5rem;">
+                <div style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+                <h3 id="infoModalTitle" style="margin-bottom: 0.5rem; color: #1f2937;">แจ้งเตือน</h3>
+                <p id="infoModalMessage" style="color: #6b7280; margin-bottom: 2rem; font-size: 1.1rem;"></p>
+                <button class="btn" onclick="closeInfoModal()" style="min-width: 120px; background: #6b7280;">ตกลง
+                    (OK)</button>
+            </div>
+        </div>
     </div>
 
     <!-- Image Modal -->
@@ -136,7 +237,8 @@
             onclick="event.stopPropagation()">
             <div style="padding: 2rem 1.5rem;">
                 <h3 style="margin-bottom: 0.5rem; color: #1f2937;">ยืนยันการลบข้อมูล?</h3>
-                <p style="color: #6b7280; margin-bottom: 2rem;">คุณแน่ใจหรือไม่ที่จะลบรายการนี้?
+                <p id="deleteConfirmMsg" style="color: #6b7280; margin-bottom: 2rem;">
+                    คุณแน่ใจหรือไม่ที่จะลบรายการที่เลือก?
                     <br>การกระทำนี้ไม่สามารถย้อนกลับได้
                 </p>
                 <div style="display: flex; gap: 1rem; justify-content: center;">
@@ -150,39 +252,105 @@
     </div>
 
     <script>
+        // Mode Management
+        function enterMode() {
+            // Hide default actions
+            document.getElementById('default-actions').style.display = 'none';
+            // Show Delete Actions
+            document.getElementById('delete-actions').style.display = 'flex';
+
+            // Show Checkboxes
+            const checkboxes = document.querySelectorAll('.checkbox-col');
+            checkboxes.forEach(el => el.style.display = 'table-cell');
+        }
+
+        function exitMode() {
+            // Reset Inputs
+            const checkboxes = document.querySelectorAll('.feedback-checkbox');
+            checkboxes.forEach(cb => cb.checked = false);
+            const selectAll = document.getElementById('selectAllFb');
+            if (selectAll) selectAll.checked = false;
+
+            // Hide Checkboxes
+            const checkboxCols = document.querySelectorAll('.checkbox-col');
+            checkboxCols.forEach(el => el.style.display = 'none');
+
+            // Reset Buttons
+            document.getElementById('default-actions').style.display = 'block';
+            document.getElementById('delete-actions').style.display = 'none';
+        }
+
         let deleteFormId = null;
 
-        function confirmDelete(id) {
-            deleteFormId = id;
+        function toggleSelectAll(source) {
+            const checkboxes = document.getElementsByClassName('feedback-checkbox');
+            for (let i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+
+        function confirmBulkDelete() {
+            const checkboxes = document.querySelectorAll('.feedback-checkbox:checked');
+            if (checkboxes.length === 0) {
+                showInfoModal('กรุณาเลือกรายการที่ต้องการลบอย่างน้อย 1 รายการ');
+                return;
+            }
+
             const modal = document.getElementById('deleteModal');
+            document.getElementById('deleteConfirmMsg').innerHTML = `คุณกำลังจะลบ <b>${checkboxes.length}</b> รายการ<br>การกระทำนี้ไม่สามารถย้อนกลับได้`;
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
 
-            // Set up confirm button
             const confirmBtn = document.getElementById('confirmDeleteBtn');
-            // Remove old event listeners to prevent multiple submissions
             const newConfirmBtn = confirmBtn.cloneNode(true);
             confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
 
             newConfirmBtn.onclick = function () {
+                const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+
+                // Create a form to submit
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '/feedback/delete/' + deleteFormId;
+                form.action = '/feedback/bulk-delete';
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'ids';
+                input.value = JSON.stringify(selectedIds);
+                form.appendChild(input);
+
                 document.body.appendChild(form);
                 form.submit();
             };
         }
 
+        function showInfoModal(message, title = 'แจ้งเตือน') {
+            document.getElementById('infoModalTitle').innerText = title;
+            document.getElementById('infoModalMessage').innerText = message;
+            document.getElementById('infoModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeInfoModal() {
+            document.getElementById('infoModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
         function closeDeleteModal() {
             document.getElementById('deleteModal').style.display = 'none';
             document.body.style.overflow = 'auto';
-            deleteFormId = null;
         }
 
         // Close delete modal on outside click
         document.getElementById('deleteModal').addEventListener('click', function (e) {
             if (e.target === this) {
                 closeDeleteModal();
+            }
+        });
+
+        document.getElementById('infoModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeInfoModal();
             }
         });
 

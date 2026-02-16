@@ -36,10 +36,29 @@
                         <span>โปรไฟล์ (Profile)</span>
                     </a>
                     <% if (user.role==='admin' ) { %>
-                        <a href="/settings" class="dropdown-item">
-                            <span class="icon">⚙️</span>
-                            <span>ตั้งค่า (Settings)</span>
+                        <a href="#" class="dropdown-item" onclick="toggleSettingsSubmenu(event)"
+                            style="justify-content: space-between;">
+                            <div style="display: flex; align-items: center;">
+                                <span class="icon">⚙️</span>
+                                <span>ตั้งค่า (Settings)</span>
+                            </div>
+                            <span id="header-settings-arrow"
+                                style="font-size: 0.8em; transition: transform 0.2s;">▼</span>
                         </a>
+                        <div id="header-settings-submenu" style="display: none; background-color: rgba(0,0,0,0.03);">
+                            <a href="/settings" class="dropdown-item" target="_blank"
+                                style="padding-left: 3rem; font-size: 0.9em;">
+                                <span>General</span>
+                            </a>
+                            <a href="/settings/estimate-cal" class="dropdown-item" target="_blank"
+                                style="padding-left: 3rem; font-size: 0.9em;">
+                                <span>Estimate Cal</span>
+                            </a>
+                            <a href="/settings/system" class="dropdown-item" target="_blank"
+                                style="padding-left: 3rem; font-size: 0.9em;">
+                                <span>System Settings</span>
+                            </a>
+                        </div>
                         <% } %>
                             <div class="dropdown-divider"></div>
                             <a href="/auth/logout" class="dropdown-item text-danger">
@@ -56,6 +75,20 @@
                 const dropdown = document.querySelector('.dropdown-menu-container');
                 if (dropdown) {
                     dropdown.classList.toggle('show');
+                }
+            }
+
+            function toggleSettingsSubmenu(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const submenu = document.getElementById('header-settings-submenu');
+                const arrow = document.getElementById('header-settings-arrow');
+                if (submenu.style.display === 'none') {
+                    submenu.style.display = 'block';
+                    if (arrow) arrow.style.transform = 'rotate(180deg)';
+                } else {
+                    submenu.style.display = 'none';
+                    if (arrow) arrow.style.transform = 'rotate(0deg)';
                 }
             }
 

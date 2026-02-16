@@ -22,8 +22,9 @@ class Feedback {
      * Get all feedbacks (Admin View).
      * @returns {Promise<Array>} - List of feedbacks joined with user details.
      */
-    static async getAll() {
+    static async getAll(limit = 10, offset = 0, order = 'DESC') {
         return new Promise((resolve, reject) => {
+            const sortOrder = order.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
             const sql = `
                 SELECT 
                     f.id, 
@@ -34,11 +35,25 @@ class Feedback {
                     u.username 
                 FROM feedbacks f
                 JOIN users u ON f.user_id = u.id
-                ORDER BY f.created_at DESC
+                ORDER BY f.created_at ${sortOrder}, f.id ${sortOrder}
+                LIMIT ? OFFSET ?
             `;
-            db.all(sql, [], (err, rows) => {
+            db.all(sql, [limit, offset], (err, rows) => {
                 if (err) return reject(err);
                 resolve(rows);
+            });
+        });
+    }
+
+    /**
+     * Count all feedbacks.
+     * @returns {Promise<number>}
+     */
+    static async count() {
+        return new Promise((resolve, reject) => {
+            db.get("SELECT COUNT(*) as count FROM feedbacks", [], (err, row) => {
+                if (err) return reject(err);
+                resolve(row.count);
             });
         });
     }
@@ -67,6 +82,25 @@ class Feedback {
         return new Promise((resolve, reject) => {
             const sql = 'DELETE FROM feedbacks WHERE id = ?';
             db.run(sql, [id], function (err) {
+                if (err) return reject(err);
+                resolve();
+            });
+        });
+    }
+
+    /**
+     * Bulk delete feedbacks by IDs.
+     * @param {number[]} ids - Array of feedback IDs to delete.
+     * @returns {Promise<void>}
+     */
+    static async bulkDelete(ids) {
+        return new Promise((resolve, reject) => {
+            if (!ids || ids.length === 0) return resolve();
+
+            const placeholders = ids.map(() => '?').join(',');
+            const sql = `DELETE FROM feedbacks WHERE id IN (${placeholders})`;
+
+            db.run(sql, ids, function (err) {
                 if (err) return reject(err);
                 resolve();
             });

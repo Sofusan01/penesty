@@ -38,5 +38,25 @@ module.exports = {
                 });
             });
         });
+    },
+
+    getAll: () => {
+        return new Promise((resolve, reject) => {
+            const sql = "SELECT id, username, role, is_active FROM users ORDER BY id ASC";
+            db.all(sql, [], (err, rows) => {
+                if (err) return reject(err);
+                resolve(rows);
+            });
+        });
+    },
+
+    updateStatus: (id, isActive) => {
+        return new Promise((resolve, reject) => {
+            const sql = "UPDATE users SET is_active = ? WHERE id = ?";
+            db.run(sql, [isActive ? 1 : 0, id], function (err) {
+                if (err) return reject(err);
+                resolve(this.changes);
+            });
+        });
     }
 };

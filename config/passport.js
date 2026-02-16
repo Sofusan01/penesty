@@ -23,6 +23,11 @@ passport.use(new LocalStrategy(
             if (!bcrypt.compareSync(password, user.password)) {
                 return done(null, false, genericError);
             }
+
+            if (user.is_active === 0) {
+                return done(null, false, { message: 'บัญชีของคุณถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ' });
+            }
+
             return done(null, user);
         } catch (err) {
             return done(err);
@@ -40,6 +45,9 @@ passport.use(new JwtStrategy(opts, async (jwt_payload, done) => {
     try {
         const user = await User.findById(jwt_payload.id);
         if (user) {
+            if (user.is_active === 0) {
+                return done(null, false, { message: 'Account deactivated' });
+            }
             return done(null, user);
         } else {
             return done(null, false);
