@@ -11,7 +11,7 @@ const cspMiddleware = (req, res, next) => {
         "connect-src 'self'; " + // Explicitly allow AJAX/Fetch to self
         "script-src 'self' 'unsafe-inline'; " + // Allow inline scripts (needed for template logic)
         "style-src 'self' 'unsafe-inline'; " +
-        "img-src 'self' data:; " +
+        "img-src 'self' data: blob:; " +
         "font-src 'self' https://fonts.gstatic.com; " +
         "object-src 'none'; " +
         "base-uri 'self';"
