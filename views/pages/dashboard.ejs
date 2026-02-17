@@ -145,7 +145,8 @@
                                                                             class="text-danger">*</span></label>
                                                                     <input type="number" id="number_of_roles"
                                                                         name="number_of_roles" min="1" max="20"
-                                                                        value="1" required>
+                                                                        value="1" required
+                                                                        onkeydown="if(['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()">
                                                                 </div>
 
 
