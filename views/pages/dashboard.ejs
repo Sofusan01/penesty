@@ -90,7 +90,8 @@
                                                         </div>
                                                         <div
                                                             style="text-align: right; display: flex; flex-direction: column; gap: 0.5rem;">
-                                                            <form action="/dashboard/confirm" method="POST">
+                                                            <form method="POST"
+                                                                onsubmit="submitHiddenForm(event, 'L2Rhc2hib2FyZC9jb25maXJt')">
                                                                 <input type="hidden" name="client_name"
                                                                     value="<%= previewResult.client_name %>">
                                                                 <input type="hidden" name="device_type"
@@ -118,7 +119,8 @@
                                                     <!-- Estimation Form -->
                                                     <div class="card">
                                                         <h3>🛠️ สร้างการประเมินใหม่ (New Estimation)</h3>
-                                                        <form action="/dashboard/estimate" method="POST">
+                                                        <form method="POST"
+                                                            onsubmit="submitHiddenForm(event, 'L2Rhc2hib2FyZC9lc3RpbWF0ZQ==')">
                                                             <div class="form-grid"
                                                                 style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
                                                                 <!-- Merged Client/Target Info -->
@@ -805,7 +807,7 @@
                 // For now, to keep it simple and compatible, we'll use a form for bulk delete.
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '/dashboard/bulk-delete';
+                form.action = atob('L2Rhc2hib2FyZC9idWxrLWRlbGV0ZQ==');
 
                 const input = document.createElement('input');
                 input.type = 'hidden';
@@ -848,6 +850,12 @@
                 closeInfoModal();
             }
         });
+
+        function submitHiddenForm(event, encodedPath) {
+            // decode path
+            const path = atob(encodedPath);
+            event.target.action = path;
+        }
     </script>
 </body>
 

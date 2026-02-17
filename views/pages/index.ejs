@@ -27,10 +27,18 @@
             </div>
             <% } else { %>
                 <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 2rem;">
-                    <a href="/auth/login" class="btn" style="font-size: 1.1rem;">เข้าสู่ระบบ (Login)</a>
+                    <a href="#" onclick="handleLogin(event)" class="btn" style="font-size: 1.1rem;">เข้าสู่ระบบ
+                        (Login)</a>
                 </div>
                 <% } %>
     </div>
+    <script>
+        function handleLogin(e) {
+            e.preventDefault();
+            // Obfuscated path for /auth/login
+            window.location.href = atob('L2F1dGgvbG9naW4=');
+        }
+    </script>
 </body>
 
 </html>
