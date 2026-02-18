@@ -1,4 +1,3 @@
-// models/User.js
 const db = require('../config/sqlite');
 const bcrypt = require('bcryptjs');
 
@@ -28,7 +27,6 @@ module.exports = {
             const hash = bcrypt.hashSync(user.password, 10);
             const sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
 
-            // Note: need to use function() {} to access this.lastID
             db.run(sql, [user.username, hash, user.role || 'user'], function (err) {
                 if (err) return reject(err);
                 resolve({

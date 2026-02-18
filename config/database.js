@@ -1,10 +1,3 @@
-// config/database.js
-// ══════════════════════════════════════════════════════════════
-//  Database Setup — สร้าง tables, migrations, seed ข้อมูลเริ่มต้น
-//  ใช้ connection ของตัวเอง (เปิด→ทำงาน→ปิด) แยกจาก sqlite.js
-//  เรียกจาก server.js ก่อนเริ่มแอป
-// ══════════════════════════════════════════════════════════════
-
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
@@ -12,8 +5,6 @@ const bcrypt = require('bcryptjs');
 
 const dataDir = path.join(__dirname, '../data');
 const dbPath = path.join(dataDir, 'database.sqlite');
-
-// ─── Promisified DB helpers ───────────────────────────────────
 
 function dbRun(db, sql, params = []) {
     return new Promise((resolve, reject) => {
@@ -32,8 +23,6 @@ function dbGet(db, sql, params = []) {
         });
     });
 }
-
-// ─── Seed Data ────────────────────────────────────────────────
 
 const defaultOWASP = [
     { code: 'WSTG-INFO-01', category: 'Information Gathering', name: 'Conduct Search Engine Discovery', base_hours: 0.5 },
@@ -130,36 +119,28 @@ const defaultUsers = [
     { username: 'user', password: 'user123', role: 'user' }
 ];
 
-// ─── Main Setup Function ──────────────────────────────────────
-
 async function setup() {
     const isNewDb = !fs.existsSync(dbPath);
 
-    // Ensure data directory exists
     if (!fs.existsSync(dataDir)) {
         fs.mkdirSync(dataDir, { recursive: true });
         console.log('[Setup] Created data directory.');
     }
 
-    // Ensure uploads directory exists
     const uploadsDir = path.join(__dirname, '../public/uploads/feedback');
     if (!fs.existsSync(uploadsDir)) {
         fs.mkdirSync(uploadsDir, { recursive: true });
         console.log('[Setup] Created uploads directory.');
     }
 
-    // Open its own connection for setup work
     const db = new sqlite3.Database(dbPath);
 
     try {
-        // Enable WAL mode and foreign keys
         await dbRun(db, "PRAGMA journal_mode=WAL");
         await dbRun(db, "PRAGMA foreign_keys = ON");
 
-        // ═══ 1. Create Tables ═══════════════════════════════════
         console.log('[Setup] Checking database tables...');
 
-        // 1.1 Users
         await dbRun(db, `CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
@@ -168,7 +149,6 @@ async function setup() {
             is_active INTEGER DEFAULT 1
         )`);
 
-        // 1.2 Estimations
         await dbRun(db, `CREATE TABLE IF NOT EXISTS estimations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -185,7 +165,6 @@ async function setup() {
             FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
         )`);
 
-        // 1.3 Estimation Configs
         await dbRun(db, `CREATE TABLE IF NOT EXISTS estimation_configs (
             id INTEGER PRIMARY KEY DEFAULT 1,
             hours_per_function REAL DEFAULT 2.0,
@@ -199,7 +178,6 @@ async function setup() {
             updated_at DATETIME
         )`);
 
-        // 1.4 Feedbacks
         await dbRun(db, `CREATE TABLE IF NOT EXISTS feedbacks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -210,7 +188,6 @@ async function setup() {
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )`);
 
-        // 1.5 OWASP Test Cases
         await dbRun(db, `CREATE TABLE IF NOT EXISTS owasp_test_cases (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             code TEXT UNIQUE NOT NULL,
@@ -221,7 +198,6 @@ async function setup() {
             risk_weight TEXT DEFAULT 'Medium'
         )`);
 
-        // 1.6 App Functions
         await dbRun(db, `CREATE TABLE IF NOT EXISTS app_functions (
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
@@ -229,7 +205,6 @@ async function setup() {
             mapped_wstg_json TEXT
         )`);
 
-        // 1.7 System Settings
         await dbRun(db, `CREATE TABLE IF NOT EXISTS system_settings (
             key TEXT PRIMARY KEY,
             value TEXT NOT NULL,
@@ -239,7 +214,6 @@ async function setup() {
 
         console.log('[Setup] ✓ All tables verified.');
 
-        // ═══ 2. Run Migrations (add missing columns) ════════════
         console.log('[Setup] Running migrations...');
 
         const migrations = [
@@ -258,7 +232,6 @@ async function setup() {
                 console.log(`  ✓ Added column: ${m.table}.${m.column}`);
             } catch (err) {
                 if (err.message.includes('duplicate column')) {
-                    // Column already exists - OK
                 } else {
                     console.warn(`  ⚠ Migration ${m.table}.${m.column}:`, err.message);
                 }
@@ -267,10 +240,8 @@ async function setup() {
 
         console.log('[Setup] ✓ Migrations complete.');
 
-        // ═══ 3. Seed Data (only if empty) ═══════════════════════
         console.log('[Setup] Checking seed data...');
 
-        // 3.1 Estimation Config
         const configRow = await dbGet(db, "SELECT COUNT(*) as count FROM estimation_configs");
         if (configRow.count === 0) {
             await dbRun(db, `INSERT INTO estimation_configs 
@@ -279,43 +250,39 @@ async function setup() {
             console.log('  ✓ Seeded estimation_configs.');
         }
 
-        // 3.2 OWASP Test Cases
         const owaspRow = await dbGet(db, "SELECT COUNT(*) as count FROM owasp_test_cases");
         if (owaspRow.count === 0) {
             for (const test of defaultOWASP) {
                 try {
                     await dbRun(db, "INSERT OR IGNORE INTO owasp_test_cases (code, category, name, base_hours) VALUES (?, ?, ?, ?)",
                         [test.code, test.category, test.name, test.base_hours]);
-                } catch (e) { /* ignore duplicates */ }
+                } catch (e) { }
             }
             console.log('  ✓ Seeded owasp_test_cases.');
         }
 
-        // 3.3 App Functions
         const funcRow = await dbGet(db, "SELECT COUNT(*) as count FROM app_functions");
         if (funcRow.count === 0) {
             for (const func of businessFunctions) {
                 try {
                     await dbRun(db, "INSERT OR REPLACE INTO app_functions (id, name, description, mapped_wstg_json) VALUES (?, ?, ?, ?)",
                         [func.id, func.name, func.description, func.wstg]);
-                } catch (e) { /* ignore errors */ }
+                } catch (e) { }
             }
             console.log('  ✓ Seeded app_functions.');
         }
 
-        // 3.4 System Settings
         const settingRow = await dbGet(db, "SELECT COUNT(*) as count FROM system_settings");
         if (settingRow.count === 0) {
             for (const setting of defaultSettings) {
                 try {
                     await dbRun(db, "INSERT OR REPLACE INTO system_settings (key, value, description, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
                         [setting.key, setting.value, setting.description]);
-                } catch (e) { /* ignore errors */ }
+                } catch (e) { }
             }
             console.log('  ✓ Seeded system_settings.');
         }
 
-        // 3.5 Default Users (only in development and only if no users exist)
         const userRow = await dbGet(db, "SELECT COUNT(*) as count FROM users");
         if (userRow.count === 0) {
             if (process.env.NODE_ENV === 'production') {
@@ -326,7 +293,7 @@ async function setup() {
                         const hash = bcrypt.hashSync(user.password, 10);
                         await dbRun(db, "INSERT OR IGNORE INTO users (username, password, role, is_active) VALUES (?, ?, ?, 1)",
                             [user.username, hash, user.role]);
-                    } catch (e) { /* ignore duplicates */ }
+                    } catch (e) { }
                 }
                 console.log('  ✓ Seeded default users (dev mode).');
                 console.warn('  ⚠ WARNING: Default credentials created. DO NOT USE IN PRODUCTION.');
@@ -335,7 +302,6 @@ async function setup() {
 
         console.log('[Setup] ✓ Seed data verified.');
 
-        // ═══ Summary ════════════════════════════════════════════
         if (isNewDb) {
             console.log('\n══════════════════════════════════════════════════');
             console.log('  ✓ NEW DATABASE CREATED AND INITIALIZED');
@@ -354,11 +320,7 @@ async function setup() {
     }
 }
 
-// ─── Export ───────────────────────────────────────────────────
-
 module.exports = setup;
-
-// ─── Allow running directly: node config/database.js ──────────
 
 if (require.main === module) {
     setup()

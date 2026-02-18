@@ -22,7 +22,6 @@ exports.getSettings = async (req, res) => {
 exports.toggleUserStatus = async (req, res) => {
     try {
         const { userId, status } = req.body;
-        // Don't allow toggling own status (security measure for admin)
         if (parseInt(userId) === req.user.id) {
             return res.redirect('/settings?error=' + encodeURIComponent('You cannot deactivate your own account.'));
         }

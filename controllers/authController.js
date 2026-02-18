@@ -1,4 +1,3 @@
-// controllers/authController.js
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
@@ -33,7 +32,6 @@ exports.logout = (req, res, next) => {
     });
 };
 
-// API Handling
 exports.apiLogin = async (req, res) => {
     const { username, password } = req.body;
 

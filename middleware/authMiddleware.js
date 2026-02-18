@@ -1,10 +1,8 @@
-// middleware/authMiddleware.js
 exports.isAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
         if (req.user.is_active) {
             return next();
         } else {
-            // User is deactivated, log them out
             req.logout((err) => {
                 if (err) console.error(err);
                 return res.redirect('/auth/login?error=' + encodeURIComponent('Your account has been deactivated. Please contact administrator.'));

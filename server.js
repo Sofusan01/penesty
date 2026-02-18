@@ -1,20 +1,21 @@
 const setup = require('./config/database');
+
 const PORT = process.env.PORT || 3000;
 
-// Run database setup before starting the server
 const fs = require('fs');
+
 const https = require('https');
+
 const http = require('http');
+
 const path = require('path');
 
-// Run database setup before starting the server
 setup()
     .then(() => {
-        // Only require app AFTER setup is done
         const app = require('./app');
 
-        // Check for SSL certificates
         const keyPath = path.join(__dirname, 'server.key');
+
         const certPath = path.join(__dirname, 'server.cert');
 
         if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
@@ -22,6 +23,7 @@ setup()
                 key: fs.readFileSync(keyPath),
                 cert: fs.readFileSync(certPath)
             };
+
             https.createServer(options, app).listen(PORT, '0.0.0.0', () => {
                 console.log(`Server running on HTTPS ${PORT} (Secure)`);
             });
@@ -33,5 +35,6 @@ setup()
     })
     .catch(err => {
         console.error('Failed to initialize database. Server will not start.', err);
+
         process.exit(1);
     });

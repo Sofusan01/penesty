@@ -1,4 +1,3 @@
-// controllers/systemSettingsController.js
 const SystemSetting = require('../models/SystemSetting');
 
 exports.getSettingsPage = async (req, res) => {
@@ -21,16 +20,12 @@ exports.updateSettings = async (req, res) => {
         const updateTasks = [];
 
         for (const [key, rawValue] of Object.entries(req.body)) {
-            // Check if key is part of settings
-            // We assume keys start with 'setting_' in the form to distinguish them
             if (key.startsWith('setting_')) {
                 const settingKey = key.replace('setting_', '');
 
-                // Validate JSON
                 try {
                     const parsedValue = JSON.parse(rawValue);
 
-                    // Schema Validation
                     if (settingKey === 'calculation_rules') {
                         if (typeof parsedValue.hours_per_day !== 'number' || parsedValue.hours_per_day <= 0 || parsedValue.hours_per_day > 24) {
                             throw new Error('hours_per_day must be 1-24');

@@ -1,4 +1,3 @@
-// models/Estimation.js
 const db = require('../config/sqlite');
 
 module.exports = {
@@ -76,7 +75,6 @@ module.exports = {
         });
     },
 
-    // Admin Delete (Can delete any by ID)
     deleteById: (id) => {
         return new Promise((resolve, reject) => {
             const sql = "DELETE FROM estimations WHERE id = ?";

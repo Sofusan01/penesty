@@ -1,4 +1,3 @@
-// models/EstimationConfig.js
 const db = require('../config/sqlite');
 
 class EstimationConfig {
@@ -9,7 +8,6 @@ class EstimationConfig {
                 if (err) {
                     reject(err);
                 } else if (!row) {
-                    // Fallback if not seeded properly
                     const defaultConfig = {
                         hours_per_function: 2.0,
                         report_overhead_hours: 8.0,
@@ -57,6 +55,22 @@ class EstimationConfig {
                 if (err) return reject(err);
                 resolve(this.changes);
             });
+        });
+    }
+
+    static async reset() {
+        return new Promise((resolve, reject) => {
+            const defaultConfig = {
+                hours_per_function: 2.0,
+                report_overhead_hours: 8.0,
+                blackbox_factor: 1.5,
+                graybox_factor: 1.0,
+                web_factor: 1.0,
+                mobile_factor: 1.2,
+                api_factor: 0.9,
+                infra_factor: 0.5
+            };
+            this.update(defaultConfig).then(resolve).catch(reject);
         });
     }
 }

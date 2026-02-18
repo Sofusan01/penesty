@@ -1,5 +1,3 @@
-// config/sqlite.js
-// จัดการ database connection อย่างเดียว
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 

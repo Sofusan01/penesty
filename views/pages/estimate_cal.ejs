@@ -34,7 +34,8 @@
                                     <% } %>
 
                                         <div class="card">
-                                            <form action="/update-config" method="POST">
+                                            <form action="/update-config" method="POST" id="configForm">
+                                                <input type="hidden" name="action" id="formAction" value="save">
 
                                                 <!-- Base Parameters -->
                                                 <div class="setting-group">
@@ -173,24 +174,32 @@
                                                     </div>
                                                 </div>
 
-                                                <button type="button" class="btn" onclick="showConfirmModal(event)"
-                                                    style="width: 100%; margin-top: 2rem; padding: 1rem; font-size: 1.1rem;">
-                                                    💾 บันทึกการตั้งค่า (Save Configuration)
-                                                </button>
+                                                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        onclick="showResetModal(event)"
+                                                        style="flex: 1; padding: 1rem; font-size: 1.1rem; border: 1px solid #dc2626; color: #dc2626; background: white;">
+                                                        🔄 รีเซ็ตค่าเริ่มต้น (Reset Default)
+                                                    </button>
+                                                    <button type="button" class="btn" onclick="showConfirmModal(event)"
+                                                        style="flex: 2; padding: 1rem; font-size: 1.1rem;">
+                                                        💾 บันทึกการตั้งค่า (Save Configuration)
+                                                    </button>
+                                                </div>
                                             </form>
                                         </div>
                     </div>
                 </div>
             </div>
     </div>
-    <!-- Custom Confirmation Modal -->
+
+    <!-- Save Confirmation Modal -->
     <div id="confirmModal" class="modal-overlay">
         <div class="modal-content" style="max-width: 480px; border-top: 5px solid var(--primary-color);">
             <div class="modal-header">
                 <h3 style="margin: 0; color: var(--primary-color); display: flex; align-items: center; gap: 0.5rem;">
                     🛡️ ยืนยันการเปลี่ยนแปลง
                 </h3>
-                <button type="button" class="close-modal" onclick="closeModal()">&times;</button>
+                <button type="button" class="close-modal" onclick="closeModal('confirmModal')">&times;</button>
             </div>
             <div class="modal-body" style="background: white; padding: 2rem;">
                 <p style="text-align: center; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 1.5rem;">
@@ -206,9 +215,41 @@
             </div>
             <div class="modal-footer"
                 style="background: #f8fafc; display: flex; justify-content: flex-end; gap: 1rem; padding: 1.25rem 2rem;">
-                <button type="button" class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>
-                <button type="button" class="btn" id="confirmSaveBtn" onclick="submitForm()">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('confirmModal')">ยกเลิก</button>
+                <button type="button" class="btn" id="confirmSaveBtn" onclick="submitForm('save')">
                     💾 ยืนยันบันทึกข้อมูล
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Confirmation Modal -->
+    <div id="resetModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 480px; border-top: 5px solid #dc2626;">
+            <div class="modal-header">
+                <h3 style="margin: 0; color: #dc2626; display: flex; align-items: center; gap: 0.5rem;">
+                    ⚠️ ยืนยันการรีเซ็ตค่า
+                </h3>
+                <button type="button" class="close-modal" onclick="closeModal('resetModal')">&times;</button>
+            </div>
+            <div class="modal-body" style="background: white; padding: 2rem;">
+                <p style="text-align: center; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 1.5rem;">
+                    คุณต้องการรีเซ็ตค่าทั้งหมดกลับเป็นค่าเริ่มต้นหรือไม่?
+                </p>
+                <div
+                    style="background-color: #fef2f2; border: 1px solid #fecaca; padding: 1rem; border-radius: 0.5rem; display: flex; gap: 0.75rem; align-items: flex-start;">
+                    <span style="font-size: 1.25rem; color: #dc2626;">❗</span>
+                    <span style="font-size: 0.9rem; color: #b91c1c;">
+                        ค่าที่ตั้งไว้ทั้งหมดจะหายไปและกลับไปใช้ค่า Default ของระบบ การกระทำนี้ไม่สามารถย้อนกลับได้
+                    </span>
+                </div>
+            </div>
+            <div class="modal-footer"
+                style="background: #f8fafc; display: flex; justify-content: flex-end; gap: 1rem; padding: 1.25rem 2rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('resetModal')">ยกเลิก</button>
+                <button type="button" class="btn" id="confirmResetBtn" onclick="submitForm('reset')"
+                    style="background: #dc2626; color: white;">
+                    🔄 ยืนยันรีเซ็ต
                 </button>
             </div>
         </div>
@@ -219,36 +260,49 @@
             event.preventDefault();
             const modal = document.getElementById('confirmModal');
             modal.style.display = 'flex';
-            modal.style.opacity = '0';
-            setTimeout(() => {
-                modal.style.transition = 'opacity 0.3s ease';
-                modal.style.opacity = '1';
-            }, 10);
+            setTimeout(() => { modal.style.opacity = '1'; }, 10);
         }
 
-        function closeModal() {
-            const modal = document.getElementById('confirmModal');
-            modal.style.opacity = '0';
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300);
+        function showResetModal(event) {
+            event.preventDefault();
+            const modal = document.getElementById('resetModal');
+            modal.style.display = 'flex';
+            setTimeout(() => { modal.style.opacity = '1'; }, 10);
         }
 
-        function submitForm() {
-            // Show loading state on button
-            const btn = document.getElementById('confirmSaveBtn');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
-            btn.disabled = true;
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.opacity = '0';
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
 
-            // Submit the form
-            document.querySelector('form[action="/update-config"]').submit();
+        function submitForm(action) {
+            const form = document.getElementById('configForm');
+            const actionInput = document.getElementById('formAction');
+
+            // Set action type
+            actionInput.value = action;
+
+            // Update button UI
+            if (action === 'save') {
+                const btn = document.getElementById('confirmSaveBtn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
+                btn.disabled = true;
+            } else if (action === 'reset') {
+                const btn = document.getElementById('confirmResetBtn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังรีเซ็ต...';
+                btn.disabled = true;
+            }
+
+            // Submit
+            form.submit();
         }
 
         // Close on overlay click
         window.onclick = function (event) {
-            const modal = document.getElementById('confirmModal');
-            if (event.target == modal) {
-                closeModal();
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.style.opacity = '0';
+                setTimeout(() => { event.target.style.display = 'none'; }, 300);
             }
         }
     </script>

@@ -1,15 +1,9 @@
-// middleware/security.js
-
-// 4. CONTENT SECURITY POLICY
-// Minimize unsafe-inline/eval. 
-// Note: EJS often needs unsafe-inline for scripts in templates unless moved to files/nonces.
-// For strictness, we remove unsafe-eval.
 const cspMiddleware = (req, res, next) => {
     res.setHeader(
         'Content-Security-Policy',
         "default-src 'self'; " +
-        "connect-src 'self'; " + // Explicitly allow AJAX/Fetch to self
-        "script-src 'self' 'unsafe-inline'; " + // Allow inline scripts (needed for template logic)
+        "connect-src 'self'; " +
+        "script-src 'self' 'unsafe-inline'; " +
         "style-src 'self' 'unsafe-inline'; " +
         "img-src 'self' data: blob:; " +
         "font-src 'self' https://fonts.gstatic.com; " +
@@ -19,20 +13,13 @@ const cspMiddleware = (req, res, next) => {
     next();
 };
 
-// 2. SECURITY FIXES
-// Enforce Origin / Referer validation for state-changing requests
 const originCheckMiddleware = (req, res, next) => {
-    // Only verify on state-changing methods
     if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
         const origin = req.get('Origin');
         const referer = req.get('Referer');
-        // Support Nginx/Proxy: Check X-Forwarded-Host first, then Host
         const host = req.get('X-Forwarded-Host') || req.get('Host');
 
-        // Allow requests with no Origin/Referer if receiving from non-browser agents (optional policy)
-        // But for browser security, we usually expect one.
         if (!origin && !referer) {
-            // Strict mode: Block if neither is present
             return res.status(403).send('Forbidden: Missing Origin/Referer');
         }
 
@@ -44,7 +31,6 @@ const originCheckMiddleware = (req, res, next) => {
                 if (originUrl.host === host) valid = true;
             }
 
-            // Fallback to Referer if Origin matches or if strictly relying on Referer
             if (!valid && referer) {
                 const refererUrl = new URL(referer);
                 if (refererUrl.host === host) valid = true;

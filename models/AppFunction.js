@@ -1,4 +1,3 @@
-// models/AppFunction.js
 const db = require('../config/sqlite');
 
 class AppFunction {
@@ -8,7 +7,6 @@ class AppFunction {
             db.all(sql, [], (err, rows) => {
                 if (err) reject(err);
                 else {
-                    // Parse the JSON field safe
                     const parsed = rows.map(row => {
                         let wstg = [];
                         try {

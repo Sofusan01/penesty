@@ -13,11 +13,9 @@ exports.getDashboard = async (req, res) => {
 
         const userId = req.user.role === 'admin' ? null : req.user.id;
 
-        // Count total items for pagination
         const totalItems = await Estimation.count(userId);
         const totalPages = Math.ceil(totalItems / limit);
 
-        // Safe Parallel DB Selects
         const [estimations, appFunctions, constraints] = await Promise.all([
             (req.user.role === 'admin' ? Estimation.getAll(limit, offset, order) : Estimation.findByUserId(req.user.id, limit, offset, order))
                 .catch(err => { console.error('Est Select Err:', err); return []; }),
@@ -44,21 +42,15 @@ exports.getDashboard = async (req, res) => {
     }
 };
 
-// ... (skipping calculateEstimation) ...
-
 exports.calculateEstimation = async (req, res) => {
-    // 1. INPUTS
     const {
         client_name, device_type, test_type, platform_count, selected_functions,
         number_of_roles, target_url, target_mobile_app, target_infra_desc
     } = req.body;
 
     try {
-        // Use Centralized Calculator
-        // 1. INPUTS
         let funcIds = selected_functions || [];
         if (!Array.isArray(funcIds)) funcIds = [funcIds];
-        // Deduplicate and filter truthy values
         funcIds = [...new Set(funcIds.filter(f => f))];
 
         const calcResult = await estimationCalculator.calculate({
@@ -82,10 +74,8 @@ exports.calculateEstimation = async (req, res) => {
             });
         }
 
-        // Target Info Map - Consolidated input from frontend maps to 'req.body.target_url'
-        let targetInfo = target_url || client_name; // Fallback to client_name if target_url is not provided (merged input)
+        let targetInfo = target_url || client_name;
 
-        // 6. RENDER PREVIEW
         res.render('pages/dashboard', {
             user: req.user,
             estimations, appFunctions, constraints,
@@ -94,7 +84,7 @@ exports.calculateEstimation = async (req, res) => {
             previewResult: {
                 client_name, device_type, test_type,
                 target_info: targetInfo,
-                selected_functions: funcIds, // Pass array for re-submission
+                selected_functions: funcIds,
                 function_count: calcResult.function_count,
                 unique_wstg_count: calcResult.unique_wstg_count,
                 platform_count: calcResult.platform_count,
@@ -111,13 +101,11 @@ exports.calculateEstimation = async (req, res) => {
 };
 
 exports.confirmEstimation = async (req, res) => {
-    // 1. INPUTS
     const {
-        client_name, device_type, test_type, target_url, // Maps from consolidated input name
+        client_name, device_type, test_type, target_url,
         platform_count, number_of_roles, selected_functions_json
     } = req.body;
 
-    // Map for consistency
     const target_info = target_url || client_name;
 
     try {
@@ -125,14 +113,12 @@ exports.confirmEstimation = async (req, res) => {
         try {
             selected_functions = JSON.parse(selected_functions_json);
             if (!Array.isArray(selected_functions)) {
-                // If parsed successfully but not an array, treat as empty or invalid
                 selected_functions = [];
             }
         } catch (e) {
             return res.redirect('/dashboard?error=' + encodeURIComponent("Invalid function data."));
         }
 
-        // 2. RE-CALCULATE for Security
         const calcResult = await estimationCalculator.calculate({
             device_type, test_type, platform_count, number_of_roles, selected_functions
         });
@@ -149,7 +135,6 @@ exports.confirmEstimation = async (req, res) => {
             return res.redirect('/dashboard?error=' + encodeURIComponent("Client/Target Info must be less than 255 characters."));
         }
 
-        // Prevent XSS or basic Injection attempts (though EJS escapes by default, we can be strict)
         const suspiciousPattern = /[<>]/;
         if (suspiciousPattern.test(client_name)) {
             return res.redirect('/dashboard?error=' + encodeURIComponent("Invalid characters detected in Client/Target Info."));
@@ -164,11 +149,10 @@ exports.confirmEstimation = async (req, res) => {
             platform_count: calcResult.platform_count,
             number_of_roles: calcResult.number_of_roles,
             target_info,
-            estimated_days: calcResult.estimated_days, // Trusted Server-Side Calculation
+            estimated_days: calcResult.estimated_days,
             selected_functions: JSON.stringify(selected_functions)
         });
 
-        // SUCCESS: Redirect using PRG Pattern
         res.redirect('/dashboard?success=' + encodeURIComponent('Estimation saved successfully!'));
 
     } catch (err) {
@@ -182,7 +166,6 @@ exports.deleteEstimation = async (req, res) => {
         if (req.user.role === 'admin') {
             await Estimation.deleteById(req.params.id);
         } else {
-            // User can only delete their own
             await Estimation.delete(req.params.id, req.user.id);
         }
         res.redirect('/dashboard?tab=history');

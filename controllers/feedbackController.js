@@ -1,24 +1,63 @@
-// controllers/feedbackController.js
 const Feedback = require('../models/Feedback');
 const fs = require('fs');
 const path = require('path');
+const checkMagicNumbers = require('../utils/fileValidator');
 
 exports.submitFeedback = async (req, res) => {
     try {
         const { subject, message } = req.body;
-        const imagePath = req.file ? '/uploads/feedback/' + req.file.filename : null;
+        let imagePath = null;
+
+        if (req.file) {
+            // 1. Verify Magic Bytes (File Signature)
+            const filePath = req.file.path;
+            const fileCheck = checkMagicNumbers(filePath);
+
+            if (!fileCheck) {
+                // If invalid file type (based on content), DELETE immediately
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+                return res.render('pages/feedback', {
+                    user: req.user,
+                    error: 'Unsafe file detected (invalid image signature). Upload rejected.',
+                    success: null
+                });
+            }
+
+            // 2. Additional check: Extension match (optional but good practice)
+            const ext = path.extname(req.file.originalname).toLowerCase().replace('.', '');
+            // Simple mapping for common extensions
+            const typeMap = { 'jpg': 'jpg', 'jpeg': 'jpg', 'png': 'png', 'gif': 'gif' };
+
+            if (typeMap[ext] !== fileCheck && !(ext === 'jpeg' && fileCheck === 'jpg')) {
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+                return res.render('pages/feedback', {
+                    user: req.user,
+                    error: 'File extension does not match content type.',
+                    success: null
+                });
+            }
+
+            // If passed, use the path for DB
+            imagePath = '/uploads/feedback/' + req.file.filename;
+        }
 
         if (!subject || subject.trim() === '') {
+            // If validation failed, cleanup file
+            if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
             return res.render('pages/feedback', { user: req.user, error: 'Subject cannot be empty.', success: null });
         }
 
         if (!message || typeof message !== 'string' || message.trim() === '' || message.length > 2000) {
+            if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
             return res.render('pages/feedback', { user: req.user, error: 'Feedback message cannot be empty or too long.', success: null });
         }
 
         await Feedback.create(req.user.id, subject.trim(), message.trim(), imagePath);
 
-        // Success redirect
         res.render('pages/feedback', {
             user: req.user,
             error: null,
@@ -27,6 +66,8 @@ exports.submitFeedback = async (req, res) => {
 
     } catch (err) {
         console.error(err);
+        // Error handling cleanup
+        if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
         res.render('pages/feedback', { user: req.user, error: 'เกิดข้อผิดพลาดในการส่งข้อเสนอแนะ', success: null });
     }
 };
@@ -64,16 +105,12 @@ exports.deleteFeedback = async (req, res) => {
     try {
         const feedbackId = req.params.id;
 
-        // Fetch feedback to get image path before deleting
         const feedback = await Feedback.getById(feedbackId);
 
         if (feedback && feedback.image_path) {
-            // Construct absolute path to the image
-            // image_path is like "/uploads/feedback/filename.jpg"
             const uniquePath = feedback.image_path.startsWith('/') ? feedback.image_path.substring(1) : feedback.image_path;
             const absolutePath = path.join(__dirname, '../public', uniquePath);
 
-            // Delete file if it exists
             if (fs.existsSync(absolutePath)) {
                 fs.unlinkSync(absolutePath);
             }
@@ -102,10 +139,6 @@ exports.bulkDeleteFeedback = async (req, res) => {
             return res.redirect('/feedback/history?error=' + encodeURIComponent("No items selected for deletion."));
         }
 
-        // Fetch all feedbacks to be deleted for image cleanup
-        // Since we don't have a bulk get, we'll iterate or fetch all and filter.
-        // Fetching all is safer given the likely small number, but iterating by ID is more direct if getById is efficient.
-        // Let's iterate for images.
         for (const id of ids) {
             try {
                 const feedback = await Feedback.getById(id);

@@ -1,9 +1,8 @@
-// config/rateLimiters.js
 const rateLimit = require('express-rate-limit');
 
 const loginLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minute
-    max: 15, // Limit each IP to 15 requests per minute
+    windowMs: 1 * 60 * 1000,
+    max: 15,
     message: "ทำรายการมากเกินไป กรุณารอสักครู่ (Too many login attempts, please try again after a minute)",
     standardHeaders: true,
     legacyHeaders: false,
@@ -14,7 +13,7 @@ const loginLimiter = rateLimit({
 });
 
 const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
+    windowMs: 15 * 60 * 1000,
     max: 100,
     message: "API Rate limit exceeded"
 });
