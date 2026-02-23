@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <%- include('../partials/head') %>
+</head>
+
+<body>
+    <div class="app-layout">
+        <% if (locals.user) { %>
+            <%- include('../partials/sidebar') %>
+                <% } %>
+
+                    <div class="main-content" <% if (!locals.user) { %> style="margin-left: 0; width: 100%;" <% } %>>
+                            <div class="dashboard-container">
+                                <header>
+                                    <div>
+                                        <h1 style="margin: 0; font-size: 1.5rem; color: var(--danger-color);">404 Not
+                                            Found</h1>
+                                        <span class="text-muted"
+                                            style="font-size: 0.9rem;">ไม่พบหน้าที่คุณต้องการ</span>
+                                    </div>
+                                    <% if (locals.user) { %>
+                                        <%- include('../partials/header_user_menu') %>
+                                            <% } %>
+                                </header>
+
+                                <div class="content">
+                                    <div class="card" style="text-align: center; padding: 4rem 2rem;">
+                                        <div style="font-size: 4rem; color: var(--danger-color); margin-bottom: 1rem;">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </div>
+                                        <h2 style="margin-bottom: 1rem;">หาหน้านี้ไม่เจอ (Page Not Found)</h2>
+                                        <p style="color: var(--text-muted); margin-bottom: 2rem;">
+                                            เส้นทาง <strong style="color: var(--primary-color);">
+                                                <%= url %>
+                                            </strong> ที่คุณพยายามเข้าถึงไม่มีอยู่ในระบบ
+                                        </p>
+                                        <a href="<%= locals.user ? '/dashboard' : '/' %>" class="btn btn-primary"
+                                            style="display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center; min-width: 150px;">
+                                            <i class="fas fa-home"></i> กลับไปหน้าหลัก
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+    </div>
+</body>
+
+</html>

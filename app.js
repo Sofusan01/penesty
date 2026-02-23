@@ -90,12 +90,21 @@ app.use('/api', require('./routes/apiRoutes'));
 app.use('/', require('./routes/indexRoutes'));
 
 app.use((req, res) => {
-   res.status(404).send('Not Found');
+   if (req.originalUrl.startsWith('/api/')) {
+       return res.status(404).json({ error: 'API Endpoint Not Found' });
+   }
+   res.status(404).render('pages/404', { url: req.originalUrl, user: req.user });
 });
 
 app.use((err, req, res, next) => {
-   console.error(err);
-   res.status(500).send('Internal Server Error');
+   console.error("\x1b[31m[Server Error]\x1b[0m", err);
+   if (req.originalUrl.startsWith('/api/')) {
+       return res.status(500).json({ error: 'Internal Server Error' });
+   }
+   res.status(500).render('pages/500', { 
+       error: process.env.NODE_ENV === 'production' ? 'เกิดข้อผิดพลาดที่เซิร์ฟเวอร์' : err.message,
+       user: req.user || null 
+   });
 });
 
 module.exports = app;

@@ -4,7 +4,7 @@ const OWASPTestCase = require('../models/OWASPTestCase');
 const Estimation = require('../models/Estimation');
 const estimationCalculator = require('../utils/estimationCalculator');
 
-exports.getDashboard = async (req, res) => {
+exports.getDashboard = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = 10;
@@ -38,7 +38,7 @@ exports.getDashboard = async (req, res) => {
         });
     } catch (err) {
         console.error("Critical Dashboard Error:", err);
-        res.status(500).send("System Error: Unable to load dashboard data. Please try again later.");
+        next(err);
     }
 };
 

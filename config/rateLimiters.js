@@ -15,7 +15,7 @@ const loginLimiter = rateLimit({
 const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
-    message: "API Rate limit exceeded"
+    message: { error: "API Rate limit exceeded" }
 });
 
 module.exports = {
