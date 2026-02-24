@@ -1466,3 +1466,49 @@ header h1 {
     border-radius: var(--radius-md);
     border: 1px solid #e2e8f0;
 }
+
+/* Custom Tooltip */
+.custom-tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: help;
+}
+
+.custom-tooltip .custom-tooltip-text {
+    visibility: hidden;
+    width: 280px;
+    background-color: #334155;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 10px 14px;
+    position: absolute;
+    z-index: 50;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s, visibility 0.2s;
+    font-size: 0.85rem;
+    font-weight: normal;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    white-space: normal;
+    line-height: 1.5;
+}
+
+.custom-tooltip .custom-tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #334155 transparent transparent transparent;
+}
+
+.custom-tooltip:hover .custom-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}

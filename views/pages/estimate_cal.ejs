@@ -21,6 +21,53 @@
                     </header>
 
                     <div class="content">
+
+<style>
+.inline-tooltip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: help;
+}
+.inline-tooltip .inline-tooltip-text {
+    visibility: hidden;
+    width: max-content;
+    max-width: 250px;
+    background-color: #1e293b;
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 9999;
+    bottom: 150%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    white-space: normal;
+    font-weight: 400;
+    line-height: 1.4;
+    pointer-events: none;
+}
+.inline-tooltip .inline-tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #1e293b transparent transparent transparent;
+}
+.inline-tooltip:hover .inline-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+</style>
+
                         <% if (locals.error) { %>
                             <div class="error">
                                 <%= error %>
@@ -43,16 +90,24 @@
                                                     <div
                                                         style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                                                         <div class="form-group">
-                                                            <label for="hours_per_function">เวลาต่อฟังก์ชัน (Hours per
-                                                                Function)</label>
+                                                            <label for="hours_per_function" style="display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">เวลาต่อฟังก์ชัน  (Hours per Function)
+    <span class="inline-tooltip">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="text-muted" viewBox="0 0 16 16"><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14z"/></svg>
+        <span class="inline-tooltip-text">เวลาเฉลี่ยที่ใช้ในการตรวจสอบและประเมินช่องโหว่ความปลอดภัยต่อ 1 ฟังก์ชันการทำงานหลักของระบบ (เช่น ระบบ Login คิดเป็น 1 ฟังก์ชัน)</span>
+    </span>
+</label>
                                                             <input type="number" step="0.1" id="hours_per_function"
                                                                 name="hours_per_function"
                                                                 value="<%= config.hours_per_function %>" required>
                                                             <small class="text-muted">ค่าเริ่มต้น: 2.0 ชั่วโมง</small>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="report_overhead_hours">เวลาทำรายงาน (Report
-                                                                Overhead Hours)</label>
+                                                            <label for="report_overhead_hours" style="display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">เวลาทำรายงาน  (Report Overhead Hours)
+    <span class="inline-tooltip">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="text-muted" viewBox="0 0 16 16"><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14z"/></svg>
+        <span class="inline-tooltip-text">เวลาที่เผื่อไว้สำหรับการจัดทำและสรุปรายงาน (ชั่วโมง)</span>
+    </span>
+</label>
                                                             <input type="number" step="0.1" id="report_overhead_hours"
                                                                 name="report_overhead_hours"
                                                                 value="<%= config.report_overhead_hours %>" required>
@@ -68,14 +123,24 @@
                                                     <div
                                                         style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                                                         <div class="form-group">
-                                                            <label for="graybox_factor">Gray Box Factor</label>
+                                                            <label for="graybox_factor" style="display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">Gray Box Factor
+    <span class="inline-tooltip">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="text-muted" viewBox="0 0 16 16"><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14z"/></svg>
+        <span class="inline-tooltip-text">ตัวคูณระยะเวลาสำหรับการทดสอบแบบรู้ข้อมูลระบบบางส่วน (มาตรฐานคือ 1.0)</span>
+    </span>
+</label>
                                                             <input type="number" step="0.1" id="graybox_factor"
                                                                 name="graybox_factor"
                                                                 value="<%= config.graybox_factor %>" required>
                                                             <small class="text-muted">ค่าเริ่มต้น: 1.0 (มาตรฐาน)</small>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="blackbox_factor">Black Box Factor</label>
+                                                            <label for="blackbox_factor" style="display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">Black Box Factor
+    <span class="inline-tooltip">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="text-muted" viewBox="0 0 16 16"><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14z"/></svg>
+        <span class="inline-tooltip-text">ตัวคูณระยะเวลาสำหรับการทดสอบโดยไม่รู้ข้อมูลระบบเลย (ใช้เวลามากกว่า)</span>
+    </span>
+</label>
                                                             <input type="number" step="0.1" id="blackbox_factor"
                                                                 name="blackbox_factor"
                                                                 value="<%= config.blackbox_factor %>" required>
@@ -90,28 +155,48 @@
                                                     <div
                                                         style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                                                         <div class="form-group">
-                                                            <label for="web_factor">Web Application</label>
+                                                            <label for="web_factor" style="display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">Web Application
+    <span class="inline-tooltip">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="text-muted" viewBox="0 0 16 16"><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14z"/></svg>
+        <span class="inline-tooltip-text">ตัวคูณสำหรับระบบประเภทเว็บแอปพลิเคชัน</span>
+    </span>
+</label>
                                                             <input type="number" step="0.1" id="web_factor"
                                                                 name="web_factor" value="<%= config.web_factor %>"
                                                                 required>
                                                             <small class="text-muted">ค่าเริ่มต้น: 1.0</small>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="mobile_factor">Mobile Application</label>
+                                                            <label for="mobile_factor" style="display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">Mobile Application
+    <span class="inline-tooltip">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="text-muted" viewBox="0 0 16 16"><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14z"/></svg>
+        <span class="inline-tooltip-text">ตัวคูณสำหรับระบบแอปพลิเคชันมือถือ (มักจะใช้เวลาตรวจสอบนานกว่าเว็บ)</span>
+    </span>
+</label>
                                                             <input type="number" step="0.1" id="mobile_factor"
                                                                 name="mobile_factor" value="<%= config.mobile_factor %>"
                                                                 required>
                                                             <small class="text-muted">ค่าเริ่มต้น: 1.2</small>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="api_factor">API / Webservice</label>
+                                                            <label for="api_factor" style="display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">API / Webservice
+    <span class="inline-tooltip">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="text-muted" viewBox="0 0 16 16"><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14z"/></svg>
+        <span class="inline-tooltip-text">ตัวคูณสำหรับระบบ API (มักจะใช้เวลาน้อยกว่าหน้าเว็บที่มี UI)</span>
+    </span>
+</label>
                                                             <input type="number" step="0.1" id="api_factor"
                                                                 name="api_factor" value="<%= config.api_factor %>"
                                                                 required>
                                                             <small class="text-muted">ค่าเริ่มต้น: 0.9</small>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label for="infra_factor">Infrastructure</label>
+                                                            <label for="infra_factor" style="display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;">Infrastructure
+    <span class="inline-tooltip">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="text-muted" viewBox="0 0 16 16"><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14z"/></svg>
+        <span class="inline-tooltip-text">ตัวคูณสำหรับโครงสร้างพื้นฐานหรือระบบเครือข่าย</span>
+    </span>
+</label>
                                                             <input type="number" step="0.1" id="infra_factor"
                                                                 name="infra_factor" value="<%= config.infra_factor %>"
                                                                 required>

@@ -42,6 +42,30 @@
                 border-color: var(--primary-color);
                 box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
             }
+
+            .data-table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-md);
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.75rem 1rem;
+                text-align: left;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .data-table th {
+                background-color: #f1f5f9;
+                font-weight: 600;
+                color: var(--text-secondary);
+                text-transform: uppercase;
+                font-size: 0.8rem;
+                letter-spacing: 0.05em;
+            }
         </style>
 </head>
 
@@ -58,6 +82,57 @@
                     </header>
 
                     <div class="content">
+
+                        <style>
+                            .inline-tooltip {
+                                position: relative;
+                                display: inline-flex;
+                                align-items: center;
+                                cursor: help;
+                            }
+
+                            .inline-tooltip .inline-tooltip-text {
+                                visibility: hidden;
+                                width: max-content;
+                                max-width: 250px;
+                                background-color: #1e293b;
+                                color: #fff;
+                                text-align: left;
+                                border-radius: 6px;
+                                padding: 8px 12px;
+                                position: absolute;
+                                z-index: 9999;
+                                bottom: 150%;
+                                left: 50%;
+                                transform: translateX(-50%);
+                                opacity: 0;
+                                transition: opacity 0.2s;
+                                font-size: 0.85rem;
+                                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                                white-space: normal;
+                                font-weight: 400;
+                                line-height: 1.4;
+                                pointer-events: none;
+                                font-family: 'Sarabun', sans-serif;
+                            }
+
+                            .inline-tooltip .inline-tooltip-text::after {
+                                content: "";
+                                position: absolute;
+                                top: 100%;
+                                left: 50%;
+                                margin-left: -5px;
+                                border-width: 5px;
+                                border-style: solid;
+                                border-color: #1e293b transparent transparent transparent;
+                            }
+
+                            .inline-tooltip:hover .inline-tooltip-text {
+                                visibility: visible;
+                                opacity: 1;
+                            }
+                        </style>
+
                         <% if (locals.error) { %>
                             <div class="error">
                                 <%= error %>
@@ -71,24 +146,264 @@
                                     <% } %>
 
                                         <form action="/settings/system" method="POST">
+
                                             <% if (settings) { %>
-                                                <% settings.forEach(setting=> { %>
-                                                    <div class="setting-block">
-                                                        <label class="setting-key" for="setting_<%= setting.key %>">
-                                                            <%= setting.key %>
-                                                        </label>
-                                                        <span class="setting-desc">
-                                                            <%= setting.description %>
-                                                        </span>
-                                                        <textarea class="json-editor" name="setting_<%= setting.key %>"
-                                                            id="setting_<%= setting.key %>"
-                                                            required><%= JSON.stringify(setting.value, null, 2) %></textarea>
-                                                        <div id="validation_<%= setting.key %>"
-                                                            style="color:red; font-size:0.8rem; margin-top:0.25rem;">
-                                                        </div>
+                                                <div class="tabs-container">
+                                                    <ul class="tabs-nav">
+                                                        <% settings.forEach((setting, index)=> { %>
+                                                            <li class="tab-link <%= index === 0 ? 'active' : '' %>"
+                                                                onclick="switchSystemTab('<%= setting.key %>')">
+                                                                <%= setting.key.replace(/_/g, ' ' ).replace(/\b\w/g, l=>
+                                                                    l.toUpperCase()) %>
+                                                            </li>
+                                                            <% }) %>
+                                                    </ul>
+                                                </div>
+
+                                                <% settings.forEach((setting, index)=> { %>
+                                                    <div id="tab-<%= setting.key %>" class="system-tab-content" <% if
+                                                        (index===0) { %> style="display: block;" <% } else { %>
+                                                            style="display: none;" <% } %>>
+                                                                <div class="setting-block"
+                                                                    style="border-top-left-radius: 0;">
+                                                                    <div
+                                                                        style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-start;">
+                                                                        <div>
+                                                                            <label
+                                                                                style="font-size: 1.25rem; color: var(--primary-color); margin-bottom: 0.25rem;">
+                                                                                <%= setting.key %>
+                                                                            </label>
+                                                                            <span class="text-muted">
+                                                                                <%= setting.description %>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <textarea class="json-editor"
+                                                                        name="setting_<%= setting.key %>"
+                                                                        id="setting_<%= setting.key %>"
+                                                                        style="display:none;"
+                                                                        required><%= JSON.stringify(setting.value, null, 2) %></textarea>
+
+                                                                    <div class="table-container">
+                                                                        <table class="data-table ui-builder-table"
+                                                                            data-target="setting_<%= setting.key %>">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Parameter / Key</th>
+                                                                                    <th>Value</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <% if (typeof setting.value==='object'
+                                                                                    && !Array.isArray(setting.value)) {
+                                                                                    %>
+                                                                                    <%
+                                                                                        Object.keys(setting.value).forEach(param=>
+                                                                                        { %>
+                                                                                        <tr>
+
+                                                                                            <td
+                                                                                                style="font-family: monospace; font-weight: 500;">
+                                                                                                <div
+                                                                                                    style="display: flex; align-items: center; gap: 0.35rem;">
+                                                                                                    <%= param %>
+                                                                                                        <span
+                                                                                                            class="inline-tooltip">
+                                                                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                                                width="14"
+                                                                                                                height="14"
+                                                                                                                fill="currentColor"
+                                                                                                                class="text-muted"
+                                                                                                                viewBox="0 0 16 16">
+                                                                                                                <path
+                                                                                                                    d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z" />
+                                                                                                                <path
+                                                                                                                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14z" />
+                                                                                                            </svg>
+                                                                                                            <span
+                                                                                                                class="inline-tooltip-text">
+                                                                                                                <% if
+                                                                                                                    (param==='hours_per_day'
+                                                                                                                    ) {
+                                                                                                                    %>
+                                                                                                                    จำนวนชั่วโมงทำงานต่อ
+                                                                                                                    1
+                                                                                                                    วัน
+                                                                                                                    (Man-Day)
+                                                                                                                    ใช้คำนวณวันทำงาน
+                                                                                                                    <% } else
+                                                                                                                        if
+                                                                                                                        (param==='rounding_step'
+                                                                                                                        )
+                                                                                                                        {
+                                                                                                                        %>
+                                                                                                                        การปัดเศษ
+                                                                                                                        (0.5
+                                                                                                                        =
+                                                                                                                        ปัดเศษทีละครึ่งวัน,
+                                                                                                                        1
+                                                                                                                        =
+                                                                                                                        ปัดเศษเต็มวัน,
+                                                                                                                        0
+                                                                                                                        =
+                                                                                                                        ไม่ปัดเศษ)
+                                                                                                                        <% } else
+                                                                                                                            if
+                                                                                                                            (param==='default_platforms'
+                                                                                                                            )
+                                                                                                                            {
+                                                                                                                            %>
+                                                                                                                            จำนวนแพลตฟอร์มเริ่มต้น
+                                                                                                                            หากไม่ได้ระบุ
+                                                                                                                            <% } else
+                                                                                                                                if
+                                                                                                                                (param==='max_platforms'
+                                                                                                                                )
+                                                                                                                                {
+                                                                                                                                %>
+                                                                                                                                จำนวนแพลตฟอร์มสูงสุดที่อนุญาตให้ทดสอบได้
+                                                                                                                                <% } else
+                                                                                                                                    if
+                                                                                                                                    (param==='min_platforms'
+                                                                                                                                    )
+                                                                                                                                    {
+                                                                                                                                    %>
+                                                                                                                                    จำนวนแพลตฟอร์มต่ำสุดที่ต้องระบุ
+                                                                                                                                    <% } else
+                                                                                                                                        if
+                                                                                                                                        (param==='min_roles'
+                                                                                                                                        )
+                                                                                                                                        {
+                                                                                                                                        %>
+                                                                                                                                        จำนวน
+                                                                                                                                        Role
+                                                                                                                                        (สิทธิ์ผู้ใช้งาน)
+                                                                                                                                        ต่ำสุดที่ต้องระบุ
+                                                                                                                                        <% } else
+                                                                                                                                            if
+                                                                                                                                            (param==='max_roles'
+                                                                                                                                            )
+                                                                                                                                            {
+                                                                                                                                            %>
+                                                                                                                                            จำนวน
+                                                                                                                                            Role
+                                                                                                                                            สูงสุดที่อนุญาตให้ประเมินได้
+                                                                                                                                            <% } else
+                                                                                                                                                if
+                                                                                                                                                (param==='default_roles'
+                                                                                                                                                )
+                                                                                                                                                {
+                                                                                                                                                %>
+                                                                                                                                                จำนวน
+                                                                                                                                                Role
+                                                                                                                                                เริ่มต้น
+                                                                                                                                                <% } else
+                                                                                                                                                    if
+                                                                                                                                                    (param==='web_application'
+                                                                                                                                                    )
+                                                                                                                                                    {
+                                                                                                                                                    %>
+                                                                                                                                                    ประเภทการทดสอบที่อนุญาตสำหรับเว็บแอปพลิเคชัน
+                                                                                                                                                    <% } else
+                                                                                                                                                        if
+                                                                                                                                                        (param==='mobile_application'
+                                                                                                                                                        )
+                                                                                                                                                        {
+                                                                                                                                                        %>
+                                                                                                                                                        ประเภทการทดสอบที่อนุญาตสำหรับโมบายล์แอปพลิเคชัน
+                                                                                                                                                        <% } else
+                                                                                                                                                            if
+                                                                                                                                                            (param==='api_webservice'
+                                                                                                                                                            )
+                                                                                                                                                            {
+                                                                                                                                                            %>
+                                                                                                                                                            ประเภทการทดสอบที่อนุญาตสำหรับ
+                                                                                                                                                            API
+                                                                                                                                                            /
+                                                                                                                                                            เว็บเซอร์วิส
+                                                                                                                                                            <% } else
+                                                                                                                                                                if
+                                                                                                                                                                (param==='infrastructure'
+                                                                                                                                                                )
+                                                                                                                                                                {
+                                                                                                                                                                %>
+                                                                                                                                                                ประเภทการทดสอบที่อนุญาตสำหรับโครงสร้างพื้นฐาน
+                                                                                                                                                                <% } else
+                                                                                                                                                                    {
+                                                                                                                                                                    %>
+                                                                                                                                                                    กำหนดค่าการทำงานของระบบ
+                                                                                                                                                                    <% }
+                                                                                                                                                                        %>
+                                                                                                            </span>
+                                                                                                        </span>
+                                                                                                </div>
+                                                                                            </td>
+
+                                                                                            <td>
+                                                                                                <% if (typeof
+                                                                                                    setting.value[param]==='number'
+                                                                                                    ) { %>
+                                                                                                    <input type="number"
+                                                                                                        step="0.1"
+                                                                                                        class="form-input ui-builder-input"
+                                                                                                        data-key="<%= param %>"
+                                                                                                        data-type="number"
+                                                                                                        value="<%= setting.value[param] %>"
+                                                                                                        style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 4px;">
+                                                                                                    <% } else if
+                                                                                                        (Array.isArray(setting.value[param]))
+                                                                                                        { %>
+                                                                                                        <input
+                                                                                                            type="text"
+                                                                                                            class="form-input ui-builder-input"
+                                                                                                            data-key="<%= param %>"
+                                                                                                            data-type="array"
+                                                                                                            value="<%= setting.value[param].join(', ') %>"
+                                                                                                            placeholder="comma separated..."
+                                                                                                            style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 4px;">
+                                                                                                        <small
+                                                                                                            class="text-muted"
+                                                                                                            style="display:block; margin-top:0.25rem;">Comma
+                                                                                                            separated
+                                                                                                            (e.g.
+                                                                                                            blackbox,
+                                                                                                            graybox)</small>
+                                                                                                        <% } else { %>
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                class="form-input ui-builder-input"
+                                                                                                                data-key="<%= param %>"
+                                                                                                                data-type="string"
+                                                                                                                value="<%= setting.value[param] %>"
+                                                                                                                style="width: 100%; border: 1px solid #d1d5db; padding: 0.5rem; border-radius: 4px;">
+                                                                                                            <% } %>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <% }) %>
+                                                                                            <% } else { %>
+                                                                                                <tr>
+                                                                                                    <td colspan="2"
+                                                                                                        style="text-align:center; color: #dc2626;">
+                                                                                                        Complex nested
+                                                                                                        JSON
+                                                                                                        structure.
+                                                                                                        Switch to raw
+                                                                                                        JSON editor.
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                                <% } %>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                    <div id="validation_<%= setting.key %>"
+                                                                        style="color:red; font-size:0.8rem; margin-top:0.75rem;">
+                                                                    </div>
+                                                                </div>
                                                     </div>
                                                     <% }) %>
                                                         <% } %>
+
 
                                                             <button type="button" class="btn btn-primary"
                                                                 style="width: 100%; margin-top: 1rem; padding: 1rem; font-size: 1.1rem;"
@@ -154,6 +469,56 @@
                 closeModal();
             }
         }
+
+
+        function switchSystemTab(tabId) {
+            document.querySelectorAll('.system-tab-content').forEach(el => el.style.display = 'none');
+            document.getElementById('tab-' + tabId).style.display = 'block';
+            document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        // Sync UI builder back to hidden JSON textareas on change or submit
+        function syncUiToJSON() {
+            document.querySelectorAll('.ui-builder-table').forEach(table => {
+                const targetId = table.getAttribute('data-target');
+                const targetTextarea = document.getElementById(targetId);
+                if (!targetTextarea) return;
+
+                let currentData;
+                try {
+                    currentData = JSON.parse(targetTextarea.value);
+                } catch (e) {
+                    currentData = {};
+                }
+
+                table.querySelectorAll('.ui-builder-input').forEach(input => {
+                    const key = input.getAttribute('data-key');
+                    const type = input.getAttribute('data-type');
+                    const val = input.value;
+
+                    if (type === 'number') {
+                        currentData[key] = Number(val);
+                    } else if (type === 'array') {
+                        currentData[key] = val.split(',').map(s => s.trim()).filter(s => s);
+                    } else {
+                        currentData[key] = val;
+                    }
+                });
+
+                targetTextarea.value = JSON.stringify(currentData, null, 2);
+            });
+        }
+
+        // Intercept form submit to ensure latest UI state is serialized
+        document.querySelector('form[action="/settings/system"]').addEventListener('submit', function (e) {
+            syncUiToJSON();
+        });
+
+        document.querySelectorAll('.ui-builder-input').forEach(input => {
+            input.addEventListener('change', syncUiToJSON);
+            input.addEventListener('keyup', syncUiToJSON);
+        });
 
         // Simple Client-side JSON Validation Feedback
         document.querySelectorAll('textarea.json-editor').forEach(ta => {

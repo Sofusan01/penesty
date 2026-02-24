@@ -429,7 +429,7 @@
                                                                         </td>
                                                                         <td
                                                                             style="padding: 0.75rem; font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">
-                                                                            <%= est.estimated_days %> วัน
+                                                                            <%= Math.ceil(est.estimated_days) %> วัน
                                                                         </td>
                                                                     </tr>
                                                                     <% }) %>
@@ -648,7 +648,7 @@
                     d.function_count,
                     d.number_of_roles,
                     d.platform_count,
-                    d.estimated_days,
+                    Math.ceil(d.estimated_days),
                     d.created_at
                 ];
             });

@@ -99,11 +99,8 @@ exports.calculate = async ({ device_type, test_type, platform_count, number_of_r
 
     let mandays = effortHours / hoursPerDay;
 
-    if (roundingStep > 0) {
-        mandays = Math.ceil(mandays / roundingStep) * roundingStep;
-    } else {
-        mandays = Math.ceil(mandays);
-    }
+    // User requested: If there is a decimal 0.1-0.9, round up to 1 (next whole integer)
+    mandays = Math.ceil(mandays);
 
     return {
         success: true,
