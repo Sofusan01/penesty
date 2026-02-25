@@ -32,7 +32,7 @@ const defaultOWASP = [
     { code: 'WSTG-CNF-01', category: 'Configuration Management', name: 'Test Network/Infrastructure', base_hours: 1.0 },
     { code: 'WSTG-CNF-02', category: 'Configuration Management', name: 'Test Platform Configuration', base_hours: 1.0 },
     { code: 'WSTG-CNF-06', category: 'Configuration Management', name: 'Test HTTP Methods', base_hours: 0.5 },
-    { code: 'WSTG-CONF-07', category: 'Configuration Management', name: 'Test HTTP Strict Transport', base_hours: 0.5 },
+    { code: 'WSTG-CNF-07', category: 'Configuration Management', name: 'Test HTTP Strict Transport', base_hours: 0.5 },
     { code: 'WSTG-IDNT-01', category: 'Identity Management', name: 'Test Role Definitions', base_hours: 0.5 },
     { code: 'WSTG-IDNT-02', category: 'Identity Management', name: 'Test User Registration Process', base_hours: 1.0 },
     { code: 'WSTG-IDNT-04', category: 'Identity Management', name: 'Test Account Enumeration', base_hours: 1.0 },
@@ -69,7 +69,7 @@ const businessFunctions = [
     { id: 'WEB_FIN', name: 'Financial System', description: 'Banking, fintech, wallet, high-security transactions', wstg: JSON.stringify(['WSTG-BUSL-01', 'WSTG-BUSL-03', 'WSTG-ATHN-01', 'WSTG-ATHN-02', 'WSTG-ATHZ-03', 'WSTG-SESS-02', 'WSTG-INPV-05', 'WSTG-CRYP-01', 'WSTG-CRYP-02', 'WSTG-CRYP-03']) },
     { id: 'WEB_CUSTOM', name: 'Custom Web Application', description: 'Bespoke business logic application', wstg: JSON.stringify(['WSTG-INFO-02', 'WSTG-IDNT-04', 'WSTG-ATHN-02', 'WSTG-ATHZ-02', 'WSTG-SESS-02', 'WSTG-INPV-05', 'WSTG-BUSL-01']) },
     { id: 'WEB_PWA', name: 'Progressive Web App (PWA)', description: 'Hybrid web/mobile functionality', wstg: JSON.stringify(['WSTG-INFO-05', 'WSTG-CLNT-01', 'WSTG-CLNT-12', 'WSTG-ATHN-02', 'WSTG-API-01']) },
-    { id: 'API_MICRO', name: 'API / Microservices', description: 'Backend APIs (REST, GraphQL, SOAP)', wstg: JSON.stringify(['WSTG-INFO-10', 'WSTG-CONF-07', 'WSTG-IDNT-04', 'WSTG-ATHN-03', 'WSTG-ATHZ-03', 'WSTG-INPV-05', 'WSTG-INPV-08', 'WSTG-API-01']) },
+    { id: 'API_MICRO', name: 'API / Microservices', description: 'Backend APIs (REST, GraphQL, SOAP)', wstg: JSON.stringify(['WSTG-INFO-10', 'WSTG-CNF-07', 'WSTG-IDNT-04', 'WSTG-ATHN-03', 'WSTG-ATHZ-03', 'WSTG-INPV-05', 'WSTG-INPV-08', 'WSTG-API-01']) },
     { id: 'WEB_PORTAL', name: 'Portal / Multi-Tenant System', description: 'SaaS platform with multiple organizations/tenants', wstg: JSON.stringify(['WSTG-IDNT-01', 'WSTG-IDNT-04', 'WSTG-ATHN-02', 'WSTG-ATHZ-02', 'WSTG-ATHZ-04', 'WSTG-SESS-02', 'WSTG-INPV-05', 'WSTG-BUSL-01']) },
     { id: 'INFRA_AD', name: 'Active Directory / LDAP', description: 'Directory services authentication', wstg: JSON.stringify(['WSTG-IDNT-01', 'WSTG-ATHN-01', 'WSTG-CNF-01']) },
     { id: 'INFRA_SRV', name: 'Other Service Server', description: 'Database, Mail, DNS, File Server', wstg: JSON.stringify(['WSTG-CNF-01', 'WSTG-CNF-02', 'WSTG-CNF-06', 'WSTG-CRYP-03']) }

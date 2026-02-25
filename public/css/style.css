@@ -1512,3 +1512,392 @@ header h1 {
     visibility: visible;
     opacity: 1;
 }
+
+/* ========================================== */
+/* Logic Engine Step-by-Step Styles           */
+/* ========================================== */
+
+.logic-engine-title {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logic-engine-title i {
+    color: var(--secondary-color);
+}
+
+.logic-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.logic-step {
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.2s ease;
+}
+
+.logic-step:hover {
+    border-color: var(--secondary-color);
+}
+
+.logic-step-header {
+    background: #f1f5f9;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+}
+
+.logic-step-badge {
+    background: var(--primary-color);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    margin-right: 0.75rem;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+}
+
+.logic-step-header h4 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.logic-step-body {
+    padding: 1rem 1.25rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Step 1&2: Two-column boxes */
+.logic-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.logic-box-independent {
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+}
+
+.logic-box-independent .logic-box-title {
+    font-weight: 700;
+    color: #0369a1;
+    margin-bottom: 0.15rem;
+    font-size: 0.85rem;
+}
+
+.logic-box-independent .logic-box-desc {
+    font-size: 0.72rem;
+    color: #0284c7;
+    margin-bottom: 0.4rem;
+}
+
+.logic-box-independent .logic-box-value {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #0c4a6e;
+    margin: 0;
+}
+
+.logic-box-dependent {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+}
+
+.logic-box-dependent .logic-box-title {
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 0.15rem;
+    font-size: 0.85rem;
+}
+
+.logic-box-dependent .logic-box-desc {
+    font-size: 0.72rem;
+    color: #b45309;
+    margin-bottom: 0.4rem;
+}
+
+.logic-box-dependent .logic-box-value {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: #78350f;
+    margin: 0;
+}
+
+/* Calculation flow (horizontal chips) */
+.logic-calc-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+}
+
+.logic-chip {
+    padding: 0.4rem 0.6rem;
+    border-radius: 3px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    background: #f8fafc;
+}
+
+.logic-chip-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-bottom: 0.15rem;
+    font-family: 'Sarabun', sans-serif;
+    font-weight: 500;
+}
+
+.logic-chip-green {
+    background: #e0f2fe;
+    border-color: #bae6fd;
+}
+
+.logic-chip-orange {
+    background: #fef3c7;
+    border-color: #fde68a;
+}
+
+.logic-chip-result {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.6rem 0.8rem;
+    border-radius: var(--radius-md);
+    border: none;
+    box-shadow: var(--shadow-md);
+}
+
+.logic-chip-result .logic-chip-label {
+    color: #bae6fd;
+    font-weight: 700;
+}
+
+.logic-chip-result .logic-chip-number {
+    font-size: 1.3rem;
+    font-weight: 900;
+}
+
+.logic-op {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* Step 3: Fallback inline */
+.logic-fallback-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.logic-fallback-formula {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #f8fafc;
+    padding: 0.4rem 0.75rem;
+    border-radius: 3px;
+    border: 1px solid var(--border-color);
+}
+
+.logic-fallback-formula .val {
+    color: var(--secondary-color);
+    font-weight: 700;
+}
+
+.logic-fallback-formula .result {
+    color: var(--text-primary);
+    font-weight: 900;
+}
+
+/* Step 6: Two-col report */
+.logic-report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.logic-report-left {
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+}
+
+.logic-report-left .label {
+    font-weight: 700;
+    color: #0369a1;
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+}
+
+.logic-report-right {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.logic-report-right .label {
+    font-weight: 700;
+    color: #991b1b;
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+}
+
+.logic-report-right .mono {
+    font-family: 'Space Mono', monospace;
+    color: #b91c1c;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.logic-report-right .total-line {
+    border-top: 1px solid #fca5a5;
+    margin-top: 0.2rem;
+    padding-top: 0.2rem;
+    font-weight: 900;
+    font-size: 1.05rem;
+    color: #991b1b;
+}
+
+/* Step 7: Final result dark card */
+.logic-final {
+    background: var(--primary-color);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    color: white;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    border: none;
+}
+
+.logic-final:hover {
+    border-color: transparent;
+}
+
+.logic-final .logic-step-header {
+    background: rgba(0,0,0,0.15);
+    border-bottom-color: rgba(255,255,255,0.1);
+}
+
+.logic-final .logic-step-badge {
+    background: #10b981;
+}
+
+.logic-final .logic-step-header h4 {
+    color: #bae6fd;
+}
+
+.logic-final-body {
+    padding: 1.25rem 1.5rem;
+    position: relative;
+}
+
+.logic-final-body .logic-final-desc {
+    color: #bae6fd;
+    font-size: 0.82rem;
+    margin-bottom: 1.25rem;
+    max-width: 30rem;
+}
+
+.logic-final-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: rgba(255,255,255,0.08);
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.logic-final-formula {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    color: #bae6fd;
+}
+
+.logic-final-formula .sub {
+    font-size: 0.72rem;
+    color: #7dd3fc;
+    display: block;
+    margin-top: 0.15rem;
+}
+
+.logic-final-arrow {
+    color: #10b981;
+    font-size: 1.3rem;
+}
+
+.logic-final-result {
+    text-align: center;
+}
+
+.logic-final-result .result-label {
+    color: #7dd3fc;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.65rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+}
+
+.logic-final-result .result-number {
+    font-size: 3rem;
+    line-height: 1;
+    font-weight: 900;
+    color: #10b981;
+    font-family: 'Outfit', sans-serif;
+}
+
+.logic-final-result .result-unit {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #6ee7b7;
+    margin-left: 0.4rem;
+}
+
+@media (max-width: 768px) {
+    .logic-two-col,
+    .logic-report-grid {
+        grid-template-columns: 1fr;
+    }
+    .logic-calc-flow {
+        font-size: 0.75rem;
+    }
+    .logic-final-result .result-number {
+        font-size: 2rem;
+    }
+}

@@ -114,6 +114,270 @@
                                                                 ยกเลิก</a>
                                                         </div>
                                                     </div>
+
+                                                    <!-- ========================================== -->
+                                                    <!-- กระดานอธิบาย Step-by-step (Logic Engine) -->
+                                                    <!-- ========================================== -->
+                                                    <hr
+                                                        style="margin: 1.5rem 0; border: 0; height: 1px; background-color: var(--border-color);">
+                                                    <h3 class="logic-engine-title"><i class="fas fa-brain"></i>
+                                                        ขั้นตอนการคำนวณ (Logic Engine)</h3>
+                                                    <div class="logic-steps">
+
+                                                        <!-- Step 1 & 2 -->
+                                                        <div class="logic-step">
+                                                            <div class="logic-step-header">
+                                                                <span class="logic-step-badge">ขั้นที่ 1 & 2</span>
+                                                                <h4>รวบรวมและแยกประเภท Test Cases</h4>
+                                                            </div>
+                                                            <div class="logic-step-body">
+                                                                <p style="margin-bottom: 0.6rem;">
+                                                                    ระบบสกัดเทสเคสจากฐานข้อมูล โดยแยกออกเป็น 2
+                                                                    กลุ่มหลัก:</p>
+                                                                <div class="logic-two-col">
+                                                                    <div class="logic-box-independent">
+                                                                        <p class="logic-box-title"><i
+                                                                                class="fas fa-shield-alt"></i> 1.
+                                                                            Role-Independent</p>
+                                                                        <p class="logic-box-desc">กลุ่มช่องโหว่พื้นฐาน
+                                                                            ทำรอบเดียว</p>
+                                                                        <p class="logic-box-value">
+                                                                            <%= previewResult.role_independent_hours.toFixed(1)
+                                                                                %> <span
+                                                                                    style="font-size: 0.8rem; font-weight: normal;">ชม.</span>
+                                                                        </p>
+                                                                    </div>
+                                                                    <div class="logic-box-dependent">
+                                                                        <p class="logic-box-title"><i
+                                                                                class="fas fa-users"></i> 2.
+                                                                            Role-Dependent</p>
+                                                                        <p class="logic-box-desc">กลุ่มเช็คสิทธิ์
+                                                                            (ต้องนำไปคูณ Roles)</p>
+                                                                        <p class="logic-box-value">
+                                                                            <%= previewResult.role_dependent_hours.toFixed(1)
+                                                                                %> <span
+                                                                                    style="font-size: 0.8rem; font-weight: normal;">ชม.</span>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Step 3 -->
+                                                        <div class="logic-step">
+                                                            <div class="logic-step-header">
+                                                                <span class="logic-step-badge">ขั้นที่ 3</span>
+                                                                <h4>คำนวณฟังก์ชันที่ไร้ Map (Fallback)</h4>
+                                                            </div>
+                                                            <div class="logic-step-body">
+                                                                <div class="logic-fallback-row">
+                                                                    <div style="flex: 1;">สูตร:
+                                                                        <code>จำนวนฟังก์ชันไร้ Map × เวลาสำรอง</code>
+                                                                    </div>
+                                                                    <div class="logic-fallback-formula">
+                                                                        <span class="val">
+                                                                            <%= previewResult.functions_without_wstg %>
+                                                                        </span>
+                                                                        <i class="fas fa-times logic-op"></i>
+                                                                        <span class="val">
+                                                                            <%= (previewResult.fallback_hours /
+                                                                                (previewResult.functions_without_wstg ||
+                                                                                1)).toFixed(1) %>
+                                                                        </span>
+                                                                        <i class="fas fa-equals logic-op"></i>
+                                                                        <span class="result">
+                                                                            <%= previewResult.fallback_hours.toFixed(1)
+                                                                                %> ชม.
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Step 4 -->
+                                                        <div class="logic-step">
+                                                            <div class="logic-step-header">
+                                                                <span class="logic-step-badge">ขั้นที่ 4</span>
+                                                                <h4>รวมเวลาตั้งต้น (Total Base Hours)</h4>
+                                                            </div>
+                                                            <div class="logic-step-body">
+                                                                <p style="margin-bottom: 0.75rem;">สูตร:
+                                                                    <code>Independent + Fallback + (Dependent × จำนวน Roles)</code>
+                                                                </p>
+                                                                <div class="logic-calc-flow">
+                                                                    <div class="logic-chip logic-chip-green">
+                                                                        <div class="logic-chip-label">Independent</div>
+                                                                        <%= previewResult.role_independent_hours.toFixed(1)
+                                                                            %>
+                                                                    </div>
+                                                                    <i class="fas fa-plus logic-op"></i>
+                                                                    <div class="logic-chip">
+                                                                        <div class="logic-chip-label">Fallback</div>
+                                                                        <%= previewResult.fallback_hours.toFixed(1) %>
+                                                                    </div>
+                                                                    <i class="fas fa-plus logic-op"></i>
+                                                                    <div class="logic-chip logic-chip-orange">
+                                                                        <div class="logic-chip-label">Dependent × Roles
+                                                                            (<%= previewResult.number_of_roles %>)</div>
+                                                                        <%= previewResult.role_dependent_hours.toFixed(1)
+                                                                            %> × <%= previewResult.number_of_roles %> =
+                                                                                <strong>
+                                                                                    <%= previewResult.dependent_total_hours.toFixed(1)
+                                                                                        %>
+                                                                                </strong>
+                                                                    </div>
+                                                                    <i class="fas fa-equals logic-op"
+                                                                        style="font-size: 1rem;"></i>
+                                                                    <div class="logic-chip logic-chip-result">
+                                                                        <div class="logic-chip-label">Total Base Hours
+                                                                        </div>
+                                                                        <span class="logic-chip-number">
+                                                                            <%= previewResult.total_base_hours.toFixed(2)
+                                                                                %>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Step 5 -->
+                                                        <div class="logic-step">
+                                                            <div class="logic-step-header">
+                                                                <span class="logic-step-badge">ขั้นที่ 5</span>
+                                                                <h4>คูณแฟกเตอร์สภาพแวดล้อม (Factors)</h4>
+                                                            </div>
+                                                            <div class="logic-step-body">
+                                                                <p style="margin-bottom: 0.75rem;">นำ Total Base Hours
+                                                                    ไปคูณกับตัวคูณความยาก ตามที่ User เลือก</p>
+                                                                <div class="logic-calc-flow">
+                                                                    <span
+                                                                        style="font-size: 1.1rem; color: var(--primary-color); font-weight: 900;">
+                                                                        <%= previewResult.total_base_hours.toFixed(2) %>
+                                                                    </span>
+                                                                    <i class="fas fa-times logic-op"></i>
+                                                                    <div class="logic-chip"
+                                                                        style="display: flex; align-items: center; gap: 0.3rem;">
+                                                                        <span class="logic-chip-label"
+                                                                            style="margin-bottom:0;"><i
+                                                                                class="fas fa-desktop"></i>
+                                                                            Device</span>
+                                                                        <strong>
+                                                                            <%= previewResult.device_factor.toFixed(1)
+                                                                                %>
+                                                                        </strong>
+                                                                    </div>
+                                                                    <i class="fas fa-times logic-op"></i>
+                                                                    <div class="logic-chip"
+                                                                        style="display: flex; align-items: center; gap: 0.3rem;">
+                                                                        <span class="logic-chip-label"
+                                                                            style="margin-bottom:0;">Test Type</span>
+                                                                        <strong>
+                                                                            <%= previewResult.test_factor.toFixed(1) %>
+                                                                        </strong>
+                                                                    </div>
+                                                                    <i class="fas fa-equals logic-op"
+                                                                        style="font-size: 1rem;"></i>
+                                                                    <div style="text-align: center;">
+                                                                        <div
+                                                                            style="font-size: 0.65rem; color: var(--secondary-color); font-weight: 700; text-transform: uppercase; margin-bottom: 0.15rem;">
+                                                                            Effort Hours (เบื้องต้น)</div>
+                                                                        <span
+                                                                            style="font-size: 1.3rem; font-weight: 900; color: var(--secondary-color);">
+                                                                            <%= previewResult.initial_effort_hours.toFixed(2)
+                                                                                %>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Step 6 -->
+                                                        <div class="logic-step">
+                                                            <div class="logic-step-header">
+                                                                <span class="logic-step-badge">ขั้นที่ 6</span>
+                                                                <h4>เวลาทำรายงาน (Report Overhead) & รวมเวลาสุทธิ</h4>
+                                                            </div>
+                                                            <div class="logic-step-body">
+                                                                <div class="logic-report-grid">
+                                                                    <div class="logic-report-left">
+                                                                        <p class="label">6.1 คำนวณ Scope Scale</p>
+                                                                        <p
+                                                                            style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.4rem;">
+                                                                            สูตร: <code>MAX(1.0, WSTG / 10)</code></p>
+                                                                        <p
+                                                                            style="font-family: 'Space Mono', monospace; font-size: 0.82rem; color: #0369a1; background: white; padding: 0.3rem 0.4rem; border: 1px solid #bae6fd; border-radius: 3px; display: inline-block; margin: 0;">
+                                                                            MAX(1.0, <%= previewResult.unique_wstg_count
+                                                                                %> / 10) = <strong>
+                                                                                    <%= previewResult.scope_scale.toFixed(1)
+                                                                                        %>
+                                                                                </strong></p>
+                                                                        <div
+                                                                            style="margin-top: 0.6rem; font-size: 0.82rem; color: var(--text-primary);">
+                                                                            ดังนั้น <strong>Report Hours</strong> = 8.0
+                                                                            × <%= previewResult.scope_scale.toFixed(1)
+                                                                                %> = <strong
+                                                                                    style="color: var(--secondary-color);">
+                                                                                    <%= previewResult.report_hours.toFixed(2)
+                                                                                        %> ชม.
+                                                                                </strong>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="logic-report-right">
+                                                                        <p class="label">6.2 รวม Effort สุดท้าย</p>
+                                                                        <div class="mono">
+                                                                            <div>
+                                                                                <%= previewResult.initial_effort_hours.toFixed(2)
+                                                                                    %> (เทสต์)
+                                                                            </div>
+                                                                            <div>+ <%=
+                                                                                    previewResult.report_hours.toFixed(2)
+                                                                                    %> (รีพอร์ต)</div>
+                                                                            <div class="total-line">
+                                                                                <%= previewResult.final_effort_hours.toFixed(2)
+                                                                                    %> ชม.
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Step 7 (Final Result) -->
+                                                        <div class="logic-step logic-final">
+                                                            <div class="logic-step-header">
+                                                                <span class="logic-step-badge">ขั้นที่ 7</span>
+                                                                <h4>แปลงเป็นจำนวนวันทำงาน (Man-Days)</h4>
+                                                            </div>
+                                                            <div class="logic-final-body">
+                                                                <p class="logic-final-desc">
+                                                                    ระบบจะนำเวลา Effort สุดท้าย (หน่วยเป็นชั่วโมง)
+                                                                    หารด้วยมาตรฐาน 8 ชั่วโมง/วัน และปัดเศษทศนิยมขึ้น
+                                                                    (Ceil) เป็นจำนวนวันเต็มเสมอ
+                                                                </p>
+                                                                <div class="logic-final-box">
+                                                                    <div class="logic-final-formula">
+                                                                        Math.ceil( <%=
+                                                                            previewResult.final_effort_hours.toFixed(2)
+                                                                            %> / 8 )
+                                                                            <span class="sub">= ปัดเศษขึ้นของ <%=
+                                                                                    (previewResult.final_effort_hours /
+                                                                                    8).toFixed(3) %> วัน</span>
+                                                                    </div>
+                                                                    <div class="logic-final-arrow">
+                                                                        <i class="fas fa-arrow-right"></i>
+                                                                    </div>
+                                                                    <div class="logic-final-result">
+                                                                        <p class="result-label">Total Estimation</p>
+                                                                        <span class="result-number">
+                                                                            <%= previewResult.estimated_days %>
+                                                                        </span>
+                                                                        <span class="result-unit">Man-Days</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
                                                 </div>
                                                 <% } else { %>
                                                     <!-- Estimation Form -->

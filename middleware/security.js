@@ -4,9 +4,9 @@ const cspMiddleware = (req, res, next) => {
         "default-src 'self'; " +
         "connect-src 'self'; " +
         "script-src 'self' 'unsafe-inline'; " +
-        "style-src 'self' 'unsafe-inline'; " +
+        "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; " +
         "img-src 'self' data: blob:; " +
-        "font-src 'self' https://fonts.gstatic.com; " +
+        "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
         "object-src 'none'; " +
         "base-uri 'self';"
     );
@@ -17,7 +17,7 @@ const originCheckMiddleware = (req, res, next) => {
     if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
         const origin = req.get('Origin');
         const referer = req.get('Referer');
-        const host = req.get('X-Forwarded-Host') || req.get('Host');
+        const host = req.get('Host');
 
         if (!origin && !referer) {
             return res.status(403).send('Forbidden: Missing Origin/Referer');

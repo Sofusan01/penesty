@@ -45,7 +45,10 @@ exports.submitFeedback = async (req, res) => {
             imagePath = '/uploads/feedback/' + req.file.filename;
         }
 
-        if (!subject || subject.trim() === '') {
+        // M1 Fix: Sanitize subject - strip HTML tags
+        const safeSubject = subject.trim().replace(/<[^>]*>/g, '');
+
+        if (!safeSubject || safeSubject === '') {
             // If validation failed, cleanup file
             if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
             return res.render('pages/feedback', { user: req.user, error: 'Subject cannot be empty.', success: null });
@@ -56,7 +59,10 @@ exports.submitFeedback = async (req, res) => {
             return res.render('pages/feedback', { user: req.user, error: 'Feedback message cannot be empty or too long.', success: null });
         }
 
-        await Feedback.create(req.user.id, subject.trim(), message.trim(), imagePath);
+        // M1 Fix: Also sanitize message
+        const safeMessage = message.trim().replace(/<[^>]*>/g, '');
+
+        await Feedback.create(req.user.id, safeSubject, safeMessage, imagePath);
 
         res.render('pages/feedback', {
             user: req.user,
@@ -78,7 +84,7 @@ exports.getFeedbackHistory = async (req, res) => {
         const limit = 10;
         const offset = (page - 1) * limit;
 
-        const order = (req.query.order || 'DESC').toUpperCase();
+        const order = ['ASC', 'DESC'].includes((req.query.order || 'DESC').toUpperCase()) ? (req.query.order || 'DESC').toUpperCase() : 'DESC';
 
         const totalItems = await Feedback.count();
         const totalPages = Math.ceil(totalItems / limit);
@@ -103,13 +109,25 @@ exports.getFeedbackHistory = async (req, res) => {
 
 exports.deleteFeedback = async (req, res) => {
     try {
-        const feedbackId = req.params.id;
+        const feedbackId = parseInt(req.params.id, 10);
+        if (isNaN(feedbackId)) {
+            return res.redirect('/feedback/history?error=' + encodeURIComponent('Invalid feedback ID.'));
+        }
 
         const feedback = await Feedback.getById(feedbackId);
 
         if (feedback && feedback.image_path) {
+            // M6 Fix: Validate path to prevent traversal
             const uniquePath = feedback.image_path.startsWith('/') ? feedback.image_path.substring(1) : feedback.image_path;
+            if (uniquePath.includes('..')) {
+                return res.redirect('/feedback/history?error=' + encodeURIComponent('Invalid file path detected.'));
+            }
             const absolutePath = path.join(__dirname, '../public', uniquePath);
+            // Ensure resolved path is still within public directory
+            const publicDir = path.resolve(path.join(__dirname, '../public'));
+            if (!path.resolve(absolutePath).startsWith(publicDir)) {
+                return res.redirect('/feedback/history?error=' + encodeURIComponent('Invalid file path detected.'));
+            }
 
             if (fs.existsSync(absolutePath)) {
                 fs.unlinkSync(absolutePath);
@@ -135,8 +153,10 @@ exports.bulkDeleteFeedback = async (req, res) => {
             }
         }
 
-        if (!Array.isArray(ids) || ids.length === 0) {
-            return res.redirect('/feedback/history?error=' + encodeURIComponent("No items selected for deletion."));
+        // H4b Fix: Sanitize IDs to integers
+        ids = ids.map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+        if (ids.length === 0) {
+            return res.redirect('/feedback/history?error=' + encodeURIComponent("Invalid item IDs."));
         }
 
         for (const id of ids) {
@@ -144,9 +164,13 @@ exports.bulkDeleteFeedback = async (req, res) => {
                 const feedback = await Feedback.getById(id);
                 if (feedback && feedback.image_path) {
                     const uniquePath = feedback.image_path.startsWith('/') ? feedback.image_path.substring(1) : feedback.image_path;
-                    const absolutePath = path.join(__dirname, '../public', uniquePath);
-                    if (fs.existsSync(absolutePath)) {
-                        fs.unlinkSync(absolutePath);
+                    // M6 Fix: Path traversal check
+                    if (!uniquePath.includes('..')) {
+                        const absolutePath = path.join(__dirname, '../public', uniquePath);
+                        const publicDir = path.resolve(path.join(__dirname, '../public'));
+                        if (path.resolve(absolutePath).startsWith(publicDir) && fs.existsSync(absolutePath)) {
+                            fs.unlinkSync(absolutePath);
+                        }
                     }
                 }
             } catch (e) {

@@ -35,6 +35,15 @@ exports.logout = (req, res, next) => {
 exports.apiLogin = async (req, res) => {
     const { username, password } = req.body;
 
+    // H3 Fix: Validate input before processing
+    if (!username || !password || typeof username !== 'string' || typeof password !== 'string') {
+        return res.status(400).json({ message: 'Username and password are required' });
+    }
+
+    if (username.length > 255 || password.length > 255) {
+        return res.status(400).json({ message: 'Input too long' });
+    }
+
     try {
         const user = await User.findOne(username);
 

@@ -35,8 +35,10 @@ exports.toggleUserStatus = async (req, res) => {
 };
 
 exports.apiGetProfile = (req, res) => {
+    // L4 Fix: Never expose password hash in API response
+    const { password, ...safeUser } = req.user;
     res.json({
         message: 'Protected data accessed',
-        user: req.user
+        user: safeUser
     });
 };

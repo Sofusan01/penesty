@@ -9,7 +9,7 @@ exports.getDashboard = async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = 10;
         const offset = (page - 1) * limit;
-        const order = (req.query.order || 'DESC').toUpperCase();
+        const order = ['ASC', 'DESC'].includes((req.query.order || 'DESC').toUpperCase()) ? (req.query.order || 'DESC').toUpperCase() : 'DESC';
 
         const userId = req.user.role === 'admin' ? null : req.user.id;
 
@@ -90,7 +90,20 @@ exports.calculateEstimation = async (req, res) => {
                 platform_count: calcResult.platform_count,
                 number_of_roles: calcResult.number_of_roles,
                 estimated_days: calcResult.estimated_days,
-                wstg_list: calcResult.wstg_list
+                wstg_list: calcResult.wstg_list,
+                // Step-by-step Details
+                role_independent_hours: calcResult.role_independent_hours,
+                role_dependent_hours: calcResult.role_dependent_hours,
+                functions_without_wstg: calcResult.functions_without_wstg,
+                fallback_hours: calcResult.fallback_hours,
+                dependent_total_hours: calcResult.dependent_total_hours,
+                total_base_hours: calcResult.total_base_hours,
+                device_factor: calcResult.device_factor,
+                test_factor: calcResult.test_factor,
+                initial_effort_hours: calcResult.initial_effort_hours,
+                scope_scale: calcResult.scope_scale,
+                report_hours: calcResult.report_hours,
+                final_effort_hours: calcResult.effort_hours
             }
         });
 
@@ -163,10 +176,13 @@ exports.confirmEstimation = async (req, res) => {
 
 exports.deleteEstimation = async (req, res) => {
     try {
+        const id = parseInt(req.params.id, 10);
+        if (isNaN(id)) return res.redirect('/dashboard?tab=history');
+
         if (req.user.role === 'admin') {
-            await Estimation.deleteById(req.params.id);
+            await Estimation.deleteById(id);
         } else {
-            await Estimation.delete(req.params.id, req.user.id);
+            await Estimation.delete(id, req.user.id);
         }
         res.redirect('/dashboard?tab=history');
     } catch (err) {
@@ -185,8 +201,14 @@ exports.bulkDeleteEstimation = async (req, res) => {
             }
         }
 
+        // H4 Fix: Sanitize IDs to integers only
         if (!Array.isArray(ids) || ids.length === 0) {
             return res.redirect('/dashboard?error=' + encodeURIComponent("No items selected for deletion.") + '&tab=history');
+        }
+
+        ids = ids.map(id => parseInt(id, 10)).filter(id => !isNaN(id));
+        if (ids.length === 0) {
+            return res.redirect('/dashboard?error=' + encodeURIComponent("Invalid item IDs.") + '&tab=history');
         }
 
         const isAdmin = req.user.role === 'admin';
