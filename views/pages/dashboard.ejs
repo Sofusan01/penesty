@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
 
 <head>
@@ -104,8 +104,9 @@
                                                                     value="<%= previewResult.number_of_roles %>">
                                                                 <input type="hidden" name="selected_functions_json"
                                                                     value="<%= JSON.stringify(previewResult.selected_functions || []) %>">
+                                                                <input type="hidden" name="selected_wstg_json"
+                                                                    value="<%= JSON.stringify(previewResult.selected_wstg || []) %>">
                                                                 <input type="hidden" name="platform_count" value="1">
-
                                                                 <button type="submit" class="btn btn-primary"
                                                                     style="width: 100%;">💾 บันทึก (Save)</button>
                                                             </form>
@@ -455,40 +456,157 @@
                                                             <div class="form-group">
                                                                 <label>เลือกฟังก์ชันระบบ (Business Functions) <span
                                                                         class="text-danger">*</span></label>
-                                                                <div
-                                                                    style="max-height: 300px; overflow-y: auto; border: 1px solid #e5e7eb; padding: 1rem; border-radius: 0.5rem; background: #f9fafb;">
-                                                                    <% if (locals.appFunctions) { %>
-                                                                        <% appFunctions.forEach(func=> { %>
-                                                                            <div class="checkbox-group"
-                                                                                style="margin-bottom: 0.5rem; padding: 0.5rem; border-bottom: 1px solid #eee;">
-                                                                                <input type="checkbox"
-                                                                                    id="func_<%= func.id %>"
-                                                                                    name="selected_functions"
-                                                                                    value="<%= func.id %>">
-                                                                                <label for="func_<%= func.id %>"
-                                                                                    style="display: inline; font-weight: normal; cursor: pointer;">
-                                                                                    <strong style="color: #374151;">
-                                                                                        <%= func.name %>
-                                                                                    </strong>
-                                                                                    <div
-                                                                                        style="font-size: 0.85rem; color: #6b7280; margin-left: 1.5rem;">
-                                                                                        <%= func.description %>
+                                                                <small class="text-muted"
+                                                                    style="display:block;margin-bottom:0.5rem;">
+                                                                    คลิก ▶ เพื่อดูรายการย่อย WSTG —
+                                                                    ติ๊กเลือก/เอาออกได้ตามต้องการ
+                                                                </small>
+                                                                <div id="bf-accordion"
+                                                                    style="border:1px solid #e5e7eb;border-radius:0.5rem;overflow:hidden;background:#fff;">
+                                                                    <% if (locals.appFunctions && appFunctions.length>
+                                                                        0) { %>
+                                                                        <% appFunctions.forEach(function(func) { %>
+                                                                            <div class="bf-item"
+                                                                                style="border-bottom:1px solid #e5e7eb;">
+                                                                                <div class="bf-header"
+                                                                                    style="display:flex;align-items:center;gap:0.75rem;padding:0.65rem 1rem;background:#f9fafb;cursor:pointer;"
+                                                                                    onclick="toggleBfAcc('bf-body-<%- func.accordionIndex %>','bf-ico-<%- func.accordionIndex %>')">
+                                                                                    <input type="checkbox"
+                                                                                        id="func_<%- func.id %>"
+                                                                                        name="selected_functions"
+                                                                                        value="<%- func.id %>"
+                                                                                        onclick="event.stopPropagation()"
+                                                                                        style="width:16px;height:16px;flex-shrink:0;cursor:pointer;">
+                                                                                    <label for="func_<%- func.id %>"
+                                                                                        onclick="event.stopPropagation()"
+                                                                                        style="flex:1;cursor:pointer;margin:0;">
+                                                                                        <span
+                                                                                            style="font-weight:600;color:#1f2937;font-size:0.95rem;"><%-
+                                                                                                func.name %></span>
+                                                                                        <span
+                                                                                            style="display:block;font-size:0.8rem;color:#6b7280;font-weight:400;"><%-
+                                                                                                func.description
+                                                                                                %></span>
+                                                                                    </label>
+                                                                                    <% if (func.owaspCategories &&
+                                                                                        func.owaspCategories.length> 0)
+                                                                                        { %>
+                                                                                        <span
+                                                                                            id="bf-hrs-<%- func.accordionIndex %>"
+                                                                                            style="font-size:0.78rem;background:#ede9fe;color:#6d28d9;padding:0.2rem 0.55rem;border-radius:999px;white-space:nowrap;flex-shrink:0;"><%-
+                                                                                                func.totalWstgHours %>
+                                                                                                ชม.</span>
+                                                                                        <span
+                                                                                            id="bf-ico-<%- func.accordionIndex %>"
+                                                                                            style="font-size:0.8rem;color:#9ca3af;flex-shrink:0;transition:transform 0.2s;">▶</span>
+                                                                                        <% } %>
+                                                                                </div>
+                                                                                <% if (func.owaspCategories &&
+                                                                                    func.owaspCategories.length> 0) { %>
+                                                                                    <div id="bf-body-<%- func.accordionIndex %>"
+                                                                                        style="display:none;padding:0.4rem 1rem 0.75rem 1rem;background:#fff;">
+                                                                                        <div
+                                                                                            style="display:flex;justify-content:flex-end;gap:0.5rem;padding:0.25rem 0 0.4rem 0;border-bottom:1px solid #f3f4f6;margin-bottom:0.3rem;">
+                                                                                            <button type="button"
+                                                                                                onclick="selectAllWstg('<%- func.accordionIndex %>',true)"
+                                                                                                style="font-size:0.72rem;padding:0.15rem 0.6rem;border:1px solid #d1d5db;border-radius:4px;background:#f9fafb;color:#374151;cursor:pointer;">✓
+                                                                                                เลือกทั้งหมด</button>
+                                                                                            <button type="button"
+                                                                                                onclick="selectAllWstg('<%- func.accordionIndex %>',false)"
+                                                                                                style="font-size:0.72rem;padding:0.15rem 0.6rem;border:1px solid #d1d5db;border-radius:4px;background:#f9fafb;color:#6b7280;cursor:pointer;">✕
+                                                                                                ยกเลิกทั้งหมด</button>
+                                                                                        </div>
+                                                                                        <% func.owaspCategories.forEach(function(cat)
+                                                                                            { %>
+                                                                                            <div
+                                                                                                style="margin-top:0.4rem;">
+                                                                                                <div
+                                                                                                    style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#9ca3af;margin-bottom:0.25rem;padding-bottom:0.15rem;border-bottom:1px dashed #f3f4f6;">
+                                                                                                    <%- cat %></div>
+                                                                                                <% func.owaspGrouped[cat].forEach(function(tc)
+                                                                                                    { %>
+                                                                                                    <div style="display:flex;justify-content:space-between;align-items:center;padding:0.22rem 0.25rem;font-size:0.82rem;border-radius:3px;"
+                                                                                                        onmouseover="this.style.background='#f9fafb'"
+                                                                                                        onmouseout="this.style.background=''">
+                                                                                                        <label
+                                                                                                            style="display:flex;align-items:center;gap:0.45rem;cursor:pointer;flex:1;margin:0;">
+                                                                                                            <input
+                                                                                                                type="checkbox"
+                                                                                                                name="selected_wstg"
+                                                                                                                value="<%- tc.code %>"
+                                                                                                                data-hours="<%- tc.base_hours %>"
+                                                                                                                class="wstg-cb wstg-cb-<%- func.accordionIndex %>"
+                                                                                                                checked
+                                                                                                                onchange="updateBfHours('<%- func.accordionIndex %>')"
+                                                                                                                style="width:14px;height:14px;flex-shrink:0;cursor:pointer;accent-color:#6d28d9;">
+                                                                                                            <span
+                                                                                                                style="font-family:monospace;font-size:0.75rem;color:#6d28d9;background:#f5f3ff;padding:0.08rem 0.32rem;border-radius:3px;flex-shrink:0;"><%-
+                                                                                                                    tc.code
+                                                                                                                    %></span>
+                                                                                                            <span
+                                                                                                                style="color:#374151;"><%-
+                                                                                                                    tc.name
+                                                                                                                    %></span>
+                                                                                                        </label>
+                                                                                                        <span
+                                                                                                            style="flex-shrink:0;font-size:0.75rem;color:#6b7280;margin-left:0.5rem;white-space:nowrap;"><%-
+                                                                                                                tc.base_hours
+                                                                                                                %>
+                                                                                                                ชม.</span>
+                                                                                                    </div>
+                                                                                                    <% }); %>
+                                                                                            </div>
+                                                                                            <% }); %>
                                                                                     </div>
-                                                                                </label>
+                                                                                    <% } else { %>
+                                                                                        <div
+                                                                                            style="padding:0.3rem 1rem 0.3rem 2.75rem;font-size:0.8rem;color:#9ca3af;font-style:italic;">
+                                                                                            ไม่มี WSTG mapping (ใช้
+                                                                                            fallback hours)</div>
+                                                                                        <% } %>
                                                                             </div>
-                                                                            <% }) %>
+                                                                            <% }); %>
                                                                                 <% } else { %>
-                                                                                    <p>ไม่พบข้อมูลฟังก์ชัน</p>
+                                                                                    <p
+                                                                                        style="padding:1rem;color:#6b7280;">
+                                                                                        ไม่พบข้อมูลฟังก์ชัน</p>
                                                                                     <% } %>
                                                                 </div>
-                                                                <small
-                                                                    class="text-muted">เลือกฟังก์ชันที่เกี่ยวข้องเพื่อคำนวณ
-                                                                    Scope งาน (OWASP WSTG Mapping)</small>
+                                                                <small class="text-muted"
+                                                                    style="margin-top:0.4rem;display:block;">
+                                                                    ✓ เลือก Business Function ▶ ขยายเพื่อติ๊กรายการ WSTG
+                                                                    ย่อย — คำนวณจาก hours ที่เลือกจริงๆ
+                                                                </small>
                                                             </div>
 
+                                                            <script>
+                                                                function toggleBfAcc(bodyId, icoId) {
+                                                                    var b = document.getElementById(bodyId);
+                                                                    var i = document.getElementById(icoId);
+                                                                    if (!b) return;
+                                                                    var open = b.style.display !== 'none';
+                                                                    b.style.display = open ? 'none' : 'block';
+                                                                    if (i) i.style.transform = open ? '' : 'rotate(90deg)';
+                                                                }
+                                                                function updateBfHours(fi) {
+                                                                    var cbs = document.querySelectorAll('.wstg-cb-' + fi);
+                                                                    var total = 0;
+                                                                    cbs.forEach(function (cb) { if (cb.checked) total += parseFloat(cb.dataset.hours || 0); });
+                                                                    var badge = document.getElementById('bf-hrs-' + fi);
+                                                                    if (badge) badge.textContent = (Math.round(total * 10) / 10) + ' ชม.';
+                                                                }
+                                                                function selectAllWstg(fi, checked) {
+                                                                    var cbs = document.querySelectorAll('.wstg-cb-' + fi);
+                                                                    cbs.forEach(function (cb) { cb.checked = checked; });
+                                                                    updateBfHours(fi);
+                                                                }
+                                                            </script>
+
                                                             <button type="submit" class="btn btn-primary"
-                                                                style="width: 100%; margin-top: 1rem; padding: 1rem; font-size: 1.1rem;">
-                                                                🚀 คำนวณราคาประเมิน (Calculate Estimate)
+                                                                style="width:100%;margin-top:1rem;padding:1rem;font-size:1.1rem;">
+                                                                &#128640;
+                                                                คำนวณราคาประเมิน
+                                                                (Calculate Estimate)
                                                             </button>
                                                         </form>
                                                     </div>

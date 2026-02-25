@@ -4,6 +4,35 @@ const OWASPTestCase = require('../models/OWASPTestCase');
 const Estimation = require('../models/Estimation');
 const estimationCalculator = require('../utils/estimationCalculator');
 
+// สร้าง lookup map: code → testCase object
+function buildOwaspByCode(allWSTG) {
+    const byCode = {};
+    allWSTG.forEach(tc => { byCode[tc.code] = tc; });
+    return byCode;
+}
+
+// Enrich แต่ละ AppFunction ด้วย OWASP sub-items จัดกลุ่มตาม category (ทำใน server ไม่ใช่ EJS)
+function enrichFunctions(appFunctions, owaspByCode) {
+    return appFunctions.map((func, fi) => {
+        const grouped = {};
+        let totalHours = 0;
+        (func.mapped_wstg_test_cases || []).forEach(code => {
+            const tc = owaspByCode[code];
+            if (!tc) return;
+            if (!grouped[tc.category]) grouped[tc.category] = [];
+            grouped[tc.category].push(tc);
+            totalHours += tc.base_hours;
+        });
+        return {
+            ...func,
+            owaspGrouped: grouped,
+            owaspCategories: Object.keys(grouped),
+            totalWstgHours: Math.round(totalHours * 10) / 10,
+            accordionIndex: fi
+        };
+    });
+}
+
 exports.getDashboard = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -16,17 +45,20 @@ exports.getDashboard = async (req, res, next) => {
         const totalItems = await Estimation.count(userId);
         const totalPages = Math.ceil(totalItems / limit);
 
-        const [estimations, appFunctions, constraints] = await Promise.all([
+        const [estimations, appFunctions, constraints, allWSTG] = await Promise.all([
             (req.user.role === 'admin' ? Estimation.getAll(limit, offset, order) : Estimation.findByUserId(req.user.id, limit, offset, order))
                 .catch(err => { console.error('Est Select Err:', err); return []; }),
             AppFunction.getAll().catch(err => { console.error('AppFunc Select Err:', err); return []; }),
-            SystemSetting.get('test_type_constraints').then(res => res || {}).catch(() => ({}))
+            SystemSetting.get('test_type_constraints').then(res => res || {}).catch(() => ({})),
+            OWASPTestCase.getAll().catch(() => [])
         ]);
+        const owaspByCode = buildOwaspByCode(allWSTG);
+        const enrichedFunctions = enrichFunctions(appFunctions, owaspByCode);
 
         res.render('pages/dashboard', {
             user: req.user,
             estimations,
-            appFunctions,
+            appFunctions: enrichedFunctions,
             constraints,
             currentPage: page,
             totalPages,
@@ -45,7 +77,7 @@ exports.getDashboard = async (req, res, next) => {
 exports.calculateEstimation = async (req, res) => {
     const {
         client_name, device_type, test_type, platform_count, selected_functions,
-        number_of_roles, target_url, target_mobile_app, target_infra_desc
+        selected_wstg, number_of_roles, target_url, target_mobile_app, target_infra_desc
     } = req.body;
 
     try {
@@ -53,22 +85,31 @@ exports.calculateEstimation = async (req, res) => {
         if (!Array.isArray(funcIds)) funcIds = [funcIds];
         funcIds = [...new Set(funcIds.filter(f => f))];
 
+        let wstgCodes = selected_wstg || [];
+        if (!Array.isArray(wstgCodes)) wstgCodes = [wstgCodes];
+        wstgCodes = [...new Set(wstgCodes.filter(c => c))];
+
         const calcResult = await estimationCalculator.calculate({
-            device_type, test_type, platform_count, number_of_roles, selected_functions: funcIds
+            device_type, test_type, platform_count, number_of_roles,
+            selected_functions: funcIds,
+            selected_wstg_codes: wstgCodes
         });
 
-        const [estimations, appFunctions, constraints, totalItems] = await Promise.all([
+        const [estimations, appFunctions, constraints, totalItems, allWSTG2] = await Promise.all([
             Estimation.findByUserId(req.user.id, 3, 0),
             AppFunction.getAll(),
             SystemSetting.get('test_type_constraints').then(res => res || {}),
-            Estimation.count(req.user.id)
+            Estimation.count(req.user.id),
+            OWASPTestCase.getAll().catch(() => [])
         ]);
+        const owaspByCode2 = buildOwaspByCode(allWSTG2);
+        const enrichedFunctions2 = enrichFunctions(appFunctions, owaspByCode2);
         const totalPages = Math.ceil(totalItems / 3);
 
         if (calcResult.error) {
             return res.render('pages/dashboard', {
                 user: req.user,
-                estimations, appFunctions, constraints,
+                estimations, appFunctions: enrichedFunctions2, constraints,
                 currentPage: 1, totalPages, totalItems,
                 error: calcResult.error, success: null, previewResult: null
             });
@@ -78,7 +119,7 @@ exports.calculateEstimation = async (req, res) => {
 
         res.render('pages/dashboard', {
             user: req.user,
-            estimations, appFunctions, constraints,
+            estimations, appFunctions: enrichedFunctions2, constraints,
             currentPage: 1, totalPages, totalItems,
             error: null, success: null,
             previewResult: {
@@ -103,7 +144,8 @@ exports.calculateEstimation = async (req, res) => {
                 initial_effort_hours: calcResult.initial_effort_hours,
                 scope_scale: calcResult.scope_scale,
                 report_hours: calcResult.report_hours,
-                final_effort_hours: calcResult.effort_hours
+                final_effort_hours: calcResult.effort_hours,
+                selected_wstg: calcResult.wstg_list // Store what was actually used
             }
         });
 
@@ -116,7 +158,8 @@ exports.calculateEstimation = async (req, res) => {
 exports.confirmEstimation = async (req, res) => {
     const {
         client_name, device_type, test_type, target_url,
-        platform_count, number_of_roles, selected_functions_json
+        platform_count, number_of_roles,
+        selected_functions_json, selected_wstg_json
     } = req.body;
 
     const target_info = target_url || client_name;
@@ -132,8 +175,19 @@ exports.confirmEstimation = async (req, res) => {
             return res.redirect('/dashboard?error=' + encodeURIComponent("Invalid function data."));
         }
 
+        let selected_wstg = [];
+        try {
+            if (selected_wstg_json) {
+                selected_wstg = JSON.parse(selected_wstg_json);
+            }
+        } catch (e) {
+            console.error("Error parsing selected_wstg_json", e);
+        }
+
         const calcResult = await estimationCalculator.calculate({
-            device_type, test_type, platform_count, number_of_roles, selected_functions
+            device_type, test_type, platform_count, number_of_roles,
+            selected_functions,
+            selected_wstg_codes: selected_wstg
         });
 
         if (calcResult.error) {
@@ -163,7 +217,8 @@ exports.confirmEstimation = async (req, res) => {
             number_of_roles: calcResult.number_of_roles,
             target_info,
             estimated_days: calcResult.estimated_days,
-            selected_functions: JSON.stringify(selected_functions)
+            selected_functions: JSON.stringify(selected_functions),
+            selected_wstg_json: JSON.stringify(calcResult.wstg_list || [])
         });
 
         res.redirect('/dashboard?success=' + encodeURIComponent('Estimation saved successfully!'));

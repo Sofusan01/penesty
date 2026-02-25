@@ -222,6 +222,7 @@ async function setup() {
             { table: 'estimations', column: 'target_info', sql: "ALTER TABLE estimations ADD COLUMN target_info TEXT" },
             { table: 'estimations', column: 'number_of_roles', sql: "ALTER TABLE estimations ADD COLUMN number_of_roles INTEGER DEFAULT 1" },
             { table: 'estimations', column: 'platform_count', sql: "ALTER TABLE estimations ADD COLUMN platform_count INTEGER DEFAULT 1" },
+            { table: 'estimations', column: 'selected_wstg_json', sql: "ALTER TABLE estimations ADD COLUMN selected_wstg_json TEXT" },
             { table: 'feedbacks', column: 'subject', sql: "ALTER TABLE feedbacks ADD COLUMN subject TEXT DEFAULT 'No Subject'" },
             { table: 'feedbacks', column: 'image_path', sql: "ALTER TABLE feedbacks ADD COLUMN image_path TEXT" },
         ];

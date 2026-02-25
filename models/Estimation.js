@@ -4,8 +4,8 @@ module.exports = {
     create: (data) => {
         return new Promise((resolve, reject) => {
             const sql = `INSERT INTO estimations 
-                (user_id, client_name, device_type, test_type, function_count, platform_count, number_of_roles, target_info, estimated_days, selected_functions) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                (user_id, client_name, device_type, test_type, function_count, platform_count, number_of_roles, target_info, estimated_days, selected_functions, selected_wstg_json) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             const params = [
                 data.user_id,
                 data.client_name,
@@ -16,7 +16,8 @@ module.exports = {
                 data.number_of_roles || 1,
                 data.target_info || '',
                 data.estimated_days,
-                data.selected_functions || '[]'
+                data.selected_functions || '[]',
+                data.selected_wstg_json || '[]'
             ];
 
             db.run(sql, params, function (err) {
