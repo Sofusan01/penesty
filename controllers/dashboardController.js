@@ -87,7 +87,7 @@ exports.calculateEstimation = async (req, res) => {
 
         let wstgCodes = selected_wstg || [];
         if (!Array.isArray(wstgCodes)) wstgCodes = [wstgCodes];
-        wstgCodes = [...new Set(wstgCodes.filter(c => c))];
+        wstgCodes = wstgCodes.filter(c => c);
 
         const calcResult = await estimationCalculator.calculate({
             device_type, test_type, platform_count, number_of_roles,

@@ -636,12 +636,6 @@ table tr:last-child td:last-child {
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-sm);
-    transition: transform 0.2s;
-}
-
-.function-item-display:hover {
-    transform: translateX(4px);
-    border-color: var(--primary-color);
 }
 
 /* Sidebar Nav */

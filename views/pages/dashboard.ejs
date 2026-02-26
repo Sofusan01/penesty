@@ -164,724 +164,718 @@
                                                             </div>
                                                         </div>
 
-                                                        <!-- Step 3 -->
-                                                        <div class="logic-step">
-                                                            <div class="logic-step-header">
-                                                                <span class="logic-step-badge">ขั้นที่ 3</span>
-                                                                <h4>คำนวณฟังก์ชันที่ไร้ Map (Fallback)</h4>
-                                                            </div>
-                                                            <div class="logic-step-body">
-                                                                <div class="logic-fallback-row">
-                                                                    <div style="flex: 1;">สูตร:
-                                                                        <code>จำนวนฟังก์ชันไร้ Map × เวลาสำรอง</code>
-                                                                    </div>
-                                                                    <div class="logic-fallback-formula">
-                                                                        <span class="val">
-                                                                            <%= previewResult.functions_without_wstg %>
-                                                                        </span>
-                                                                        <i class="fas fa-times logic-op"></i>
-                                                                        <span class="val">
-                                                                            <%= (previewResult.fallback_hours /
-                                                                                (previewResult.functions_without_wstg ||
-                                                                                1)).toFixed(1) %>
-                                                                        </span>
-                                                                        <i class="fas fa-equals logic-op"></i>
-                                                                        <span class="result">
-                                                                            <%= previewResult.fallback_hours.toFixed(1)
-                                                                                %> ชม.
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    </div>
 
-                                                        <!-- Step 4 -->
-                                                        <div class="logic-step">
-                                                            <div class="logic-step-header">
-                                                                <span class="logic-step-badge">ขั้นที่ 4</span>
-                                                                <h4>รวมเวลาตั้งต้น (Total Base Hours)</h4>
-                                                            </div>
-                                                            <div class="logic-step-body">
-                                                                <p style="margin-bottom: 0.75rem;">สูตร:
-                                                                    <code>Independent + Fallback + (Dependent × จำนวน Roles)</code>
-                                                                </p>
-                                                                <div class="logic-calc-flow">
-                                                                    <div class="logic-chip logic-chip-green">
-                                                                        <div class="logic-chip-label">Independent</div>
-                                                                        <%= previewResult.role_independent_hours.toFixed(1)
-                                                                            %>
-                                                                    </div>
-                                                                    <i class="fas fa-plus logic-op"></i>
-                                                                    <div class="logic-chip">
-                                                                        <div class="logic-chip-label">Fallback</div>
-                                                                        <%= previewResult.fallback_hours.toFixed(1) %>
-                                                                    </div>
-                                                                    <i class="fas fa-plus logic-op"></i>
-                                                                    <div class="logic-chip logic-chip-orange">
-                                                                        <div class="logic-chip-label">Dependent × Roles
-                                                                            (<%= previewResult.number_of_roles %>)</div>
-                                                                        <%= previewResult.role_dependent_hours.toFixed(1)
-                                                                            %> × <%= previewResult.number_of_roles %> =
-                                                                                <strong>
-                                                                                    <%= previewResult.dependent_total_hours.toFixed(1)
-                                                                                        %>
-                                                                                </strong>
-                                                                    </div>
-                                                                    <i class="fas fa-equals logic-op"
-                                                                        style="font-size: 1rem;"></i>
-                                                                    <div class="logic-chip logic-chip-result">
-                                                                        <div class="logic-chip-label">Total Base Hours
-                                                                        </div>
-                                                                        <span class="logic-chip-number">
-                                                                            <%= previewResult.total_base_hours.toFixed(2)
-                                                                                %>
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                    <!-- Step 3 -->
+                                                    <div class="logic-step">
+                                                        <div class="logic-step-header">
+                                                            <span class="logic-step-badge">ขั้นที่ 3</span>
+                                                            <h4>รวมเวลาตั้งต้น (Total Base Hours)</h4>
                                                         </div>
-
-                                                        <!-- Step 5 -->
-                                                        <div class="logic-step">
-                                                            <div class="logic-step-header">
-                                                                <span class="logic-step-badge">ขั้นที่ 5</span>
-                                                                <h4>คูณแฟกเตอร์สภาพแวดล้อม (Factors)</h4>
-                                                            </div>
-                                                            <div class="logic-step-body">
-                                                                <p style="margin-bottom: 0.75rem;">นำ Total Base Hours
-                                                                    ไปคูณกับตัวคูณความยาก ตามที่ User เลือก</p>
-                                                                <div class="logic-calc-flow">
-                                                                    <span
-                                                                        style="font-size: 1.1rem; color: var(--primary-color); font-weight: 900;">
+                                                        <div class="logic-step-body">
+                                                            <p style="margin-bottom: 0.75rem;">สูตร:
+                                                                <code>Independent + (Dependent × จำนวน Roles)</code>
+                                                            </p>
+                                                            <div class="logic-calc-flow">
+                                                                <div class="logic-chip logic-chip-green">
+                                                                    <div class="logic-chip-label">Independent</div>
+                                                                    <%= previewResult.role_independent_hours.toFixed(1)
+                                                                        %>
+                                                                </div>
+                                                                <i class="fas fa-plus logic-op"></i>
+                                                                <div class="logic-chip logic-chip-orange">
+                                                                    <div class="logic-chip-label">Dependent × Roles
+                                                                        (<%= previewResult.number_of_roles %>)</div>
+                                                                    <%= previewResult.role_dependent_hours.toFixed(1) %>
+                                                                        × <%= previewResult.number_of_roles %> =
+                                                                            <strong>
+                                                                                <%= previewResult.dependent_total_hours.toFixed(1)
+                                                                                    %>
+                                                                            </strong>
+                                                                </div>
+                                                                <i class="fas fa-equals logic-op"
+                                                                    style="font-size: 1rem;"></i>
+                                                                <div class="logic-chip logic-chip-result">
+                                                                    <div class="logic-chip-label">Total Base Hours
+                                                                    </div>
+                                                                    <span class="logic-chip-number">
                                                                         <%= previewResult.total_base_hours.toFixed(2) %>
                                                                     </span>
-                                                                    <i class="fas fa-times logic-op"></i>
-                                                                    <div class="logic-chip"
-                                                                        style="display: flex; align-items: center; gap: 0.3rem;">
-                                                                        <span class="logic-chip-label"
-                                                                            style="margin-bottom:0;"><i
-                                                                                class="fas fa-desktop"></i>
-                                                                            Device</span>
-                                                                        <strong>
-                                                                            <%= previewResult.device_factor.toFixed(1)
-                                                                                %>
-                                                                        </strong>
-                                                                    </div>
-                                                                    <i class="fas fa-times logic-op"></i>
-                                                                    <div class="logic-chip"
-                                                                        style="display: flex; align-items: center; gap: 0.3rem;">
-                                                                        <span class="logic-chip-label"
-                                                                            style="margin-bottom:0;">Test Type</span>
-                                                                        <strong>
-                                                                            <%= previewResult.test_factor.toFixed(1) %>
-                                                                        </strong>
-                                                                    </div>
-                                                                    <i class="fas fa-equals logic-op"
-                                                                        style="font-size: 1rem;"></i>
-                                                                    <div style="text-align: center;">
-                                                                        <div
-                                                                            style="font-size: 0.65rem; color: var(--secondary-color); font-weight: 700; text-transform: uppercase; margin-bottom: 0.15rem;">
-                                                                            Effort Hours (เบื้องต้น)</div>
-                                                                        <span
-                                                                            style="font-size: 1.3rem; font-weight: 900; color: var(--secondary-color);">
-                                                                            <%= previewResult.initial_effort_hours.toFixed(2)
-                                                                                %>
-                                                                        </span>
-                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                    </div>
 
-                                                        <!-- Step 6 -->
-                                                        <div class="logic-step">
-                                                            <div class="logic-step-header">
-                                                                <span class="logic-step-badge">ขั้นที่ 6</span>
-                                                                <h4>เวลาทำรายงาน (Report Overhead) & รวมเวลาสุทธิ</h4>
+                                                    <!-- Step 4 -->
+                                                    <div class="logic-step">
+                                                        <div class="logic-step-header">
+                                                            <span class="logic-step-badge">ขั้นที่ 4</span>
+                                                            <h4>คูณแฟกเตอร์สภาพแวดล้อม (Factors)</h4>
+                                                        </div>
+                                                        <div class="logic-step-body">
+                                                            <p style="margin-bottom: 0.75rem;">นำ Total Base Hours
+                                                                ไปคูณกับตัวคูณความยาก ตามที่ User เลือก</p>
+                                                            <div class="logic-calc-flow">
+                                                                <span
+                                                                    style="font-size: 1.1rem; color: var(--primary-color); font-weight: 900;">
+                                                                    <%= previewResult.total_base_hours.toFixed(2) %>
+                                                                </span>
+                                                                <i class="fas fa-times logic-op"></i>
+                                                                <div class="logic-chip"
+                                                                    style="display: flex; align-items: center; gap: 0.3rem;">
+                                                                    <span class="logic-chip-label"
+                                                                        style="margin-bottom:0;"><i
+                                                                            class="fas fa-desktop"></i>
+                                                                        Device</span>
+                                                                    <strong>
+                                                                        <%= previewResult.device_factor.toFixed(1) %>
+                                                                    </strong>
+                                                                </div>
+                                                                <i class="fas fa-times logic-op"></i>
+                                                                <div class="logic-chip"
+                                                                    style="display: flex; align-items: center; gap: 0.3rem;">
+                                                                    <span class="logic-chip-label"
+                                                                        style="margin-bottom:0;">Test Type</span>
+                                                                    <strong>
+                                                                        <%= previewResult.test_factor.toFixed(1) %>
+                                                                    </strong>
+                                                                </div>
+                                                                <i class="fas fa-equals logic-op"
+                                                                    style="font-size: 1rem;"></i>
+                                                                <div style="text-align: center;">
+                                                                    <div
+                                                                        style="font-size: 0.65rem; color: var(--secondary-color); font-weight: 700; text-transform: uppercase; margin-bottom: 0.15rem;">
+                                                                        Effort Hours (เบื้องต้น)</div>
+                                                                    <span
+                                                                        style="font-size: 1.3rem; font-weight: 900; color: var(--secondary-color);">
+                                                                        <%= previewResult.initial_effort_hours.toFixed(2)
+                                                                            %>
+                                                                    </span>
+                                                                </div>
                                                             </div>
-                                                            <div class="logic-step-body">
-                                                                <div class="logic-report-grid">
-                                                                    <div class="logic-report-left">
-                                                                        <p class="label">6.1 คำนวณ Scope Scale</p>
-                                                                        <p
-                                                                            style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.4rem;">
-                                                                            สูตร: <code>MAX(1.0, WSTG / 10)</code></p>
-                                                                        <p
-                                                                            style="font-family: 'Space Mono', monospace; font-size: 0.82rem; color: #0369a1; background: white; padding: 0.3rem 0.4rem; border: 1px solid #bae6fd; border-radius: 3px; display: inline-block; margin: 0;">
-                                                                            MAX(1.0, <%= previewResult.unique_wstg_count
-                                                                                %> / 10) = <strong>
-                                                                                    <%= previewResult.scope_scale.toFixed(1)
-                                                                                        %>
-                                                                                </strong></p>
-                                                                        <div
-                                                                            style="margin-top: 0.6rem; font-size: 0.82rem; color: var(--text-primary);">
-                                                                            ดังนั้น <strong>Report Hours</strong> = 8.0
-                                                                            × <%= previewResult.scope_scale.toFixed(1)
-                                                                                %> = <strong
-                                                                                    style="color: var(--secondary-color);">
-                                                                                    <%= previewResult.report_hours.toFixed(2)
-                                                                                        %> ชม.
-                                                                                </strong>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="logic-report-right">
-                                                                        <p class="label">6.2 รวม Effort สุดท้าย</p>
-                                                                        <div class="mono">
-                                                                            <div>
-                                                                                <%= previewResult.initial_effort_hours.toFixed(2)
-                                                                                    %> (เทสต์)
-                                                                            </div>
-                                                                            <div>+ <%=
-                                                                                    previewResult.report_hours.toFixed(2)
-                                                                                    %> (รีพอร์ต)</div>
-                                                                            <div class="total-line">
-                                                                                <%= previewResult.final_effort_hours.toFixed(2)
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Step 5 -->
+                                                    <div class="logic-step">
+                                                        <div class="logic-step-header">
+                                                            <span class="logic-step-badge">ขั้นที่ 5</span>
+                                                            <h4>เวลาทำรายงาน (Report Overhead) & รวมเวลาสุทธิ</h4>
+                                                        </div>
+                                                        <div class="logic-step-body">
+                                                            <div class="logic-report-grid">
+                                                                <div class="logic-report-left">
+                                                                    <p class="label">5.1 คำนวณ Scope Scale</p>
+                                                                    <p
+                                                                        style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.4rem;">
+                                                                        สูตร: <code>MAX(1.0, WSTG / 10)</code></p>
+                                                                    <p
+                                                                        style="font-family: 'Space Mono', monospace; font-size: 0.82rem; color: #0369a1; background: white; padding: 0.3rem 0.4rem; border: 1px solid #bae6fd; border-radius: 3px; display: inline-block; margin: 0;">
+                                                                        MAX(1.0, <%= previewResult.unique_wstg_count %>
+                                                                            / 10) = <strong>
+                                                                                <%= previewResult.scope_scale.toFixed(1)
+                                                                                    %>
+                                                                            </strong></p>
+                                                                    <div
+                                                                        style="margin-top: 0.6rem; font-size: 0.82rem; color: var(--text-primary);">
+                                                                        ดังนั้น <strong>Report Hours</strong> = 8.0
+                                                                        × <%= previewResult.scope_scale.toFixed(1) %> =
+                                                                            <strong
+                                                                                style="color: var(--secondary-color);">
+                                                                                <%= previewResult.report_hours.toFixed(2)
                                                                                     %> ชม.
-                                                                            </div>
+                                                                            </strong>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="logic-report-right">
+                                                                    <p class="label">5.2 รวม Effort สุดท้าย</p>
+                                                                    <div class="mono">
+                                                                        <div>
+                                                                            <%= previewResult.initial_effort_hours.toFixed(2)
+                                                                                %> (เทสต์)
+                                                                        </div>
+                                                                        <div>+ <%= previewResult.report_hours.toFixed(2)
+                                                                                %> (รีพอร์ต)</div>
+                                                                        <div class="total-line">
+                                                                            <%= previewResult.final_effort_hours.toFixed(2)
+                                                                                %> ชม.
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                    </div>
 
-                                                        <!-- Step 7 (Final Result) -->
-                                                        <div class="logic-step logic-final">
-                                                            <div class="logic-step-header">
-                                                                <span class="logic-step-badge">ขั้นที่ 7</span>
-                                                                <h4>แปลงเป็นจำนวนวันทำงาน (Man-Days)</h4>
-                                                            </div>
-                                                            <div class="logic-final-body">
-                                                                <p class="logic-final-desc">
-                                                                    ระบบจะนำเวลา Effort สุดท้าย (หน่วยเป็นชั่วโมง)
-                                                                    หารด้วยมาตรฐาน 8 ชั่วโมง/วัน และปัดเศษทศนิยมขึ้น
-                                                                    (Ceil) เป็นจำนวนวันเต็มเสมอ
-                                                                </p>
-                                                                <div class="logic-final-box">
-                                                                    <div class="logic-final-formula">
-                                                                        Math.ceil( <%=
-                                                                            previewResult.final_effort_hours.toFixed(2)
-                                                                            %> / 8 )
-                                                                            <span class="sub">= ปัดเศษขึ้นของ <%=
-                                                                                    (previewResult.final_effort_hours /
-                                                                                    8).toFixed(3) %> วัน</span>
-                                                                    </div>
-                                                                    <div class="logic-final-arrow">
-                                                                        <i class="fas fa-arrow-right"></i>
-                                                                    </div>
-                                                                    <div class="logic-final-result">
-                                                                        <p class="result-label">Total Estimation</p>
-                                                                        <span class="result-number">
-                                                                            <%= previewResult.estimated_days %>
-                                                                        </span>
-                                                                        <span class="result-unit">Man-Days</span>
-                                                                    </div>
+                                                    <!-- Step 6 (Final Result) -->
+                                                    <div class="logic-step logic-final">
+                                                        <div class="logic-step-header">
+                                                            <span class="logic-step-badge">ขั้นที่ 6</span>
+                                                            <h4>แปลงเป็นจำนวนวันทำงาน (Man-Days)</h4>
+                                                        </div>
+                                                        <div class="logic-final-body">
+                                                            <p class="logic-final-desc">
+                                                                ระบบจะนำเวลา Effort สุดท้าย (หน่วยเป็นชั่วโมง)
+                                                                หารด้วยมาตรฐาน 8 ชั่วโมง/วัน และปัดเศษทศนิยมขึ้น
+                                                                (Ceil) เป็นจำนวนวันเต็มเสมอ
+                                                            </p>
+                                                            <div class="logic-final-box">
+                                                                <div class="logic-final-formula">
+                                                                    Math.ceil( <%=
+                                                                        previewResult.final_effort_hours.toFixed(2) %> /
+                                                                        8 )
+                                                                        <span class="sub">= ปัดเศษขึ้นของ <%=
+                                                                                (previewResult.final_effort_hours /
+                                                                                8).toFixed(3) %> วัน</span>
+                                                                </div>
+                                                                <div class="logic-final-arrow">
+                                                                    <i class="fas fa-arrow-right"></i>
+                                                                </div>
+                                                                <div class="logic-final-result">
+                                                                    <p class="result-label">Total Estimation</p>
+                                                                    <span class="result-number">
+                                                                        <%= previewResult.estimated_days %>
+                                                                    </span>
+                                                                    <span class="result-unit">Man-Days</span>
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                    </div>
+
+                                                </div>
+                                        </div>
+                                        <% } else { %>
+                                            <!-- Estimation Form -->
+                                            <div class="card">
+                                                <h3>🛠️ สร้างการประเมินใหม่ (New Estimation)</h3>
+                                                <form method="POST"
+                                                    onsubmit="submitHiddenForm(event, 'L2Rhc2hib2FyZC9lc3RpbWF0ZQ==')">
+                                                    <div class="form-grid"
+                                                        style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                                                        <!-- Merged Client/Target Info -->
+                                                        <div class="form-group">
+                                                            <label for="client_name">ข้อมูลลูกค้า / เป้าหมาย
+                                                                (Client
+                                                                & Target Info) <span
+                                                                    class="text-danger">*</span></label>
+                                                            <input type="text" id="client_name" name="client_name"
+                                                                placeholder="ระบุชื่อลูกค้าและเป้าหมาย เช่น 'Acme Corp - www.acme.com'"
+                                                                required maxlength="255">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-grid"
+                                                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                                        <!-- Roles -->
+                                                        <div class="form-group">
+                                                            <label for="number_of_roles">จำนวน Role (Number of
+                                                                Roles) <span class="text-danger">*</span></label>
+                                                            <input type="number" id="number_of_roles"
+                                                                name="number_of_roles" min="1" max="20" value="1"
+                                                                required
+                                                                onkeydown="if(['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()">
+                                                        </div>
+
 
                                                     </div>
-                                                </div>
-                                                <% } else { %>
-                                                    <!-- Estimation Form -->
-                                                    <div class="card">
-                                                        <h3>🛠️ สร้างการประเมินใหม่ (New Estimation)</h3>
-                                                        <form method="POST"
-                                                            onsubmit="submitHiddenForm(event, 'L2Rhc2hib2FyZC9lc3RpbWF0ZQ==')">
-                                                            <div class="form-grid"
-                                                                style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
-                                                                <!-- Merged Client/Target Info -->
-                                                                <div class="form-group">
-                                                                    <label for="client_name">ข้อมูลลูกค้า / เป้าหมาย
-                                                                        (Client
-                                                                        & Target Info) <span
-                                                                            class="text-danger">*</span></label>
-                                                                    <input type="text" id="client_name"
-                                                                        name="client_name"
-                                                                        placeholder="ระบุชื่อลูกค้าและเป้าหมาย เช่น 'Acme Corp - www.acme.com'"
-                                                                        required maxlength="255">
-                                                                </div>
-                                                            </div>
 
-                                                            <div class="form-grid"
-                                                                style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                                                <!-- Roles -->
-                                                                <div class="form-group">
-                                                                    <label for="number_of_roles">จำนวน Role (Number of
-                                                                        Roles) <span
-                                                                            class="text-danger">*</span></label>
-                                                                    <input type="number" id="number_of_roles"
-                                                                        name="number_of_roles" min="1" max="20"
-                                                                        value="1" required
-                                                                        onkeydown="if(['e', 'E', '+', '-', '.'].includes(event.key)) event.preventDefault()">
-                                                                </div>
+                                                    <div class="form-grid"
+                                                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                                        <!-- Device Type -->
+                                                        <div class="form-group">
+                                                            <label for="device_type">ชนิดเป้าหมาย (System Type)
+                                                                <span class="text-danger">*</span></label>
+                                                            <select id="device_type" name="device_type" required
+                                                                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: #f9fafb;">
+                                                                <option value="web_application">Web Application
+                                                                </option>
+                                                                <option value="mobile_application">Mobile
+                                                                    Application</option>
+                                                                <option value="api_webservice">API / Webservice
+                                                                </option>
+                                                                <option value="infrastructure">Infrastructure /
+                                                                    Network</option>
+                                                            </select>
+                                                        </div>
 
-
-                                                            </div>
-
-                                                            <div class="form-grid"
-                                                                style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                                                                <!-- Device Type -->
-                                                                <div class="form-group">
-                                                                    <label for="device_type">ชนิดเป้าหมาย (System Type)
-                                                                        <span class="text-danger">*</span></label>
-                                                                    <select id="device_type" name="device_type" required
-                                                                        style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: #f9fafb;">
-                                                                        <option value="web_application">Web Application
-                                                                        </option>
-                                                                        <option value="mobile_application">Mobile
-                                                                            Application</option>
-                                                                        <option value="api_webservice">API / Webservice
-                                                                        </option>
-                                                                        <option value="infrastructure">Infrastructure /
-                                                                            Network</option>
-                                                                    </select>
-                                                                </div>
-
-                                                                <!-- Test Type -->
-                                                                <div class="form-group">
-                                                                    <label for="test_type">รูปแบบการทดสอบ (Test Type)
-                                                                        <span class="text-danger">*</span></label>
-                                                                    <select id="test_type" name="test_type" required
-                                                                        style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: #f9fafb;">
-                                                                        <option value="graybox">Gray Box (Authenticated)
-                                                                        </option>
-                                                                        <option value="blackbox">Black Box
-                                                                            (Unauthenticated)
-                                                                        </option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
+                                                        <!-- Test Type -->
+                                                        <div class="form-group">
+                                                            <label for="test_type">รูปแบบการทดสอบ (Test Type)
+                                                                <span class="text-danger">*</span></label>
+                                                            <select id="test_type" name="test_type" required
+                                                                style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: #f9fafb;">
+                                                                <option value="graybox">Gray Box (Authenticated)
+                                                                </option>
+                                                                <option value="blackbox">Black Box
+                                                                    (Unauthenticated)
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
 
 
 
-                                                            <div class="form-group">
-                                                                <label>เลือกฟังก์ชันระบบ (Business Functions) <span
-                                                                        class="text-danger">*</span></label>
-                                                                <small class="text-muted"
-                                                                    style="display:block;margin-bottom:0.5rem;">
-                                                                    คลิก ▶ เพื่อดูรายการย่อย WSTG —
-                                                                    ติ๊กเลือก/เอาออกได้ตามต้องการ
-                                                                </small>
-                                                                <div id="bf-accordion"
-                                                                    style="border:1px solid #e5e7eb;border-radius:0.5rem;overflow:hidden;background:#fff;">
-                                                                    <% if (locals.appFunctions && appFunctions.length>
-                                                                        0) { %>
-                                                                        <% appFunctions.forEach(function(func) { %>
-                                                                            <div class="bf-item"
-                                                                                style="border-bottom:1px solid #e5e7eb;">
-                                                                                <div class="bf-header"
-                                                                                    style="display:flex;align-items:center;gap:0.75rem;padding:0.65rem 1rem;background:#f9fafb;cursor:pointer;"
-                                                                                    onclick="toggleBfAcc('bf-body-<%- func.accordionIndex %>','bf-ico-<%- func.accordionIndex %>')">
-                                                                                    <input type="checkbox"
-                                                                                        id="func_<%- func.id %>"
-                                                                                        name="selected_functions"
-                                                                                        value="<%- func.id %>"
-                                                                                        onclick="event.stopPropagation()"
-                                                                                        style="width:16px;height:16px;flex-shrink:0;cursor:pointer;">
-                                                                                    <label for="func_<%- func.id %>"
-                                                                                        onclick="event.stopPropagation()"
-                                                                                        style="flex:1;cursor:pointer;margin:0;">
-                                                                                        <span
-                                                                                            style="font-weight:600;color:#1f2937;font-size:0.95rem;"><%-
-                                                                                                func.name %></span>
-                                                                                        <span
-                                                                                            style="display:block;font-size:0.8rem;color:#6b7280;font-weight:400;"><%-
-                                                                                                func.description
-                                                                                                %></span>
-                                                                                    </label>
-                                                                                    <% if (func.owaspCategories &&
-                                                                                        func.owaspCategories.length> 0)
-                                                                                        { %>
-                                                                                        <span
-                                                                                            id="bf-hrs-<%- func.accordionIndex %>"
-                                                                                            style="font-size:0.78rem;background:#ede9fe;color:#6d28d9;padding:0.2rem 0.55rem;border-radius:999px;white-space:nowrap;flex-shrink:0;"><%-
-                                                                                                func.totalWstgHours %>
-                                                                                                ชม.</span>
-                                                                                        <span
-                                                                                            id="bf-ico-<%- func.accordionIndex %>"
-                                                                                            style="font-size:0.8rem;color:#9ca3af;flex-shrink:0;transition:transform 0.2s;">▶</span>
-                                                                                        <% } %>
-                                                                                </div>
-                                                                                <% if (func.owaspCategories &&
-                                                                                    func.owaspCategories.length> 0) { %>
-                                                                                    <div id="bf-body-<%- func.accordionIndex %>"
-                                                                                        style="display:none;padding:0.4rem 1rem 0.75rem 1rem;background:#fff;">
+                                                    <div class="form-group">
+                                                        <label>เลือกฟังก์ชันระบบ (Business Functions) <span
+                                                                class="text-danger">*</span></label>
+                                                        <small class="text-muted"
+                                                            style="display:block;margin-bottom:0.5rem;">
+                                                            คลิก ▶ เพื่อดูรายการย่อย WSTG —
+                                                            ติ๊กเลือก/เอาออกได้ตามต้องการ
+                                                        </small>
+                                                        <div id="bf-accordion"
+                                                            style="border:1px solid #e5e7eb;border-radius:0.5rem;overflow:hidden;background:#fff;">
+                                                            <% if (locals.appFunctions && appFunctions.length>
+                                                                0) { %>
+                                                                <% appFunctions.forEach(function(func) { %>
+                                                                    <div class="bf-item"
+                                                                        style="border-bottom:1px solid #e5e7eb;">
+                                                                        <div class="bf-header"
+                                                                            style="display:flex;align-items:center;gap:0.75rem;padding:0.65rem 1rem;background:#f9fafb;cursor:pointer;"
+                                                                            onclick="toggleBfAcc('bf-body-<%- func.accordionIndex %>','bf-ico-<%- func.accordionIndex %>')">
+                                                                            <input type="checkbox"
+                                                                                id="func_<%- func.id %>"
+                                                                                name="selected_functions"
+                                                                                value="<%- func.id %>"
+                                                                                onchange="updateAllWstgStates()"
+                                                                                onclick="event.stopPropagation()"
+                                                                                style="width:16px;height:16px;flex-shrink:0;cursor:pointer;">
+                                                                            <label for="func_<%- func.id %>"
+                                                                                onclick="event.stopPropagation()"
+                                                                                style="flex:1;cursor:pointer;margin:0;">
+                                                                                <span
+                                                                                    style="font-weight:600;color:#1f2937;font-size:0.95rem;"><%-
+                                                                                        func.name %></span>
+                                                                                <span
+                                                                                    style="display:block;font-size:0.8rem;color:#6b7280;font-weight:400;"><%-
+                                                                                        func.description %></span>
+                                                                            </label>
+                                                                            <% if (func.owaspCategories &&
+                                                                                func.owaspCategories.length> 0)
+                                                                                { %>
+                                                                                <span
+                                                                                    id="bf-hrs-<%- func.accordionIndex %>"
+                                                                                    style="font-size:0.78rem;background:#ede9fe;color:#6d28d9;padding:0.2rem 0.55rem;border-radius:999px;white-space:nowrap;flex-shrink:0;"><%-
+                                                                                        func.totalWstgHours %>
+                                                                                        ชม.</span>
+                                                                                <span
+                                                                                    id="bf-ico-<%- func.accordionIndex %>"
+                                                                                    style="font-size:0.8rem;color:#9ca3af;flex-shrink:0;transition:transform 0.2s;">▶</span>
+                                                                                <% } %>
+                                                                        </div>
+                                                                        <% if (func.owaspCategories &&
+                                                                            func.owaspCategories.length> 0) { %>
+                                                                            <div id="bf-body-<%- func.accordionIndex %>"
+                                                                                style="display:none;padding:0.4rem 1rem 0.75rem 1rem;background:#fff;">
+
+                                                                                <% func.owaspCategories.forEach(function(cat)
+                                                                                    { %>
+                                                                                    <div style="margin-top:0.4rem;">
                                                                                         <div
-                                                                                            style="display:flex;justify-content:flex-end;gap:0.5rem;padding:0.25rem 0 0.4rem 0;border-bottom:1px solid #f3f4f6;margin-bottom:0.3rem;">
-                                                                                            <button type="button"
-                                                                                                onclick="selectAllWstg('<%- func.accordionIndex %>',true)"
-                                                                                                style="font-size:0.72rem;padding:0.15rem 0.6rem;border:1px solid #d1d5db;border-radius:4px;background:#f9fafb;color:#374151;cursor:pointer;">✓
-                                                                                                เลือกทั้งหมด</button>
-                                                                                            <button type="button"
-                                                                                                onclick="selectAllWstg('<%- func.accordionIndex %>',false)"
-                                                                                                style="font-size:0.72rem;padding:0.15rem 0.6rem;border:1px solid #d1d5db;border-radius:4px;background:#f9fafb;color:#6b7280;cursor:pointer;">✕
-                                                                                                ยกเลิกทั้งหมด</button>
+                                                                                            style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#9ca3af;margin-bottom:0.25rem;padding-bottom:0.15rem;border-bottom:1px dashed #f3f4f6;">
+                                                                                            <%- cat %>
                                                                                         </div>
-                                                                                        <% func.owaspCategories.forEach(function(cat)
+                                                                                        <% func.owaspGrouped[cat].forEach(function(tc)
                                                                                             { %>
-                                                                                            <div
-                                                                                                style="margin-top:0.4rem;">
+                                                                                            <label
+                                                                                                style="display:flex;justify-content:space-between;align-items:center;padding:0.22rem 0.25rem;font-size:0.82rem;border-radius:3px;cursor:pointer;margin:0;"
+                                                                                                onmouseover="this.style.background='#f9fafb'"
+                                                                                                onmouseout="this.style.background=''">
                                                                                                 <div
-                                                                                                    style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#9ca3af;margin-bottom:0.25rem;padding-bottom:0.15rem;border-bottom:1px dashed #f3f4f6;">
-                                                                                                    <%- cat %></div>
-                                                                                                <% func.owaspGrouped[cat].forEach(function(tc)
-                                                                                                    { %>
-                                                                                                    <div style="display:flex;justify-content:space-between;align-items:center;padding:0.22rem 0.25rem;font-size:0.82rem;border-radius:3px;"
-                                                                                                        onmouseover="this.style.background='#f9fafb'"
-                                                                                                        onmouseout="this.style.background=''">
-                                                                                                        <label
-                                                                                                            style="display:flex;align-items:center;gap:0.45rem;cursor:pointer;flex:1;margin:0;">
-                                                                                                            <input
-                                                                                                                type="checkbox"
-                                                                                                                name="selected_wstg"
-                                                                                                                value="<%- tc.code %>"
-                                                                                                                data-hours="<%- tc.base_hours %>"
-                                                                                                                class="wstg-cb wstg-cb-<%- func.accordionIndex %>"
-                                                                                                                checked
-                                                                                                                onchange="updateBfHours('<%- func.accordionIndex %>')"
-                                                                                                                style="width:14px;height:14px;flex-shrink:0;cursor:pointer;accent-color:#6d28d9;">
-                                                                                                            <span
-                                                                                                                style="font-family:monospace;font-size:0.75rem;color:#6d28d9;background:#f5f3ff;padding:0.08rem 0.32rem;border-radius:3px;flex-shrink:0;"><%-
-                                                                                                                    tc.code
-                                                                                                                    %></span>
-                                                                                                            <span
-                                                                                                                style="color:#374151;"><%-
-                                                                                                                    tc.name
-                                                                                                                    %></span>
-                                                                                                        </label>
-                                                                                                        <span
-                                                                                                            style="flex-shrink:0;font-size:0.75rem;color:#6b7280;margin-left:0.5rem;white-space:nowrap;"><%-
-                                                                                                                tc.base_hours
-                                                                                                                %>
-                                                                                                                ชม.</span>
-                                                                                                    </div>
-                                                                                                    <% }); %>
-                                                                                            </div>
+                                                                                                    style="display:flex;align-items:center;gap:0.45rem;flex:1;margin:0;">
+                                                                                                    <input
+                                                                                                        type="checkbox"
+                                                                                                        name="selected_wstg"
+                                                                                                        value="<%- tc.code %>"
+                                                                                                        data-hours="<%- tc.base_hours %>"
+                                                                                                        class="wstg-cb wstg-cb-<%- func.accordionIndex %>"
+                                                                                                        checked
+                                                                                                        onchange="updateBfHours('<%- func.accordionIndex %>')"
+                                                                                                        style="width:14px;height:14px;flex-shrink:0;cursor:pointer;accent-color:#6d28d9;">
+                                                                                                    <span
+                                                                                                        style="font-family:monospace;font-size:0.75rem;color:#6d28d9;background:#f5f3ff;padding:0.08rem 0.32rem;border-radius:3px;flex-shrink:0;"><%-
+                                                                                                            tc.code
+                                                                                                            %></span>
+                                                                                                    <span
+                                                                                                        style="color:#374151;"><%-
+                                                                                                            tc.name
+                                                                                                            %></span>
+                                                                                                </div>
+                                                                                                <span
+                                                                                                    class="wstg-hour-display"
+                                                                                                    style="flex-shrink:0;font-size:0.75rem;color:#6b7280;margin-left:0.5rem;white-space:nowrap;"><%-
+                                                                                                        tc.base_hours %>
+                                                                                                        ชม.</span>
+                                                                                            </label>
                                                                                             <% }); %>
                                                                                     </div>
-                                                                                    <% } else { %>
-                                                                                        <div
-                                                                                            style="padding:0.3rem 1rem 0.3rem 2.75rem;font-size:0.8rem;color:#9ca3af;font-style:italic;">
-                                                                                            ไม่มี WSTG mapping (ใช้
-                                                                                            fallback hours)</div>
-                                                                                        <% } %>
+                                                                                    <% }); %>
                                                                             </div>
-                                                                            <% }); %>
-                                                                                <% } else { %>
-                                                                                    <p
-                                                                                        style="padding:1rem;color:#6b7280;">
-                                                                                        ไม่พบข้อมูลฟังก์ชัน</p>
-                                                                                    <% } %>
-                                                                </div>
-                                                                <small class="text-muted"
-                                                                    style="margin-top:0.4rem;display:block;">
-                                                                    ✓ เลือก Business Function ▶ ขยายเพื่อติ๊กรายการ WSTG
-                                                                    ย่อย — คำนวณจาก hours ที่เลือกจริงๆ
-                                                                </small>
-                                                            </div>
-
-                                                            <script>
-                                                                function toggleBfAcc(bodyId, icoId) {
-                                                                    var b = document.getElementById(bodyId);
-                                                                    var i = document.getElementById(icoId);
-                                                                    if (!b) return;
-                                                                    var open = b.style.display !== 'none';
-                                                                    b.style.display = open ? 'none' : 'block';
-                                                                    if (i) i.style.transform = open ? '' : 'rotate(90deg)';
-                                                                }
-                                                                function updateBfHours(fi) {
-                                                                    var cbs = document.querySelectorAll('.wstg-cb-' + fi);
-                                                                    var total = 0;
-                                                                    cbs.forEach(function (cb) { if (cb.checked) total += parseFloat(cb.dataset.hours || 0); });
-                                                                    var badge = document.getElementById('bf-hrs-' + fi);
-                                                                    if (badge) badge.textContent = (Math.round(total * 10) / 10) + ' ชม.';
-                                                                }
-                                                                function selectAllWstg(fi, checked) {
-                                                                    var cbs = document.querySelectorAll('.wstg-cb-' + fi);
-                                                                    cbs.forEach(function (cb) { cb.checked = checked; });
-                                                                    updateBfHours(fi);
-                                                                }
-                                                            </script>
-
-                                                            <button type="submit" class="btn btn-primary"
-                                                                style="width:100%;margin-top:1rem;padding:1rem;font-size:1.1rem;">
-                                                                &#128640;
-                                                                คำนวณราคาประเมิน
-                                                                (Calculate Estimate)
-                                                            </button>
-                                                        </form>
+                                                                            <% } else { %>
+                                                                                <div
+                                                                                    style="padding:0.3rem 1rem 0.3rem 2.75rem;font-size:0.8rem;color:#9ca3af;font-style:italic;">
+                                                                                    ไม่มี WSTG mapping (ใช้
+                                                                                    fallback hours)</div>
+                                                                                <% } %>
+                                                                    </div>
+                                                                    <% }); %>
+                                                                        <% } else { %>
+                                                                            <p style="padding:1rem;color:#6b7280;">
+                                                                                ไม่พบข้อมูลฟังก์ชัน</p>
+                                                                            <% } %>
+                                                        </div>
+                                                        <small class="text-muted"
+                                                            style="margin-top:0.4rem;display:block;">
+                                                            ✓ เลือก Business Function ▶ ขยายเพื่อติ๊กรายการ WSTG
+                                                            ย่อย — คำนวณจาก hours ที่เลือกจริงๆ
+                                                        </small>
                                                     </div>
 
-                                                    <!-- Data for Client Constraints -->
-                                                    <script id="constraints-data" type="application/json">
+                                                    <script>
+                                                        function updateAllWstgStates() {
+                                                            const testSelect = document.getElementById('test_type');
+                                                            const isBlackBox = testSelect && testSelect.value === 'blackbox';
+                                                            const grayBoxOnlyCodes = [
+                                                                'WSTG-IDNT-01', 'WSTG-ATHZ-03', 'WSTG-ATHZ-04',
+                                                                'WSTG-BUSL-02', 'WSTG-BUSL-03', 'WSTG-CLNT-12'
+                                                            ];
+
+                                                            document.querySelectorAll('input[name="selected_functions"]').forEach(function (funcCb) {
+                                                                const bfItem = funcCb.closest('.bf-item');
+                                                                if (bfItem) {
+                                                                    bfItem.querySelectorAll('.wstg-cb').forEach(function (cb) {
+                                                                        let shouldDisable = !funcCb.checked;
+                                                                        let isGrayBoxRestricted = isBlackBox && grayBoxOnlyCodes.includes(cb.value);
+
+                                                                        if (isGrayBoxRestricted) {
+                                                                            shouldDisable = true;
+                                                                            cb.checked = false;
+                                                                            cb.parentElement.style.opacity = '0.4';
+                                                                            cb.parentElement.style.textDecoration = 'line-through';
+                                                                            cb.parentElement.title = "ต้องเป็น Gray Box เท่านั้น";
+                                                                        } else {
+                                                                            cb.parentElement.style.opacity = '1';
+                                                                            cb.parentElement.style.textDecoration = 'none';
+                                                                            cb.parentElement.title = "";
+                                                                        }
+                                                                        cb.disabled = shouldDisable;
+                                                                    });
+                                                                }
+                                                            });
+
+                                                            document.querySelectorAll('.wstg-cb').forEach(function (cb) {
+                                                                if (!cb.hasAttribute('data-original-hours')) {
+                                                                    cb.setAttribute('data-original-hours', cb.getAttribute('data-hours') || '0');
+                                                                }
+                                                                const originalHours = parseFloat(cb.getAttribute('data-original-hours') || '0');
+                                                                let newHours = isBlackBox ? originalHours * 3.0 : originalHours;
+                                                                cb.setAttribute('data-hours', newHours);
+                                                                const hourLabel = cb.closest('label').querySelector('.wstg-hour-display');
+                                                                if (hourLabel) {
+                                                                    hourLabel.textContent = (Math.round(newHours * 10) / 10) + ' ชม.';
+                                                                }
+                                                            });
+
+                                                            const accHeaders = document.querySelectorAll('[id^=bf-hrs-]');
+                                                            accHeaders.forEach(function (el) {
+                                                                const fi = el.id.replace('bf-hrs-', '');
+                                                                if (typeof updateBfHours === 'function') updateBfHours(fi);
+                                                            });
+                                                        }
+
+                                                        function toggleBfAcc(bodyId, icoId) {
+                                                            var b = document.getElementById(bodyId);
+                                                            var i = document.getElementById(icoId);
+                                                            if (!b) return;
+                                                            var open = b.style.display !== 'none';
+                                                            b.style.display = open ? 'none' : 'block';
+                                                            if (i) i.style.transform = open ? '' : 'rotate(90deg)';
+                                                        }
+                                                        function updateBfHours(fi) {
+                                                            var cbs = document.querySelectorAll('.wstg-cb-' + fi);
+                                                            var total = 0;
+                                                            cbs.forEach(function (cb) { if (cb.checked) total += parseFloat(cb.dataset.hours || 0); });
+                                                            var badge = document.getElementById('bf-hrs-' + fi);
+                                                            if (badge) badge.textContent = (Math.round(total * 10) / 10) + ' ชม.';
+                                                        }
+                                                        function selectAllWstg(fi, checked) {
+                                                            var cbs = document.querySelectorAll('.wstg-cb-' + fi);
+                                                            cbs.forEach(function (cb) { cb.checked = checked; });
+                                                            updateBfHours(fi);
+                                                        }
+                                                    </script>
+
+                                                    <button type="submit" class="btn btn-primary"
+                                                        style="width:100%;margin-top:1rem;padding:1rem;font-size:1.1rem;">
+                                                        &#128640;
+                                                        คำนวณราคาประเมิน
+                                                        (Calculate Estimate)
+                                                    </button>
+                                                </form>
+                                            </div>
+
+                                            <!-- Data for Client Constraints -->
+                                            <script id="constraints-data" type="application/json">
                                                     <%- JSON.stringify(locals.constraints || {}) %>
                                                 </script>
 
-                                                    <script>
-                                                        const deviceSelect = document.getElementById('device_type');
-                                                        const testSelect = document.getElementById('test_type');
+                                            <script>
+                                                const deviceSelect = document.getElementById('device_type');
+                                                const testSelect = document.getElementById('test_type');
 
-                                                        let constraints = {};
-                                                        try {
-                                                            constraints = JSON.parse(document.getElementById('constraints-data').textContent);
-                                                        } catch (e) { console.error(e); }
+                                                let constraints = {};
+                                                try {
+                                                    constraints = JSON.parse(document.getElementById('constraints-data').textContent);
+                                                } catch (e) { console.error(e); }
 
-                                                        function updateUI() {
-                                                            const device = deviceSelect.value;
+                                                function updateUI() {
+                                                    const device = deviceSelect.value;
 
-                                                            // 1. Update Target Inputs - No longer needed as we use a single consolidated input
-                                                            // targetUrl.style.display = 'none'; targetUrl.removeAttribute('required');
-                                                            // ... kept singular logic
+                                                    // 1. Update Target Inputs - No longer needed as we use a single consolidated input
+                                                    // targetUrl.style.display = 'none'; targetUrl.removeAttribute('required');
+                                                    // ... kept singular logic
 
-                                                            // 2. Update Test Type Constraints
-                                                            const allowed = constraints[device] || [];
-                                                            const options = testSelect.options;
+                                                    // 2. Update Test Type Constraints
+                                                    const allowed = constraints[device] || [];
+                                                    const options = testSelect.options;
 
-                                                            for (let i = 0; i < options.length; i++) {
-                                                                const opt = options[i];
-                                                                // Enable if allowed
-                                                                if (allowed.includes(opt.value)) {
-                                                                    opt.disabled = false;
-                                                                    opt.hidden = false;
-                                                                } else {
-                                                                    opt.disabled = true;
-                                                                    opt.hidden = true;
-                                                                }
-                                                            }
+                                                    for (let i = 0; i < options.length; i++) {
+                                                        const opt = options[i];
+                                                        // Enable if allowed
+                                                        if (allowed.includes(opt.value)) {
+                                                            opt.disabled = false;
+                                                            opt.hidden = false;
+                                                        } else {
+                                                            opt.disabled = true;
+                                                            opt.hidden = true;
+                                                        }
+                                                    }
 
-                                                            // Auto-select valid option if current is invalid
-                                                            if (!allowed.includes(testSelect.value)) {
-                                                                // Find first enabled option
-                                                                for (let i = 0; i < options.length; i++) {
-                                                                    if (!options[i].disabled) {
-                                                                        testSelect.value = options[i].value;
-                                                                        break;
-                                                                    }
-                                                                }
+                                                    // Auto-select valid option if current is invalid
+                                                    if (!allowed.includes(testSelect.value)) {
+                                                        // Find first enabled option
+                                                        for (let i = 0; i < options.length; i++) {
+                                                            if (!options[i].disabled) {
+                                                                testSelect.value = options[i].value;
+                                                                break;
                                                             }
                                                         }
+                                                    }
 
-                                                        deviceSelect.addEventListener('change', updateUI);
-                                                        // Init
-                                                        updateUI();
-                                                    </script>
-                                                    <% } %>
-                                        </div>
+                                                    // Update Roles Input (Blackbox = Unauthenticated, always 1 role)
+                                                    const rolesInput = document.getElementById('number_of_roles');
+                                                    if (rolesInput) {
+                                                        if (testSelect.value === 'blackbox') {
+                                                            rolesInput.value = '1';
+                                                            rolesInput.readOnly = true;
+                                                            rolesInput.style.backgroundColor = '#e5e7eb';
+                                                        } else {
+                                                            rolesInput.readOnly = false;
+                                                            rolesInput.style.backgroundColor = '';
+                                                        }
+                                                    }
 
-                                        <div id="history-tab" class="tab-content">
+                                                    updateAllWstgStates();
+                                                }
+
+                                                deviceSelect.addEventListener('change', updateUI);
+                                                testSelect.addEventListener('change', updateUI);
+                                                // Init
+                                                updateUI();
+                                            </script>
+                                            <% } %>
+                    </div>
+
+                    <div id="history-tab" class="tab-content">
 
 
-                                            <!-- History Table -->
-                                            <div class="card">
-                                                <div
-                                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                                                    <h3 style="margin: 0;">📜 ประวัติการประเมิน (History)</h3>
-                                                    <div style="display: flex; gap: 0.75rem; align-items: center;">
-                                                        <!-- Default Actions -->
-                                                        <div id="default-actions" style="display: flex; gap: 0.75rem;">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                onclick="enterMode('csv')"
-                                                                style="background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;">
-                                                                <i class="fas fa-download"></i> ส่งออก CSV
-                                                            </button>
-                                                            <button type="button" class="btn"
-                                                                onclick="enterMode('delete')"
-                                                                style="background-color: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;">
-                                                                <i class="fas fa-trash-alt"></i> ลบข้อมูล
-                                                            </button>
-                                                        </div>
+                        <!-- History Table -->
+                        <div class="card">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <h3 style="margin: 0;">📜 ประวัติการประเมิน (History)</h3>
+                                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                                    <!-- Default Actions -->
+                                    <div id="default-actions" style="display: flex; gap: 0.75rem;">
+                                        <button type="button" class="btn btn-secondary" onclick="enterMode('csv')"
+                                            style="background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;">
+                                            <i class="fas fa-download"></i> ส่งออก CSV
+                                        </button>
+                                        <button type="button" class="btn" onclick="enterMode('delete')"
+                                            style="background-color: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem;">
+                                            <i class="fas fa-trash-alt"></i> ลบข้อมูล
+                                        </button>
+                                    </div>
 
-                                                        <!-- CSV Selection Mode -->
-                                                        <div id="csv-actions"
-                                                            style="display: none; gap: 0.75rem; align-items: center;">
-                                                            <span
-                                                                style="color: var(--primary-color); font-weight: 600; font-size: 0.9rem; white-space: nowrap;">เลือกรายการส่งออก:</span>
-                                                            <button type="button" class="btn btn-secondary"
-                                                                onclick="exitMode()"
-                                                                style="padding: 0.4rem 0.8rem; font-size: 0.9rem;">
-                                                                ยกเลิก (Cancel)
-                                                            </button>
-                                                            <button type="button" class="btn" onclick="executeCSV()"
-                                                                style="background-color: var(--success-color); padding: 0.4rem 0.8rem; font-size: 0.9rem;">
-                                                                ยืนยัน (Confirm)
-                                                            </button>
-                                                        </div>
+                                    <!-- CSV Selection Mode -->
+                                    <div id="csv-actions" style="display: none; gap: 0.75rem; align-items: center;">
+                                        <span
+                                            style="color: var(--primary-color); font-weight: 600; font-size: 0.9rem; white-space: nowrap;">เลือกรายการส่งออก:</span>
+                                        <button type="button" class="btn btn-secondary" onclick="exitMode()"
+                                            style="padding: 0.4rem 0.8rem; font-size: 0.9rem;">
+                                            ยกเลิก (Cancel)
+                                        </button>
+                                        <button type="button" class="btn" onclick="executeCSV()"
+                                            style="background-color: var(--success-color); padding: 0.4rem 0.8rem; font-size: 0.9rem;">
+                                            ยืนยัน (Confirm)
+                                        </button>
+                                    </div>
 
-                                                        <!-- Delete Selection Mode -->
-                                                        <div id="delete-actions"
-                                                            style="display: none; gap: 0.75rem; align-items: center;">
-                                                            <span
-                                                                style="color: var(--danger-color); font-weight: 600; font-size: 0.9rem; white-space: nowrap;">เลือกรายการลบ:</span>
-                                                            <button type="button" class="btn btn-secondary"
-                                                                onclick="exitMode()"
-                                                                style="padding: 0.4rem 0.8rem; font-size: 0.9rem;">
-                                                                ยกเลิก (Cancel)
-                                                            </button>
-                                                            <button type="button" class="btn"
-                                                                onclick="confirmBulkDelete()"
-                                                                style="background-color: var(--danger-color); padding: 0.4rem 0.8rem; font-size: 0.9rem;">
-                                                                ยืนยัน (Confirm)
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div style="overflow-x: auto;">
-                                                    <table
-                                                        style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
-                                                        <thead>
-                                                            <tr style="background: #f3f4f6; text-align: left;">
-                                                                <th class="checkbox-col"
-                                                                    style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb; width: 40px; text-align: center; display: none;">
-                                                                    <input type="checkbox" id="selectAllEst"
-                                                                        onclick="toggleSelectAllRecords(this)"
-                                                                        style="width: 18px; height: 18px; cursor: pointer;">
-                                                                </th>
-                                                                <th
-                                                                    style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
-                                                                    <a href="?tab=history&page=1&order=<%= (locals.order === 'ASC') ? 'DESC' : 'ASC' %>"
-                                                                        style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
-                                                                        ลำดับ <span style="font-size: 0.8em;">
-                                                                            <%= (locals.order==='ASC' ) ? '▲' : '▼' %>
-                                                                        </span>
-                                                                    </a>
-                                                                </th>
-                                                                <th
-                                                                    style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
-                                                                    ลูกค้า</th>
-                                                                <th
-                                                                    style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
-                                                                    ประเภท</th>
-                                                                <th
-                                                                    style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
-                                                                    จำนวนฟังก์ชัน</th>
-                                                                <th
-                                                                    style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb; color: var(--primary-color);">
-                                                                    เวลาประเมิน (Man-Days)</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <% if (locals.estimations && estimations.length> 0) { %>
-                                                                <% estimations.forEach((est, index)=> { %>
-                                                                    <tr style="border-bottom: 1px solid #e5e7eb;"
-                                                                        class="history-row">
-                                                                        <td class="checkbox-col"
-                                                                            style="padding: 0.75rem; text-align: center; display: none;">
-                                                                            <input type="checkbox"
-                                                                                class="record-checkbox"
-                                                                                value="<%= est.id %>"
-                                                                                style="width: 18px; height: 18px; cursor: pointer;">
-                                                                        </td>
-                                                                        <td style="padding: 0.75rem;">
-                                                                            <%= (locals.order==='ASC' ) ?
-                                                                                (((locals.currentPage || 1) - 1) * 10 +
-                                                                                index + 1) : (locals.totalItems -
-                                                                                (((locals.currentPage || 1) - 1) * 10) -
-                                                                                index) %>
-                                                                        </td>
-                                                                        <td style="padding: 0.75rem;">
-                                                                            <%= est.client_name %>
-                                                                        </td>
-                                                                        <td style="padding: 0.75rem;">
-                                                                            <span
-                                                                                style="font-size: 0.85rem; font-weight: bold;">
-                                                                                <%= est.device_type %>
-                                                                            </span><br>
-                                                                            <span
-                                                                                style="font-size: 0.75rem; color: #6b7280;">
-                                                                                <%= est.test_type %>
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="padding: 0.75rem;">
-                                                                            <% if (est.selected_functions &&
-                                                                                est.selected_functions !=='[]' ) { %>
-                                                                                <div class="function-count-link tooltip-btn"
-                                                                                    data-functions='<%- est.selected_functions %>'
-                                                                                    data-client="<%= est.client_name %>"
-                                                                                    onclick="handleViewFunctions(this)"
-                                                                                    data-tooltip="คลิกเพื่อดูรายละเอียด"
-                                                                                    style="cursor: pointer; color: var(--primary-color); font-weight: 500; text-decoration: underline; text-underline-offset: 4px; display: inline-block;">
-                                                                                    <%= est.function_count %> ฟังก์ชัน
-                                                                                </div>
-                                                                                <% } else { %>
-                                                                                    <div
-                                                                                        style="color: var(--text-secondary);">
-                                                                                        <%= est.function_count %>
-                                                                                            ฟังก์ชัน
-                                                                                    </div>
-                                                                                    <% } %>
-                                                                        </td>
-                                                                        <td
-                                                                            style="padding: 0.75rem; font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">
-                                                                            <%= Math.ceil(est.estimated_days) %> วัน
-                                                                        </td>
-                                                                    </tr>
-                                                                    <% }) %>
-                                                                        <% } else { %>
-                                                                            <tr>
-                                                                                <td colspan="6"
-                                                                                    style="text-align: center; padding: 3rem; color: #6b7280;">
-                                                                                    <i class="fas fa-folder-open"
-                                                                                        style="font-size: 2rem; display: block; margin-bottom: 1rem; opacity: 0.5;"></i>
-                                                                                    ยังไม่มีประวัติการประเมิน
-                                                                                </td>
-                                                                            </tr>
-                                                                            <% } %>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                    <!-- Delete Selection Mode -->
+                                    <div id="delete-actions" style="display: none; gap: 0.75rem; align-items: center;">
+                                        <span
+                                            style="color: var(--danger-color); font-weight: 600; font-size: 0.9rem; white-space: nowrap;">เลือกรายการลบ:</span>
+                                        <button type="button" class="btn btn-secondary" onclick="exitMode()"
+                                            style="padding: 0.4rem 0.8rem; font-size: 0.9rem;">
+                                            ยกเลิก (Cancel)
+                                        </button>
+                                        <button type="button" class="btn" onclick="confirmBulkDelete()"
+                                            style="background-color: var(--danger-color); padding: 0.4rem 0.8rem; font-size: 0.9rem;">
+                                            ยืนยัน (Confirm)
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="overflow-x: auto;">
+                                <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                                    <thead>
+                                        <tr style="background: #f3f4f6; text-align: left;">
+                                            <th class="checkbox-col"
+                                                style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb; width: 40px; text-align: center; display: none;">
+                                                <input type="checkbox" id="selectAllEst"
+                                                    onclick="toggleSelectAllRecords(this)"
+                                                    style="width: 18px; height: 18px; cursor: pointer;">
+                                            </th>
+                                            <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                                <a href="?tab=history&page=1&order=<%= (locals.order === 'ASC') ? 'DESC' : 'ASC' %>"
+                                                    style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 4px;">
+                                                    ลำดับ <span style="font-size: 0.8em;">
+                                                        <%= (locals.order==='ASC' ) ? '▲' : '▼' %>
+                                                    </span>
+                                                </a>
+                                            </th>
+                                            <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                                ลูกค้า</th>
+                                            <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                                ประเภท</th>
+                                            <th style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb;">
+                                                จำนวนฟังก์ชัน</th>
+                                            <th
+                                                style="padding: 0.75rem; border-bottom: 2px solid #e5e7eb; color: var(--primary-color);">
+                                                เวลาประเมิน (Man-Days)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (locals.estimations && estimations.length> 0) { %>
+                                            <% estimations.forEach((est, index)=> { %>
+                                                <tr style="border-bottom: 1px solid #e5e7eb;" class="history-row">
+                                                    <td class="checkbox-col"
+                                                        style="padding: 0.75rem; text-align: center; display: none;">
+                                                        <input type="checkbox" class="record-checkbox"
+                                                            value="<%= est.id %>"
+                                                            style="width: 18px; height: 18px; cursor: pointer;">
+                                                    </td>
+                                                    <td style="padding: 0.75rem;">
+                                                        <%= (locals.order==='ASC' ) ? (((locals.currentPage || 1) - 1) *
+                                                            10 + index + 1) : (locals.totalItems - (((locals.currentPage
+                                                            || 1) - 1) * 10) - index) %>
+                                                    </td>
+                                                    <td style="padding: 0.75rem;">
+                                                        <%= est.client_name %>
+                                                    </td>
+                                                    <td style="padding: 0.75rem;">
+                                                        <span style="font-size: 0.85rem; font-weight: bold;">
+                                                            <%= est.device_type %>
+                                                        </span><br>
+                                                        <span style="font-size: 0.75rem; color: #6b7280;">
+                                                            <%= est.test_type %>
+                                                        </span>
+                                                    </td>
+                                                    <td style="padding: 0.75rem;">
+                                                        <% if (est.selected_functions && est.selected_functions !=='[]'
+                                                            ) { %>
+                                                            <div class="function-count-link tooltip-btn"
+                                                                data-functions='<%- est.selected_functions %>'
+                                                                data-wstg='<%- est.selected_wstg_json || "[]" %>'
+                                                                data-client="<%= est.client_name %>"
+                                                                onclick="handleViewFunctions(this)"
+                                                                data-tooltip="คลิกเพื่อดูรายละเอียด"
+                                                                style="cursor: pointer; color: var(--primary-color); font-weight: 500; text-decoration: underline; text-underline-offset: 4px; display: inline-block;">
+                                                                <%= est.function_count %> ฟังก์ชัน
+                                                            </div>
+                                                            <% } else { %>
+                                                                <div style="color: var(--text-secondary);">
+                                                                    <%= est.function_count %>
+                                                                        ฟังก์ชัน
+                                                                </div>
+                                                                <% } %>
+                                                    </td>
+                                                    <td
+                                                        style="padding: 0.75rem; font-size: 1.1rem; font-weight: bold; color: var(--primary-color);">
+                                                        <%= Math.ceil(est.estimated_days) %> วัน
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <tr>
+                                                            <td colspan="6"
+                                                                style="text-align: center; padding: 3rem; color: #6b7280;">
+                                                                <i class="fas fa-folder-open"
+                                                                    style="font-size: 2rem; display: block; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                                                ยังไม่มีประวัติการประเมิน
+                                                            </td>
+                                                        </tr>
+                                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
 
-                                                <!-- Pagination -->
-                                                <% if (locals.totalPages && totalPages> 1) { %>
-                                                    <div
-                                                        style="display: flex; justify-content: flex-end; align-items: center; margin-top: 12px; gap: 8px;">
-                                                        <% if (typeof currentPage !=='undefined' && currentPage> 1) { %>
-                                                            <a href="?tab=history&page=<%= currentPage - 1 %>&order=<%= locals.order || 'DESC' %>"
-                                                                class="btn"
-                                                                style="padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid #d1d5db; color: #374151; border-radius: 4px; width: auto; flex-grow: 0;">&lt;</a>
-                                                            <% } %>
+                            <!-- Pagination -->
+                            <% if (locals.totalPages && totalPages> 1) { %>
+                                <div
+                                    style="display: flex; justify-content: flex-end; align-items: center; margin-top: 12px; gap: 8px;">
+                                    <% if (typeof currentPage !=='undefined' && currentPage> 1) { %>
+                                        <a href="?tab=history&page=<%= currentPage - 1 %>&order=<%= locals.order || 'DESC' %>"
+                                            class="btn"
+                                            style="padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid #d1d5db; color: #374151; border-radius: 4px; width: auto; flex-grow: 0;">&lt;</a>
+                                        <% } %>
 
-                                                                <% let shownDotsBefore=false; let shownDotsAfter=false;
-                                                                    for(let i=1; i <=totalPages; i++) { if (i===1 ||
-                                                                    i===totalPages || i===currentPage) { if
-                                                                    (i===currentPage) { %>
-                                                                    <span
-                                                                        style="padding: 4px 10px; font-size: 14px; background: var(--primary-color); color: white; border: 1px solid var(--primary-color); border-radius: 4px; cursor: default;">
-                                                                        <%= i %>
-                                                                    </span>
-                                                                    <% } else { %>
-                                                                        <a href="?tab=history&page=<%= i %>&order=<%= locals.order || 'DESC' %>"
-                                                                            style="padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid #d1d5db; color: #374151; border-radius: 4px; text-decoration: none;">
-                                                                            <%= i %>
-                                                                        </a>
-                                                                        <% } } else if (i < currentPage &&
-                                                                            !shownDotsBefore) { shownDotsBefore=true; %>
-                                                                            <span
-                                                                                style="padding: 4px 8px; color: #6b7280;">...</span>
-                                                                            <% } else if (i> currentPage &&
-                                                                                !shownDotsAfter) { shownDotsAfter =
-                                                                                true; %>
-                                                                                <span
-                                                                                    style="padding: 4px 8px; color: #6b7280;">...</span>
-                                                                                <% } } %>
+                                            <% let shownDotsBefore=false; let shownDotsAfter=false; for(let i=1; i
+                                                <=totalPages; i++) { if (i===1 || i===totalPages || i===currentPage) {
+                                                if (i===currentPage) { %>
+                                                <span
+                                                    style="padding: 4px 10px; font-size: 14px; background: var(--primary-color); color: white; border: 1px solid var(--primary-color); border-radius: 4px; cursor: default;">
+                                                    <%= i %>
+                                                </span>
+                                                <% } else { %>
+                                                    <a href="?tab=history&page=<%= i %>&order=<%= locals.order || 'DESC' %>"
+                                                        style="padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid #d1d5db; color: #374151; border-radius: 4px; text-decoration: none;">
+                                                        <%= i %>
+                                                    </a>
+                                                    <% } } else if (i < currentPage && !shownDotsBefore) {
+                                                        shownDotsBefore=true; %>
+                                                        <span style="padding: 4px 8px; color: #6b7280;">...</span>
+                                                        <% } else if (i> currentPage &&
+                                                            !shownDotsAfter) { shownDotsAfter =
+                                                            true; %>
+                                                            <span style="padding: 4px 8px; color: #6b7280;">...</span>
+                                                            <% } } %>
 
-                                                                                    <% if (typeof currentPage
-                                                                                        !=='undefined' && currentPage <
-                                                                                        totalPages) { %>
-                                                                                        <a href="?tab=history&page=<%= currentPage + 1 %>&order=<%= locals.order || 'DESC' %>"
-                                                                                            class="btn"
-                                                                                            style="padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid #d1d5db; color: #374151; border-radius: 4px; width: auto; flex-grow: 0;">></a>
-                                                                                        <% } %>
-                                                    </div>
-                                                    <div
-                                                        style="text-align: right; font-size: 0.8rem; color: #6b7280; margin-top: 4px;">
-                                                        หน้า <%= currentPage %> จาก <%= totalPages %> (ทั้งหมด <%=
-                                                                    totalItems %> รายการ)
-                                                    </div>
-                                                    <% } %>
-                                            </div>
-                                        </div>
+                                                                <% if (typeof currentPage !=='undefined' && currentPage
+                                                                    < totalPages) { %>
+                                                                    <a href="?tab=history&page=<%= currentPage + 1 %>&order=<%= locals.order || 'DESC' %>"
+                                                                        class="btn"
+                                                                        style="padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid #d1d5db; color: #374151; border-radius: 4px; width: auto; flex-grow: 0;">></a>
+                                                                    <% } %>
+                                </div>
+                                <div style="text-align: right; font-size: 0.8rem; color: #6b7280; margin-top: 4px;">
+                                    หน้า <%= currentPage %> จาก <%= totalPages %> (ทั้งหมด <%= totalItems %> รายการ)
+                                </div>
+                                <% } %>
+                        </div>
                     </div>
                 </div>
             </div>
+    </div>
     </div>
 
     <!-- Hidden data for JS -->
@@ -1108,14 +1102,17 @@
 
         function handleViewFunctions(btn) {
             const functionsJson = btn.getAttribute('data-functions');
+            const wstgJson = btn.getAttribute('data-wstg');
             const clientName = btn.getAttribute('data-client');
-            viewFunctions(functionsJson, clientName);
+            viewFunctions(functionsJson, wstgJson, clientName);
         }
 
-        function viewFunctions(functionsJson, clientName) {
+        function viewFunctions(functionsJson, wstgJson, clientName) {
             let selectedIds = [];
+            let selectedWstgs = [];
             try {
                 selectedIds = JSON.parse(functionsJson);
+                selectedWstgs = JSON.parse(wstgJson || "[]");
             } catch (e) {
                 return;
             }
@@ -1137,9 +1134,39 @@
                     if (func) {
                         const item = document.createElement('div');
                         item.className = 'function-item-display';
+                        item.style = 'margin-bottom: 1rem; border-bottom: 1px solid #f3f4f6; padding-bottom: 0.8rem;';
+
+                        let wstgHtml = '';
+                        if (func.owaspGrouped) {
+                            let matchedWstgCount = 0;
+                            let wstgListHtml = `<div style="margin-top: 0.5rem; padding-left: 0.8rem; border-left: 3px solid #e5e7eb;">`;
+                            for (const cat in func.owaspGrouped) {
+                                const tcs = func.owaspGrouped[cat];
+                                const activeTcs = tcs.filter(tc => selectedWstgs.includes(tc.code));
+                                if (activeTcs.length > 0) {
+                                    wstgListHtml += `<div style="font-size: 0.75rem; font-weight: bold; color: #4b5563; margin-top: 6px;">${cat}</div>`;
+                                    activeTcs.forEach(tc => {
+                                        wstgListHtml += `<div style="display: flex; align-items: start; font-size: 0.8rem; color: #6b7280; padding-left: 5px; margin-top: 3px;">
+                                            <span style="color: #0369a1; font-family: monospace; font-weight: 500; min-width: 105px; flex-shrink: 0;">${tc.code}</span>
+                                            <span style="flex: 1; margin-left: 5px;">${tc.name}</span>
+                                        </div>`;
+                                        matchedWstgCount++;
+                                    });
+                                }
+                            }
+                            wstgListHtml += `</div>`;
+
+                            if (matchedWstgCount > 0) {
+                                wstgHtml = wstgListHtml;
+                            } else {
+                                wstgHtml = `<div style="font-size: 0.8rem; color: #9ca3af; margin-top: 5px; font-style: italic;">ไม่มีหัวข้อย่อย WSTG ที่เลือก</div>`;
+                            }
+                        }
+
                         item.innerHTML = `
-                            <div style="font-weight: 600; color: var(--text-primary);">${func.name}</div>
+                            <div style="font-weight: 600; color: var(--text-primary); font-size: 1rem;">${func.name}</div>
                             <div style="font-size: 0.85rem; color: var(--text-muted);">${func.description || ''}</div>
+                            ${wstgHtml}
                         `;
                         list.appendChild(item);
                     }

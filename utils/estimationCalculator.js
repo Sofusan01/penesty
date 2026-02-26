@@ -19,7 +19,7 @@ exports.calculate = async ({ device_type, test_type, platform_count, number_of_r
 
     let explicitWstgCodes = selected_wstg_codes || [];
     if (!Array.isArray(explicitWstgCodes)) explicitWstgCodes = [explicitWstgCodes];
-    explicitWstgCodes = [...new Set(explicitWstgCodes.filter(c => c))];
+    explicitWstgCodes = explicitWstgCodes.filter(c => c);
 
     // ─── โหลดข้อมูลทั้งหมดพร้อมกัน ───
     const [constraints, calcRules, roleRules, allWSTG, config] = await Promise.all([
@@ -34,7 +34,25 @@ exports.calculate = async ({ device_type, test_type, platform_count, number_of_r
     ]);
 
     const errors = [];
-    // ... validation (omitted for brevity in replacement, will keep original logic) ...
+
+    // ─── Validation ───
+    const allowedDevices = ['web_application', 'mobile_application', 'api_webservice', 'infrastructure'];
+    const allowedTests = ['graybox', 'blackbox'];
+
+    if (!allowedDevices.includes(device_type)) {
+        errors.push(`Invalid device type. Allowed: ${allowedDevices.join(', ')}`);
+    }
+
+    if (!allowedTests.includes(test_type)) {
+        errors.push(`Invalid test type. Allowed: ${allowedTests.join(', ')}`);
+    }
+
+    if (constraints && constraints[device_type]) {
+        const allowed = constraints[device_type];
+        if (Array.isArray(allowed) && !allowed.includes(test_type)) {
+            errors.push(`Device type '${device_type}' only supports: ${allowed.join(', ')}.`);
+        }
+    }
 
     const roles = parseInt(number_of_roles) || 1;
     if (roles < (roleRules.min_roles || 1) || roles > (roleRules.max_roles || 20)) {
@@ -58,32 +76,41 @@ exports.calculate = async ({ device_type, test_type, platform_count, number_of_r
     const wstgMap = {};
     allWSTG.forEach(tc => { wstgMap[tc.code] = tc.base_hours; });
 
-    // ─── รวบรวม unique WSTG codes ───
-    const finalWSTGCodes = new Set();
+    // ─── รวบรวม WSTG codes ทั้งหมด (รวมตัวซ้ำตามที่ระบุมาจริงๆ) ───
+    let finalWSTGCodes = [];
     let functionsWithoutWSTG = 0;
 
     if (explicitWstgCodes.length > 0) {
-        // กรณีมีรายการ WSTG ที่เลือกมาโดยตรง (Granular)
-        explicitWstgCodes.forEach(code => finalWSTGCodes.add(code));
+        // กรณีมีรายการ WSTG ที่เลือกมาโดยตรง (สะสมซ้ำได้เลย)
+        explicitWstgCodes.forEach(code => finalWSTGCodes.push(code));
 
-        // ยังต้องนับ function ที่ไม่มี WSTG เพื่อทำ fallback (เช่น ฟังก์ชันแต่งรูป, อัปโหลดไฟล์ ที่ไม่มี WSTG เฉพาะ)
         selectedFuncDetails.forEach(func => {
             if (!func.mapped_wstg_test_cases || func.mapped_wstg_test_cases.length === 0) {
                 functionsWithoutWSTG++;
             }
         });
     } else {
-        // กรณีเลือกทั้งก้อน (Legacy/Bulk selection)
         selectedFuncDetails.forEach(func => {
             if (func.mapped_wstg_test_cases && func.mapped_wstg_test_cases.length > 0) {
-                func.mapped_wstg_test_cases.forEach(code => finalWSTGCodes.add(code));
+                func.mapped_wstg_test_cases.forEach(code => finalWSTGCodes.push(code));
             } else {
                 functionsWithoutWSTG++;
             }
         });
     }
 
-    // ─── FIX: แยก Role-Dependent vs Role-Independent hours ───
+    // ─── การแยก WSTG ตามรูปแบบ (Test Type) ───
+    const GRAYBOX_ONLY_WSTG = [
+        'WSTG-IDNT-01', 'WSTG-ATHZ-03', 'WSTG-ATHZ-04',
+        'WSTG-BUSL-02', 'WSTG-BUSL-03', 'WSTG-CLNT-12'
+    ];
+
+    if (test_type === 'blackbox') {
+        // กรองเอาตัวที่เป็นของ Gray Box ออกให้เกลี้ยงใน Array ปัจจุบัน
+        finalWSTGCodes = finalWSTGCodes.filter(code => !GRAYBOX_ONLY_WSTG.includes(code));
+    }
+
+    // ─── แยก Role-Dependent vs Role-Independent hours ───
     let roleIndependentHours = 0;
     let roleDependentHours = 0;
     const usedWSTG = [];
@@ -96,23 +123,23 @@ exports.calculate = async ({ device_type, test_type, platform_count, number_of_r
             } else {
                 roleIndependentHours += wstgMap[code];
             }
+            // ใส่เข้า usedWSTG ทุกรอบตามจริง
             usedWSTG.push(code);
         } else {
             missingWSTG.push(code);
         }
     });
 
-    // ─── FIX: ใช้ hours_per_function เป็น fallback สำหรับ function ที่เลือกแต่ไม่มี mapping ───
-    const fallbackHours = functionsWithoutWSTG * (config.hours_per_function || 2.0);
-
-
-    // ─── สูตรใหม่ ───
-    // totalBaseHours = (ชม.ที่ไม่ขึ้นกับ role + fallback) + (ชม.ที่ขึ้นกับ role × จำนวน roles)
-    const totalBaseHours = (roleIndependentHours + fallbackHours) + (roleDependentHours * roles);
+    // ─── การคำนวณเวลาตั้งต้นที่เลือกชัวร์แล้ว
+    // ─── (ตัด Fallback ทิ้งตาม User Request) ───
+    const totalBaseHours = roleIndependentHours + (roleDependentHours * roles);
 
     // ─── Test Type Factor (blackbox/graybox) ───
     let typeFactor = config.graybox_factor || 1.0;
-    if (test_type === 'blackbox') typeFactor = config.blackbox_factor || 1.5;
+    if (test_type === 'blackbox') {
+        // บังคับให้ Black Box มีระยะเวลาใช้นานกว่า Gray Box (ค่าเริ่มต้น * 3)
+        typeFactor = Math.max(config.blackbox_factor || 3.0, 3.0);
+    }
 
     // ─── Device Factor ───
     let deviceFactor = config.web_factor || 1.0;
@@ -128,7 +155,7 @@ exports.calculate = async ({ device_type, test_type, platform_count, number_of_r
     // scope เล็ก (≤10 WSTG) = report_overhead ปกติ
     // scope ใหญ่ (>10 WSTG) = report_overhead เพิ่มตามสัดส่วน
     const baseReportHours = config.report_overhead_hours || 8.0;
-    const scopeScale = Math.max(1.0, uniqueWSTGCodes.size / 10);
+    const scopeScale = Math.max(1.0, finalWSTGCodes.length / 10);
     const reportHours = baseReportHours * scopeScale;
     effortHours += reportHours;
 
@@ -157,13 +184,12 @@ exports.calculate = async ({ device_type, test_type, platform_count, number_of_r
         target_info_map: {},
         warnings: warnings.length > 0 ? warnings : undefined,
         // เพิ่มตัวแปรสำหรับใช้อธิบาย Step-by-Step
-        fallback_hours: Math.round(fallbackHours * 100) / 100,
-        functions_without_wstg: functionsWithoutWSTG,
         dependent_total_hours: Math.round((roleDependentHours * roles) * 100) / 100,
         total_base_hours: Math.round(totalBaseHours * 100) / 100,
         device_factor: deviceFactor,
         test_factor: typeFactor,
         initial_effort_hours: Math.round((totalBaseHours * typeFactor * deviceFactor) * 100) / 100,
-        scope_scale: Math.round(scopeScale * 100) / 100
+        scope_scale: Math.round(scopeScale * 100) / 100,
+        final_effort_hours: Math.round(effortHours * 100) / 100
     };
 };
